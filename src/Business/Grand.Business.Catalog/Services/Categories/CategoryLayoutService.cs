@@ -51,8 +51,8 @@ public class CategoryLayoutService : ICategoryLayoutService
         return await _cacheBase.GetAsync(CacheKey.CATEGORY_LAYOUT_ALL, async () =>
         {
             var query = from pt in _categoryLayoutRepository.Table
-                orderby pt.DisplayOrder
-                select pt;
+                        orderby pt.DisplayOrder
+                        select pt;
             return await Task.FromResult(query.ToList());
         });
     }

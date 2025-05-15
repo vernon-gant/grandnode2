@@ -57,8 +57,8 @@ public class PickupPointService : IPickupPointService
         return await _cacheBase.GetAsync(CacheKey.PICKUPPOINTS_ALL, async () =>
         {
             var query = from pp in _pickupPointsRepository.Table
-                orderby pp.DisplayOrder
-                select pp;
+                        orderby pp.DisplayOrder
+                        select pp;
             return await Task.FromResult(query.ToList());
         });
     }

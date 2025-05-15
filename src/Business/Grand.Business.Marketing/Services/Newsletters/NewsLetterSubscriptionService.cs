@@ -109,7 +109,7 @@ public class NewsLetterSubscriptionService : INewsLetterSubscriptionService
 
         //save history
         await _historyService.SaveObject(newsLetterSubscription);
-        
+
         //Publish the un/subscribe event 
         if (prevNewsLetterSubscription != null)
             switch (newsLetterSubscription.Active)
@@ -165,8 +165,8 @@ public class NewsLetterSubscriptionService : INewsLetterSubscriptionService
         if (newsLetterSubscriptionGuid == Guid.Empty) return null;
 
         var newsLetterSubscriptions = from nls in _subscriptionRepository.Table
-            where nls.NewsLetterSubscriptionGuid == newsLetterSubscriptionGuid
-            select nls;
+                                      where nls.NewsLetterSubscriptionGuid == newsLetterSubscriptionGuid
+                                      select nls;
 
         return await Task.FromResult(newsLetterSubscriptions.FirstOrDefault());
     }
@@ -186,8 +186,8 @@ public class NewsLetterSubscriptionService : INewsLetterSubscriptionService
         email = email.Trim();
 
         var newsLetterSubscriptions = from nls in _subscriptionRepository.Table
-            where nls.Email.ToLower() == email.ToLower() && nls.StoreId == storeId
-            select nls;
+                                      where nls.Email.ToLower() == email.ToLower() && nls.StoreId == storeId
+                                      select nls;
 
         return await Task.FromResult(newsLetterSubscriptions.FirstOrDefault());
     }
@@ -203,8 +203,8 @@ public class NewsLetterSubscriptionService : INewsLetterSubscriptionService
             return null;
 
         var newsLetterSubscriptions = from nls in _subscriptionRepository.Table
-            where nls.CustomerId == customerId
-            select nls;
+                                      where nls.CustomerId == customerId
+                                      select nls;
 
         return await Task.FromResult(newsLetterSubscriptions.FirstOrDefault());
     }
@@ -225,7 +225,7 @@ public class NewsLetterSubscriptionService : INewsLetterSubscriptionService
     {
         //do not filter by customer group
         var query = from p in _subscriptionRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(email))
             query = query.Where(nls => nls.Email.ToLower().Contains(email.ToLower()));

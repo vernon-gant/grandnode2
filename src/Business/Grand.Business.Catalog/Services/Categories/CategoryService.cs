@@ -79,7 +79,7 @@ public class CategoryService : ICategoryService
         int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
     {
         var query = from c in _categoryRepository.Table
-            select c;
+                    select c;
 
         if (!showHidden)
             query = query.Where(c => c.Published);
@@ -97,15 +97,15 @@ public class CategoryService : ICategoryService
                 //Limited to customer group (access control list)
                 var allowedCustomerGroupsIds = CurrentCustomer.GetCustomerGroupIds();
                 query = from p in query
-                    where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                    select p;
+                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                        select p;
             }
 
             if (!string.IsNullOrEmpty(storeId) && !_accessControlConfig.IgnoreStoreLimitations)
                 //Limited to stores rule
                 query = from p in query
-                    where !p.LimitedToStores || p.Stores.Contains(storeId)
-                    select p;
+                        where !p.LimitedToStores || p.Stores.Contains(storeId)
+                        select p;
         }
 
         query = query.OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name);
@@ -121,7 +121,7 @@ public class CategoryService : ICategoryService
     public virtual async Task<IList<Category>> GetMenuCategories()
     {
         var query = from c in _categoryRepository.Table
-            select c;
+                    select c;
 
         query = query.Where(c => c.Published && c.IncludeInMenu);
 
@@ -131,21 +131,21 @@ public class CategoryService : ICategoryService
                 string.IsNullOrEmpty(CurrentStore.Id) || _accessControlConfig.IgnoreStoreLimitations:
                 return await Task.FromResult(query.ToList());
             case false:
-            {
-                //Limited to customer group (access control list)
-                var allowedCustomerGroupsIds = CurrentCustomer.GetCustomerGroupIds();
-                query = from p in query
-                    where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                    select p;
-                break;
-            }
+                {
+                    //Limited to customer group (access control list)
+                    var allowedCustomerGroupsIds = CurrentCustomer.GetCustomerGroupIds();
+                    query = from p in query
+                            where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                            select p;
+                    break;
+                }
         }
 
         if (!string.IsNullOrEmpty(CurrentStore.Id) && !_accessControlConfig.IgnoreStoreLimitations)
             //Limited to stores rule
             query = from p in query
-                where !p.LimitedToStores || p.Stores.Contains(CurrentStore.Id)
-                select p;
+                    where !p.LimitedToStores || p.Stores.Contains(CurrentStore.Id)
+                    select p;
         return await Task.FromResult(query.ToList());
     }
 
@@ -174,15 +174,15 @@ public class CategoryService : ICategoryService
                     //Limited to customer groups rules
                     var allowedCustomerGroupsIds = CurrentCustomer.GetCustomerGroupIds();
                     query = from p in query
-                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                        select p;
+                            where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                            select p;
                 }
 
                 if (!_accessControlConfig.IgnoreStoreLimitations)
                     //Limited to stores rules
                     query = from p in query
-                        where !p.LimitedToStores || p.Stores.Contains(CurrentStore.Id)
-                        select p;
+                            where !p.LimitedToStores || p.Stores.Contains(CurrentStore.Id)
+                            select p;
             }
 
             var categories = query.OrderBy(x => x.DisplayOrder).ToList();
@@ -312,8 +312,8 @@ public class CategoryService : ICategoryService
             alreadyProcessedCategoryIds.Add(category.Id);
 
             category = (from c in allCategories
-                where c.Id == category.ParentCategoryId
-                select c).FirstOrDefault();
+                        where c.Id == category.ParentCategoryId
+                        select c).FirstOrDefault();
         }
 
         result.Reverse();
@@ -378,8 +378,8 @@ public class CategoryService : ICategoryService
     public virtual async Task<IList<Category>> GetAllCategoriesByDiscount(string discountId)
     {
         var query = from c in _categoryRepository.Table
-            where c.AppliedDiscounts.Any(x => x == discountId)
-            select c;
+                    where c.AppliedDiscounts.Any(x => x == discountId)
+                    select c;
 
         return await Task.FromResult(query.ToList());
     }

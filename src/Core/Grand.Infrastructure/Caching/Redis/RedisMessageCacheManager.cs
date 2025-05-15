@@ -43,8 +43,7 @@ public class RedisMessageCacheManager : MemoryCacheBase, ICacheBase
         foreach (var cacheEntries in entriesToRemove) _cache.Remove(cacheEntries.Key);
 
         if (publisher)
-            _messageBus.PublishAsync(new MessageEvent
-                { Key = prefix, MessageType = (int)MessageEventType.RemoveByPrefix });
+            _messageBus.PublishAsync(new MessageEvent { Key = prefix, MessageType = (int)MessageEventType.RemoveByPrefix });
 
         return Task.CompletedTask;
     }

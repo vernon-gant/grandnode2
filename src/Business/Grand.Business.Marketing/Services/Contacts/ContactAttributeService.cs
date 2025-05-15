@@ -79,7 +79,7 @@ public class ContactAttributeService : IContactAttributeService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _contactAttributeRepository.Table
-                select p;
+                        select p;
 
             query = query.OrderBy(c => c.DisplayOrder);
 
@@ -89,15 +89,15 @@ public class ContactAttributeService : IContactAttributeService
             {
                 var allowedCustomerGroupsIds = _contextAccessor.WorkContext.CurrentCustomer.GetCustomerGroupIds();
                 query = from p in query
-                    where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                    select p;
+                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                        select p;
             }
 
             //Store acl
             if (!string.IsNullOrEmpty(storeId) && !_accessControlConfig.IgnoreStoreLimitations)
                 query = from p in query
-                    where !p.LimitedToStores || p.Stores.Contains(storeId)
-                    select p;
+                        where !p.LimitedToStores || p.Stores.Contains(storeId)
+                        select p;
             return await Task.FromResult(query.ToList());
         });
     }

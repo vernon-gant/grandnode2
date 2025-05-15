@@ -62,6 +62,6 @@ public class TranslateExtensionsTests
         var fake = new FakeStruct();
         Assert.ThrowsException<ArgumentException>(() => fake.GetTranslationEnum(translationServiceMock.Object, "PL"));
     }
-    
+
     private struct FakeStruct;
 }

@@ -29,8 +29,8 @@ public class AdminSiteMapService : IAdminSiteMapService
         return await _cacheBase.GetAsync(CacheKey.ADMIN_SITEMAP_KEY, () =>
         {
             var query = from c in _adminSiteMapRepository.Table
-                orderby c.DisplayOrder
-                select c;
+                        orderby c.DisplayOrder
+                        select c;
 
             return Task.FromResult(query.ToList());
         });

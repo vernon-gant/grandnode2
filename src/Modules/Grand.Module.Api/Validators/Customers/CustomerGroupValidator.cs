@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using Grand.Module.Api.DTOs.Customers;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Infrastructure.Validators;
+using Grand.Module.Api.DTOs.Customers;
 
 namespace Grand.Module.Api.Validators.Customers;
 

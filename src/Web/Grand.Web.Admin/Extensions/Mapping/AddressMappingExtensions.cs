@@ -71,41 +71,41 @@ public static class AddressMappingExtensions
                 case AttributeControlType.DropdownList:
                 case AttributeControlType.RadioList:
                 case AttributeControlType.Checkboxes:
-                {
-                    if (selectedAddressAttributes.Any())
                     {
-                        //clear default selection
-                        foreach (var item in attributeModel.Values)
-                            item.IsPreSelected = false;
+                        if (selectedAddressAttributes.Any())
+                        {
+                            //clear default selection
+                            foreach (var item in attributeModel.Values)
+                                item.IsPreSelected = false;
 
-                        //select new values
-                        var selectedValues =
-                            await addressAttributeParser.ParseAddressAttributeValues(selectedAddressAttributes);
-                        foreach (var attributeValue in selectedValues)
-                            if (attributeModel.Id == attributeValue.AddressAttributeId)
-                                foreach (var item in attributeModel.Values)
-                                    if (attributeValue.Id == item.Id)
-                                        item.IsPreSelected = true;
+                            //select new values
+                            var selectedValues =
+                                await addressAttributeParser.ParseAddressAttributeValues(selectedAddressAttributes);
+                            foreach (var attributeValue in selectedValues)
+                                if (attributeModel.Id == attributeValue.AddressAttributeId)
+                                    foreach (var item in attributeModel.Values)
+                                        if (attributeValue.Id == item.Id)
+                                            item.IsPreSelected = true;
+                        }
                     }
-                }
                     break;
                 case AttributeControlType.ReadonlyCheckboxes:
-                {
-                    //do nothing
-                    //values are already pre-set
-                }
+                    {
+                        //do nothing
+                        //values are already pre-set
+                    }
                     break;
                 case AttributeControlType.TextBox:
                 case AttributeControlType.MultilineTextbox:
-                {
-                    if (selectedAddressAttributes.Any())
                     {
-                        var enteredText = selectedAddressAttributes.Where(x => x.Key == attribute.Id)
-                            .Select(x => x.Value).ToList();
-                        if (enteredText.Count > 0)
-                            attributeModel.DefaultValue = enteredText[0];
+                        if (selectedAddressAttributes.Any())
+                        {
+                            var enteredText = selectedAddressAttributes.Where(x => x.Key == attribute.Id)
+                                .Select(x => x.Value).ToList();
+                            if (enteredText.Count > 0)
+                                attributeModel.DefaultValue = enteredText[0];
+                        }
                     }
-                }
                     break;
                 case AttributeControlType.ColorSquares:
                 case AttributeControlType.Datepicker:

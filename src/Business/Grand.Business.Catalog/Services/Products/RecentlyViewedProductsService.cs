@@ -48,9 +48,9 @@ public class RecentlyViewedProductsService : IRecentlyViewedProductsService
     protected IList<RecentlyViewedProduct> GetRecentlyViewedProducts(string customerId)
     {
         var query = from p in _recentlyViewedProducts.Table
-            where p.CustomerId == customerId
-            orderby p.CreatedOnUtc descending
-            select p;
+                    where p.CustomerId == customerId
+                    orderby p.CreatedOnUtc descending
+                    select p;
 
         return query.ToList();
     }
@@ -67,9 +67,9 @@ public class RecentlyViewedProductsService : IRecentlyViewedProductsService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _recentlyViewedProducts.Table
-                where p.CustomerId == customerId
-                orderby p.CreatedOnUtc descending
-                select p.ProductId;
+                        where p.CustomerId == customerId
+                        orderby p.CreatedOnUtc descending
+                        select p.ProductId;
             return await Task.FromResult(query.Take(number).ToList());
         });
     }
@@ -104,8 +104,7 @@ public class RecentlyViewedProductsService : IRecentlyViewedProductsService
         var recentlyViewedProducts = GetRecentlyViewedProducts(customerId);
         var recentlyViewedProduct = recentlyViewedProducts.FirstOrDefault(x => x.ProductId == productId);
         if (recentlyViewedProduct == null)
-            await _recentlyViewedProducts.InsertAsync(new RecentlyViewedProduct
-                { CustomerId = customerId, ProductId = productId });
+            await _recentlyViewedProducts.InsertAsync(new RecentlyViewedProduct { CustomerId = customerId, ProductId = productId });
         else
             await _recentlyViewedProducts.UpdateAsync(recentlyViewedProduct);
         var maxProducts = _catalogSettings.RecentlyViewedProductsNumber;

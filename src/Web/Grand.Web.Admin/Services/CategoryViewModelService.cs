@@ -32,7 +32,7 @@ public class CategoryViewModelService : ICategoryViewModelService
     private readonly IVendorService _vendorService;
     private readonly ISeNameService _seNameService;
     private readonly IEnumTranslationService _enumTranslationService;
-   
+
     public CategoryViewModelService(
         ICategoryService categoryService,
         IProductCategoryService productCategoryService,
@@ -44,7 +44,7 @@ public class CategoryViewModelService : ICategoryViewModelService
         IProductService productService,
         IVendorService vendorService,
         CatalogSettings catalogSettings,
-        ISeNameService seNameService, 
+        ISeNameService seNameService,
         IEnumTranslationService enumTranslationService)
     {
         _categoryService = categoryService;
@@ -64,8 +64,7 @@ public class CategoryViewModelService : ICategoryViewModelService
     public virtual async Task<CategoryListModel> PrepareCategoryListModel(string storeId)
     {
         var model = new CategoryListModel();
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
         foreach (var s in (await _storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
@@ -245,15 +244,13 @@ public class CategoryViewModelService : ICategoryViewModelService
     {
         var model = new CategoryModel.AddCategoryProductModel();
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in (await _storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await _vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 

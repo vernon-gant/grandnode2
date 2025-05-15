@@ -4,8 +4,8 @@ using Grand.Business.Core.Interfaces.Checkout.Shipping;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Pdf;
-using Grand.Domain.Permissions;
 using Grand.Domain.Orders;
+using Grand.Domain.Permissions;
 using Grand.Domain.Shipping;
 using Grand.Infrastructure;
 using Grand.Web.Common.DataSource;
@@ -418,8 +418,8 @@ public class ShipmentController : BaseVendorController
         //a vendor should have access only to his shipments
         var shipmentsAccess =
             (from item in shipments
-                where _contextAccessor.WorkContext.HasAccessToShipment(item)
-                select item).ToList();
+             where _contextAccessor.WorkContext.HasAccessToShipment(item)
+             select item).ToList();
 
         //ensure that we at least one shipment selected
         if (shipments.Count == 0)
@@ -448,8 +448,8 @@ public class ShipmentController : BaseVendorController
 
         //a vendor should have access only to his shipments
         shipmentsAccess.AddRange(from item in shipments
-            where _contextAccessor.WorkContext.HasAccessToShipment(item)
-            select item);
+                                 where _contextAccessor.WorkContext.HasAccessToShipment(item)
+                                 select item);
 
         foreach (var shipment in shipmentsAccess)
             try

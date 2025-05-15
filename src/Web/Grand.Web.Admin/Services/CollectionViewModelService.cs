@@ -36,7 +36,7 @@ public class CollectionViewModelService : ICollectionViewModelService
     private readonly IContextAccessor _contextAccessor;
     private readonly ISeNameService _seNameService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     #endregion
 
     #region Constructors
@@ -52,7 +52,7 @@ public class CollectionViewModelService : ICollectionViewModelService
         IDiscountService discountService,
         IVendorService vendorService,
         IContextAccessor contextAccessor,
-        ISeNameService seNameService, 
+        ISeNameService seNameService,
         IEnumTranslationService enumTranslationService)
     {
         _collectionLayoutService = collectionLayoutService;
@@ -112,7 +112,7 @@ public class CollectionViewModelService : ICollectionViewModelService
         foreach (var discount in allDiscounts)
             if (model.SelectedDiscountIds != null && model.SelectedDiscountIds.Contains(discount.Id))
                 collection.AppliedDiscounts.Add(discount.Id);
-        
+
         //search engine name
         collection.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, collection, x => x.Name);
         collection.SeName = await _seNameService.ValidateSeName(collection, model.SeName, collection.Name, true);
@@ -130,10 +130,10 @@ public class CollectionViewModelService : ICollectionViewModelService
     {
         var prevPictureId = collection.PictureId;
         collection = model.ToEntity(collection);
-        
+
         collection.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, collection, x => x.Name);
         collection.SeName = await _seNameService.ValidateSeName(collection, model.SeName, collection.Name, true);
-        
+
         //discounts
         var allDiscounts = await _discountService.GetDiscountsQuery(DiscountType.AssignedToCollections);
         foreach (var discount in allDiscounts)
@@ -179,21 +179,18 @@ public class CollectionViewModelService : ICollectionViewModelService
         var model = new CollectionModel.AddCollectionProductModel();
 
         //collections
-        model.AvailableCollections.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableCollections.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var m in await _collectionService.GetAllCollections(showHidden: true))
             model.AvailableCollections.Add(new SelectListItem { Text = m.Name, Value = m.Id });
 
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in (await _storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await _vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 

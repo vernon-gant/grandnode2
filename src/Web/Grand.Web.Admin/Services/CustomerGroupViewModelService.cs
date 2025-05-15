@@ -24,7 +24,7 @@ public class CustomerGroupViewModelService : ICustomerGroupViewModelService
     private readonly ITranslationService _translationService;
     private readonly IVendorService _vendorService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     #region Constructors
 
     public CustomerGroupViewModelService(
@@ -33,7 +33,7 @@ public class CustomerGroupViewModelService : ICustomerGroupViewModelService
         ITranslationService translationService,
         IProductService productService,
         IStoreService storeService,
-        IVendorService vendorService, 
+        IVendorService vendorService,
         IEnumTranslationService enumTranslationService)
     {
         _groupService = groupService;
@@ -107,14 +107,12 @@ public class CustomerGroupViewModelService : ICustomerGroupViewModelService
         };
 
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await _vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 

@@ -90,8 +90,7 @@ public class MerchandiseReturnController : BasePublicController
         }
         else
         {
-            var customAttributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                { SelectedAttributes = model.MerchandiseReturnNewAddress.SelectedAttributes });
+            var customAttributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.MerchandiseReturnNewAddress.SelectedAttributes });
             address = model.MerchandiseReturnNewAddress.ToEntity(_contextAccessor.WorkContext.CurrentCustomer, _addressSettings);
             model.NewAddressPreselected = true;
             address.Attributes = customAttributes;
@@ -152,8 +151,7 @@ public class MerchandiseReturnController : BasePublicController
 
         if (ModelState.IsValid)
         {
-            var result = await _mediator.Send(new MerchandiseReturnSubmitCommand
-                { Address = address, Model = model, Order = order });
+            var result = await _mediator.Send(new MerchandiseReturnSubmitCommand { Address = address, Model = model, Order = order });
 
             model.Result = string.Format(_translationService.GetResource("MerchandiseReturns.Submitted"),
                 result.ReturnNumber,

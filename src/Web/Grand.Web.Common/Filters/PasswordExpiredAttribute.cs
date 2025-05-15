@@ -56,8 +56,7 @@ public class PasswordExpiredAttribute : TypeFilterAttribute
                )
             {
                 //check password expiration
-                var passwordIsExpired = await mediator.Send(new GetPasswordIsExpiredQuery
-                    { Customer = contextAccessor.WorkContext.CurrentCustomer });
+                var passwordIsExpired = await mediator.Send(new GetPasswordIsExpiredQuery { Customer = contextAccessor.WorkContext.CurrentCustomer });
                 if (passwordIsExpired)
                     //redirect to ChangePassword page if expires
                     context.Result = new RedirectToRouteResult("CustomerChangePassword", new RouteValueDictionary());

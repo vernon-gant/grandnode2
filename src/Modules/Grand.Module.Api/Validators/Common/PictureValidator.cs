@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using Grand.Module.Api.DTOs.Common;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Infrastructure.Validators;
+using Grand.Module.Api.DTOs.Common;
 
 namespace Grand.Module.Api.Validators.Common;
 

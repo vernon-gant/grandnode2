@@ -7,8 +7,8 @@ using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Queries.Catalog;
-using Grand.Domain.Permissions;
 using Grand.Domain;
+using Grand.Domain.Permissions;
 using Grand.Domain.Vendors;
 using Grand.Infrastructure;
 using Grand.Web.Admin.Extensions;
@@ -238,7 +238,8 @@ public class DiscountController : BaseAdminController
         var couponcodes = await _discountService.GetAllCouponCodesByDiscountId(discount.Id,
             command.Page - 1, command.PageSize);
         var gridModel = new DataSourceResult {
-            Data = couponcodes.Select(x => new {
+            Data = couponcodes.Select(x => new
+            {
                 x.Id,
                 x.CouponCode,
                 x.Used
@@ -263,8 +264,7 @@ public class DiscountController : BaseAdminController
             if (!coupon.Used)
                 await _discountService.DeleteDiscountCoupon(coupon);
             else
-                return new JsonResult(new DataSourceResult
-                    { Errors = "You can't delete coupon code, it was used" });
+                return new JsonResult(new DataSourceResult { Errors = "You can't delete coupon code, it was used" });
 
             return new JsonResult("");
         }

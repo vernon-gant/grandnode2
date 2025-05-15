@@ -1,8 +1,8 @@
 ﻿using Grand.Business.Core.Extensions;
 using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Business.Core.Interfaces.Common.Localization;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
+using Grand.Domain.Permissions;
 using Grand.Domain.Seo;
 using Grand.Web.Admin.Models.Catalog;
 using Grand.Web.Common.DataSource;
@@ -79,8 +79,10 @@ public class ProductTagsController : BaseAdminController
         var products = (await _productService.SearchProducts(pageIndex: command.Page - 1, pageSize: command.PageSize,
             productTag: tag.Name, orderBy: ProductSortingEnum.NameAsc)).products;
         var gridModel = new DataSourceResult {
-            Data = products.Select(x => new {
-                x.Id, x.Name
+            Data = products.Select(x => new
+            {
+                x.Id,
+                x.Name
             }),
             Total = products.TotalCount
         };

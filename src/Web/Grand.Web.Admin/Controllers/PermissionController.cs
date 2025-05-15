@@ -50,7 +50,7 @@ public class PermissionController : BaseAdminController
         var customerGroups = await _groupService.GetAllCustomerGroups(showHidden: true);
         foreach (var pr in permissionRecords.OrderBy(x => x.Category))
             model.AvailablePermissions.Add(new PermissionRecordModel {
-                Name =_translationService.GetResource(pr.GetTranslationPermissionName(), _contextAccessor.WorkContext.WorkingLanguage.Id),
+                Name = _translationService.GetResource(pr.GetTranslationPermissionName(), _contextAccessor.WorkContext.WorkingLanguage.Id),
                 SystemName = pr.SystemName,
                 Area = pr.Area,
                 Category = pr.Category,
@@ -61,13 +61,13 @@ public class PermissionController : BaseAdminController
             model.AvailableCustomerGroups.Add(new CustomerGroupModel { Id = cr.Id, Name = cr.Name });
 
         foreach (var pr in permissionRecords)
-        foreach (var cr in customerGroups)
-        {
-            var allowed = pr.CustomerGroups.Count(x => x == cr.Id) > 0;
-            if (!model.Allowed.ContainsKey(pr.SystemName))
-                model.Allowed[pr.SystemName] = new Dictionary<string, bool>();
-            model.Allowed[pr.SystemName][cr.Id] = allowed;
-        }
+            foreach (var cr in customerGroups)
+            {
+                var allowed = pr.CustomerGroups.Count(x => x == cr.Id) > 0;
+                if (!model.Allowed.ContainsKey(pr.SystemName))
+                    model.Allowed[pr.SystemName] = new Dictionary<string, bool>();
+                model.Allowed[pr.SystemName][cr.Id] = allowed;
+            }
 
         return View(model);
     }

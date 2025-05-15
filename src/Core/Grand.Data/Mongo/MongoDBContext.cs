@@ -12,7 +12,7 @@ public class MongoDBContext : IDatabaseContext
     {
         _database = mongodatabase;
     }
-    
+
     public async Task<bool> DatabaseExist()
     {
         var filter = new BsonDocument("name", "GrandNodeVersion");

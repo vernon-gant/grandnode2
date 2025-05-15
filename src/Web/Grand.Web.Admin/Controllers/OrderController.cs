@@ -7,10 +7,10 @@ using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Pdf;
 using Grand.Business.Core.Interfaces.ExportImport;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Orders;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Web.Admin.Extensions;
 using Grand.Web.Admin.Interfaces;
@@ -88,10 +88,11 @@ public class OrderController(
             showHidden: true)).products;
 
         var result = (from p in products
-                select new {
-                    label = p.Name,
-                    productid = p.Id
-                })
+                      select new
+                      {
+                          label = p.Name,
+                          productid = p.Id
+                      })
             .ToList();
         return Json(result);
     }
@@ -882,17 +883,17 @@ public class OrderController(
         switch (billingAddress)
         {
             case true when order.BillingAddress != null:
-            {
-                if (order.BillingAddress.Id == addressId)
-                    address = order.BillingAddress;
-                break;
-            }
+                {
+                    if (order.BillingAddress.Id == addressId)
+                        address = order.BillingAddress;
+                    break;
+                }
             case false when order.ShippingAddress != null:
-            {
-                if (order.ShippingAddress.Id == addressId)
-                    address = order.ShippingAddress;
-                break;
-            }
+                {
+                    if (order.ShippingAddress.Id == addressId)
+                        address = order.ShippingAddress;
+                    break;
+                }
         }
 
         if (address == null)
@@ -921,17 +922,17 @@ public class OrderController(
         switch (model.BillingAddress)
         {
             case true when order.BillingAddress != null:
-            {
-                if (order.BillingAddress.Id == model.Address.Id)
-                    address = order.BillingAddress;
-                break;
-            }
+                {
+                    if (order.BillingAddress.Id == model.Address.Id)
+                        address = order.BillingAddress;
+                    break;
+                }
             case false when order.ShippingAddress != null:
-            {
-                if (order.ShippingAddress.Id == model.Address.Id)
-                    address = order.ShippingAddress;
-                break;
-            }
+                {
+                    if (order.ShippingAddress.Id == model.Address.Id)
+                        address = order.ShippingAddress;
+                    break;
+                }
         }
 
         if (ModelState.IsValid)

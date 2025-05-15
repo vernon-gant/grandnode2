@@ -1,8 +1,8 @@
 ﻿using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Customers;
-using Grand.Domain.Permissions;
 using Grand.Domain.Customers;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Web.Admin.Models.Customers;
 using Grand.Web.Common.DataSource;

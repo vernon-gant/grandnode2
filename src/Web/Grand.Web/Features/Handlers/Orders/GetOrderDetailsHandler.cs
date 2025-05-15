@@ -46,7 +46,7 @@ public class GetOrderDetailsHandler : IRequestHandler<GetOrderDetails, OrderDeta
     private readonly TaxSettings _taxSettings;
     private readonly ITranslationService _translationService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     private Currency _orderCurrency;
 
     public GetOrderDetailsHandler(
@@ -66,7 +66,7 @@ public class GetOrderDetailsHandler : IRequestHandler<GetOrderDetails, OrderDeta
         CatalogSettings catalogSettings,
         OrderSettings orderSettings,
         PdfSettings pdfSettings,
-        TaxSettings taxSettings, 
+        TaxSettings taxSettings,
         IEnumTranslationService enumTranslationService)
     {
         _dateTimeService = dateTimeService;

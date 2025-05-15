@@ -69,11 +69,11 @@ public class ContactAttributeParser : IContactAttributeParser
 
             var valuesStr = customAttributes.Where(x => x.Key == attribute.Id).Select(x => x.Value);
             values.AddRange(from valueStr in valuesStr
-                where !string.IsNullOrEmpty(valueStr)
-                select attribute.ContactAttributeValues.FirstOrDefault(x => x.Id == valueStr)
+                            where !string.IsNullOrEmpty(valueStr)
+                            select attribute.ContactAttributeValues.FirstOrDefault(x => x.Id == valueStr)
                 into value
-                where value != null
-                select value);
+                            where value != null
+                            select value);
         }
 
         return values;
@@ -193,45 +193,45 @@ public class ContactAttributeParser : IContactAttributeParser
                     {
                         //no values
                         case AttributeControlType.MultilineTextbox:
-                        {
-                            //multiline text box
-                            var attributeName = attribute.GetTranslation(a => a.Name, language.Id);
-                            //encode (if required)
-                            if (htmlEncode)
-                                attributeName = WebUtility.HtmlEncode(attributeName);
-                            formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
-                            //we never encode multiline text box input
-                            break;
-                        }
-                        case AttributeControlType.FileUpload:
-                        {
-                            //file upload
-                            if (Guid.TryParse(valueStr, out var downloadGuid))
                             {
-                                var attributeText = string.Empty;
+                                //multiline text box
                                 var attributeName = attribute.GetTranslation(a => a.Name, language.Id);
-                                if (allowHyperlinks)
+                                //encode (if required)
+                                if (htmlEncode)
+                                    attributeName = WebUtility.HtmlEncode(attributeName);
+                                formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
+                                //we never encode multiline text box input
+                                break;
+                            }
+                        case AttributeControlType.FileUpload:
+                            {
+                                //file upload
+                                if (Guid.TryParse(valueStr, out var downloadGuid))
                                 {
-                                    var downloadLink =
-                                        $"{_contextAccessor.StoreContext.CurrentHost.Url.TrimEnd('/')}/download/getfileupload/?downloadId={downloadGuid}";
-                                    attributeText =
-                                        $"<a href=\"{downloadLink}\" class=\"fileuploadattribute\">{attribute.GetTranslation(a => a.TextPrompt, language.Id)}</a>";
+                                    var attributeText = string.Empty;
+                                    var attributeName = attribute.GetTranslation(a => a.Name, language.Id);
+                                    if (allowHyperlinks)
+                                    {
+                                        var downloadLink =
+                                            $"{_contextAccessor.StoreContext.CurrentHost.Url.TrimEnd('/')}/download/getfileupload/?downloadId={downloadGuid}";
+                                        attributeText =
+                                            $"<a href=\"{downloadLink}\" class=\"fileuploadattribute\">{attribute.GetTranslation(a => a.TextPrompt, language.Id)}</a>";
+                                    }
+
+                                    formattedAttribute = $"{attributeName}: {attributeText}";
                                 }
 
-                                formattedAttribute = $"{attributeName}: {attributeText}";
+                                break;
                             }
-
-                            break;
-                        }
                         default:
-                        {
-                            //other attributes (text box, datepicker)
-                            formattedAttribute = $"{attribute.GetTranslation(a => a.Name, language.Id)}: {valueStr}";
-                            //encode (if required)
-                            if (htmlEncode)
-                                formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
-                            break;
-                        }
+                            {
+                                //other attributes (text box, datepicker)
+                                formattedAttribute = $"{attribute.GetTranslation(a => a.Name, language.Id)}: {valueStr}";
+                                //encode (if required)
+                                if (htmlEncode)
+                                    formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
+                                break;
+                            }
                     }
                 }
                 else
@@ -267,70 +267,70 @@ public class ContactAttributeParser : IContactAttributeParser
                 case AttributeControlType.RadioList:
                 case AttributeControlType.ColorSquares:
                 case AttributeControlType.ImageSquares:
-                {
-                    var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(ctrlAttributes))
-                        customAttributes = AddContactAttribute(customAttributes,
-                            attribute, ctrlAttributes).ToList();
-                }
+                    {
+                        var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(ctrlAttributes))
+                            customAttributes = AddContactAttribute(customAttributes,
+                                attribute, ctrlAttributes).ToList();
+                    }
                     break;
                 case AttributeControlType.Checkboxes:
-                {
-                    var cblAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                    {
+                        var cblAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
 
-                    if (!string.IsNullOrEmpty(cblAttributes))
-                        foreach (var item in cblAttributes.Split(','))
-                            customAttributes = AddContactAttribute(customAttributes, attribute, item).ToList();
-                }
+                        if (!string.IsNullOrEmpty(cblAttributes))
+                            foreach (var item in cblAttributes.Split(','))
+                                customAttributes = AddContactAttribute(customAttributes, attribute, item).ToList();
+                    }
                     break;
                 case AttributeControlType.ReadonlyCheckboxes:
-                {
-                    //load read-only (already server-side selected) values
-                    var attributeValues = attribute.ContactAttributeValues;
-                    foreach (var selectedAttributeId in attributeValues
-                                 .Where(v => v.IsPreSelected)
-                                 .Select(v => v.Id)
-                                 .ToList())
-                        customAttributes = AddContactAttribute(customAttributes,
-                            attribute, selectedAttributeId).ToList();
-                }
+                    {
+                        //load read-only (already server-side selected) values
+                        var attributeValues = attribute.ContactAttributeValues;
+                        foreach (var selectedAttributeId in attributeValues
+                                     .Where(v => v.IsPreSelected)
+                                     .Select(v => v.Id)
+                                     .ToList())
+                            customAttributes = AddContactAttribute(customAttributes,
+                                attribute, selectedAttributeId).ToList();
+                    }
                     break;
                 case AttributeControlType.TextBox:
                 case AttributeControlType.MultilineTextbox:
-                {
-                    var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(ctrlAttributes))
                     {
-                        var enteredText = ctrlAttributes.Trim();
-                        customAttributes = AddContactAttribute(customAttributes,
-                            attribute, enteredText).ToList();
+                        var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(ctrlAttributes))
+                        {
+                            var enteredText = ctrlAttributes.Trim();
+                            customAttributes = AddContactAttribute(customAttributes,
+                                attribute, enteredText).ToList();
+                        }
                     }
-                }
                     break;
                 case AttributeControlType.Datepicker:
-                {
-                    var date = model.FirstOrDefault(x => x.Key == attribute.Id + "_day")?.Value;
-                    var month = model.FirstOrDefault(x => x.Key == attribute.Id + "_month")?.Value;
-                    var year = model.FirstOrDefault(x => x.Key == attribute.Id + "_year")?.Value;
-                    DateTime? selectedDate = null;
-                    try
                     {
-                        selectedDate = new DateTime(int.Parse(year), int.Parse(month), int.Parse(date));
-                    }
-                    catch { }
+                        var date = model.FirstOrDefault(x => x.Key == attribute.Id + "_day")?.Value;
+                        var month = model.FirstOrDefault(x => x.Key == attribute.Id + "_month")?.Value;
+                        var year = model.FirstOrDefault(x => x.Key == attribute.Id + "_year")?.Value;
+                        DateTime? selectedDate = null;
+                        try
+                        {
+                            selectedDate = new DateTime(int.Parse(year), int.Parse(month), int.Parse(date));
+                        }
+                        catch { }
 
-                    if (selectedDate.HasValue)
-                        customAttributes = AddContactAttribute(customAttributes,
-                            attribute, selectedDate.Value.ToString("D")).ToList();
-                }
+                        if (selectedDate.HasValue)
+                            customAttributes = AddContactAttribute(customAttributes,
+                                attribute, selectedDate.Value.ToString("D")).ToList();
+                    }
                     break;
                 case AttributeControlType.FileUpload:
-                {
-                    var guid = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (Guid.TryParse(guid, out var downloadGuid))
-                        customAttributes = AddContactAttribute(customAttributes,
-                            attribute, downloadGuid.ToString()).ToList();
-                }
+                    {
+                        var guid = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (Guid.TryParse(guid, out var downloadGuid))
+                            customAttributes = AddContactAttribute(customAttributes,
+                                attribute, downloadGuid.ToString()).ToList();
+                    }
                     break;
             }
 

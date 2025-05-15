@@ -197,7 +197,7 @@ public class DiscountService : IDiscountService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from d in _discountCouponRepository.Table
-            select d;
+                    select d;
 
         if (!string.IsNullOrEmpty(discountId))
             query = query.Where(duh => duh.DiscountId == discountId);

@@ -101,15 +101,15 @@ public class QueuedEmailService : IQueuedEmailService
             return new List<QueuedEmail>();
 
         var query = from qe in _queuedEmailRepository.Table
-            where queuedEmailIds.Contains(qe.Id)
-            select qe;
+                    where queuedEmailIds.Contains(qe.Id)
+                    select qe;
         var queuedEmails = query.ToList();
         //sort by passed identifiers
         var sortedQueuedEmails =
             queuedEmailIds.Select(id => queuedEmails.FirstOrDefault(email => email.Id == id))
                 .Where(queuedEmail => queuedEmail != null)
                 .ToList();
-        
+
         return await Task.FromResult(sortedQueuedEmails);
     }
 
@@ -139,7 +139,7 @@ public class QueuedEmailService : IQueuedEmailService
         toEmail = (toEmail ?? string.Empty).Trim();
 
         var query = from p in _queuedEmailRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(fromEmail))
             query = query.Where(qe => qe.From.ToLower().Contains(fromEmail.ToLower()));

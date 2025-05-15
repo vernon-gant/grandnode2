@@ -4,8 +4,8 @@ using Grand.Business.Core.Interfaces.Checkout.Payments;
 using Grand.Business.Core.Interfaces.Checkout.Shipping;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
-using Grand.Domain.Permissions;
 using Grand.Domain.Directory;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Infrastructure.Caching;
 using Grand.Infrastructure.Configuration;
@@ -301,7 +301,8 @@ public class SystemController : BaseAdminController
             : new List<ResultCompiler>();
 
         var gridModel = new DataSourceResult {
-            Data = scripts.Select(x => new {
+            Data = scripts.Select(x => new
+            {
                 FileName = x.OriginalFile,
                 x.IsCompiled,
                 Errors = string.Join(",", x.ErrorInfo)

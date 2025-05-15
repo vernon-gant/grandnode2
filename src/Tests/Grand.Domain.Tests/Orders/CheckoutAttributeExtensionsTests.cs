@@ -18,8 +18,7 @@ public class CheckoutAttributeExtensionsTests
     public void ShouldHaveValues__ReturnFalse()
     {
         var checkoutAttribute1 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.TextBox };
-        var checkoutAttribute2 = new CheckoutAttribute
-            { AttributeControlTypeId = AttributeControlType.MultilineTextbox };
+        var checkoutAttribute2 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.MultilineTextbox };
         var checkoutAttribute3 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.Datepicker };
         var checkoutAttribute4 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.FileUpload };
         Assert.IsFalse(checkoutAttribute1.ShouldHaveValues());
@@ -35,8 +34,7 @@ public class CheckoutAttributeExtensionsTests
         var checkoutAttribute1 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.DropdownList };
         var checkoutAttribute2 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.ImageSquares };
         var checkoutAttribute3 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.RadioList };
-        var checkoutAttribute4 = new CheckoutAttribute
-            { AttributeControlTypeId = AttributeControlType.ReadonlyCheckboxes };
+        var checkoutAttribute4 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.ReadonlyCheckboxes };
         Assert.IsTrue(checkoutAttribute1.ShouldHaveValues());
         Assert.IsTrue(checkoutAttribute2.ShouldHaveValues());
         Assert.IsTrue(checkoutAttribute3.ShouldHaveValues());
@@ -47,8 +45,7 @@ public class CheckoutAttributeExtensionsTests
     public void CanBeUsedAsConditionTest__ReturnFalse()
     {
         var checkoutAttribute1 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.TextBox };
-        var checkoutAttribute2 = new CheckoutAttribute
-            { AttributeControlTypeId = AttributeControlType.MultilineTextbox };
+        var checkoutAttribute2 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.MultilineTextbox };
         var checkoutAttribute3 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.Datepicker };
         var checkoutAttribute4 = new CheckoutAttribute { AttributeControlTypeId = AttributeControlType.FileUpload };
         Assert.IsFalse(checkoutAttribute1.CanBeUsedAsCondition());

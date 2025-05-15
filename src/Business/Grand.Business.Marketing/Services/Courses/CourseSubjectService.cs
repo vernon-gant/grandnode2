@@ -32,9 +32,9 @@ public class CourseSubjectService : ICourseSubjectService
         ArgumentNullException.ThrowIfNullOrEmpty(courseId);
 
         var query = from c in _courseSubjectRepository.Table
-            where c.CourseId == courseId
-            orderby c.DisplayOrder
-            select c;
+                    where c.CourseId == courseId
+                    orderby c.DisplayOrder
+                    select c;
 
         return await Task.FromResult(query.ToList());
     }

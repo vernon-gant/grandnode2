@@ -33,7 +33,7 @@ public class UrlRewriteStartup : IStartupApplication
     {
         var urlConfig = application.Services.GetRequiredService<UrlRewriteConfig>();
         var urlRewriteOptions = new RewriteOptions();
-        
+
         ConfigureUrlRewriteOptions(urlRewriteOptions, urlConfig);
         ConfigureHttpsOptions(urlRewriteOptions, urlConfig);
 

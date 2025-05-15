@@ -310,8 +310,7 @@ public class ShipmentViewModelService : IShipmentViewModelService
         model.AvailableStates.Add(new SelectListItem { Text = "*", Value = "" });
 
         //warehouses
-        model.AvailableWarehouses.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
+        model.AvailableWarehouses.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
         foreach (var w in await _warehouseService.GetAllWarehouses())
             model.AvailableWarehouses.Add(new SelectListItem { Text = w.Name, Value = w.Id });
 
@@ -368,47 +367,10 @@ public class ShipmentViewModelService : IShipmentViewModelService
             switch (product.ManageInventoryMethodId)
             {
                 case ManageInventoryMethod.ManageStock when product.UseMultipleWarehouses:
-                {
-                    //multiple warehouses supported
-                    shipmentItemModel.AllowToChooseWarehouse = true;
-                    foreach (var pwi in product.ProductWarehouseInventory
-                                 .OrderBy(w => w.WarehouseId).ToList())
                     {
-                        var warehouse = await _warehouseService.GetWarehouseById(pwi.WarehouseId);
-                        if (warehouse != null)
-                            shipmentItemModel.AvailableWarehouses.Add(
-                                new ShipmentModel.ShipmentItemModel.WarehouseInfo {
-                                    WarehouseId = warehouse.Id,
-                                    WarehouseName = warehouse.Name,
-                                    WarehouseCode = warehouse.Code,
-                                    StockQuantity = pwi.StockQuantity,
-                                    ReservedQuantity = pwi.ReservedQuantity
-                                });
-                    }
-
-                    break;
-                }
-                case ManageInventoryMethod.ManageStock:
-                {
-                    //multiple warehouses are not supported
-                    var warehouse = await _warehouseService.GetWarehouseById(product.WarehouseId);
-                    if (warehouse != null)
-                        shipmentItemModel.AvailableWarehouses.Add(new ShipmentModel.ShipmentItemModel.WarehouseInfo {
-                            WarehouseId = warehouse.Id,
-                            WarehouseName = warehouse.Name,
-                            WarehouseCode = warehouse.Code,
-                            StockQuantity = product.StockQuantity
-                        });
-
-                    break;
-                }
-                case ManageInventoryMethod.ManageStockByAttributes when product.UseMultipleWarehouses:
-                {
-                    //multiple warehouses supported
-                    shipmentItemModel.AllowToChooseWarehouse = true;
-                    var comb = product.FindProductAttributeCombination(orderItem.Attributes);
-                    if (comb != null)
-                        foreach (var pwi in comb.WarehouseInventory
+                        //multiple warehouses supported
+                        shipmentItemModel.AllowToChooseWarehouse = true;
+                        foreach (var pwi in product.ProductWarehouseInventory
                                      .OrderBy(w => w.WarehouseId).ToList())
                         {
                             var warehouse = await _warehouseService.GetWarehouseById(pwi.WarehouseId);
@@ -417,28 +379,65 @@ public class ShipmentViewModelService : IShipmentViewModelService
                                     new ShipmentModel.ShipmentItemModel.WarehouseInfo {
                                         WarehouseId = warehouse.Id,
                                         WarehouseName = warehouse.Name,
-                                        StockQuantity = pwi.StockQuantity,
                                         WarehouseCode = warehouse.Code,
+                                        StockQuantity = pwi.StockQuantity,
                                         ReservedQuantity = pwi.ReservedQuantity
                                     });
                         }
 
-                    break;
-                }
-                case ManageInventoryMethod.ManageStockByAttributes:
-                {
-                    //multiple warehouses are not supported
-                    var warehouse = await _warehouseService.GetWarehouseById(product.WarehouseId);
-                    if (warehouse != null)
-                        shipmentItemModel.AvailableWarehouses.Add(new ShipmentModel.ShipmentItemModel.WarehouseInfo {
-                            WarehouseId = warehouse.Id,
-                            WarehouseName = warehouse.Name,
-                            WarehouseCode = warehouse.Code,
-                            StockQuantity = product.StockQuantity
-                        });
+                        break;
+                    }
+                case ManageInventoryMethod.ManageStock:
+                    {
+                        //multiple warehouses are not supported
+                        var warehouse = await _warehouseService.GetWarehouseById(product.WarehouseId);
+                        if (warehouse != null)
+                            shipmentItemModel.AvailableWarehouses.Add(new ShipmentModel.ShipmentItemModel.WarehouseInfo {
+                                WarehouseId = warehouse.Id,
+                                WarehouseName = warehouse.Name,
+                                WarehouseCode = warehouse.Code,
+                                StockQuantity = product.StockQuantity
+                            });
 
-                    break;
-                }
+                        break;
+                    }
+                case ManageInventoryMethod.ManageStockByAttributes when product.UseMultipleWarehouses:
+                    {
+                        //multiple warehouses supported
+                        shipmentItemModel.AllowToChooseWarehouse = true;
+                        var comb = product.FindProductAttributeCombination(orderItem.Attributes);
+                        if (comb != null)
+                            foreach (var pwi in comb.WarehouseInventory
+                                         .OrderBy(w => w.WarehouseId).ToList())
+                            {
+                                var warehouse = await _warehouseService.GetWarehouseById(pwi.WarehouseId);
+                                if (warehouse != null)
+                                    shipmentItemModel.AvailableWarehouses.Add(
+                                        new ShipmentModel.ShipmentItemModel.WarehouseInfo {
+                                            WarehouseId = warehouse.Id,
+                                            WarehouseName = warehouse.Name,
+                                            StockQuantity = pwi.StockQuantity,
+                                            WarehouseCode = warehouse.Code,
+                                            ReservedQuantity = pwi.ReservedQuantity
+                                        });
+                            }
+
+                        break;
+                    }
+                case ManageInventoryMethod.ManageStockByAttributes:
+                    {
+                        //multiple warehouses are not supported
+                        var warehouse = await _warehouseService.GetWarehouseById(product.WarehouseId);
+                        if (warehouse != null)
+                            shipmentItemModel.AvailableWarehouses.Add(new ShipmentModel.ShipmentItemModel.WarehouseInfo {
+                                WarehouseId = warehouse.Id,
+                                WarehouseName = warehouse.Name,
+                                WarehouseCode = warehouse.Code,
+                                StockQuantity = product.StockQuantity
+                            });
+
+                        break;
+                    }
             }
 
             if (product.ManageInventoryMethodId == ManageInventoryMethod.ManageStockByBundleProducts)
@@ -488,25 +487,25 @@ public class ShipmentViewModelService : IShipmentViewModelService
             switch (product.ManageInventoryMethodId)
             {
                 case ManageInventoryMethod.ManageStock:
-                {
-                    var stock = _stockQuantityService.GetTotalStockQuantity(product, false,
-                        item.WarehouseId);
-                    if (stock - item.Quantity < 0)
-                        return (false, $"Out of stock for product {product.Name}");
-                    break;
-                }
+                    {
+                        var stock = _stockQuantityService.GetTotalStockQuantity(product, false,
+                            item.WarehouseId);
+                        if (stock - item.Quantity < 0)
+                            return (false, $"Out of stock for product {product.Name}");
+                        break;
+                    }
                 case ManageInventoryMethod.ManageStockByAttributes:
-                {
-                    var combination = product.FindProductAttributeCombination(item.Attributes);
-                    if (combination == null)
-                        return (false, $"Can't find combination for product {product.Name}");
+                    {
+                        var combination = product.FindProductAttributeCombination(item.Attributes);
+                        if (combination == null)
+                            return (false, $"Can't find combination for product {product.Name}");
 
-                    var stock = _stockQuantityService.GetTotalStockQuantityForCombination(product, combination,
-                        false, item.WarehouseId);
-                    if (stock - item.Quantity < 0)
-                        return (false, $"Out of stock for product {product.Name}");
-                    break;
-                }
+                        var stock = _stockQuantityService.GetTotalStockQuantityForCombination(product, combination,
+                            false, item.WarehouseId);
+                        if (stock - item.Quantity < 0)
+                            return (false, $"Out of stock for product {product.Name}");
+                        break;
+                    }
             }
         }
 

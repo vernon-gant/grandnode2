@@ -36,10 +36,8 @@ public class AddRequiredProductsCommandHandlerTests
         var command = new AddRequiredProductsCommand {
             Customer = new Customer()
         };
-        command.Customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { ProductId = "1", ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "" });
-        command.Product = new Product
-            { Id = "1", RequireOtherProducts = true, RequiredProductIds = "2,3", AutoAddRequiredProducts = true };
+        command.Customer.ShoppingCartItems.Add(new ShoppingCartItem { ProductId = "1", ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "" });
+        command.Product = new Product { Id = "1", RequireOtherProducts = true, RequiredProductIds = "2,3", AutoAddRequiredProducts = true };
         command.ShoppingCartType = ShoppingCartType.ShoppingCart;
         command.StoreId = "";
 

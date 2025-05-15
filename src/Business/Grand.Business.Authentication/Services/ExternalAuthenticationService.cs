@@ -310,9 +310,9 @@ public class ExternalAuthenticationService : IExternalAuthenticationService
         ArgumentNullException.ThrowIfNull(parameters);
 
         var associationRecord = (from q in _externalAuthenticationRecordRepository.Table
-            where q.ExternalIdentifier.ToLowerInvariant() == parameters.Identifier
-                  && q.ProviderSystemName.ToLowerInvariant() == parameters.ProviderSystemName.ToLowerInvariant()
-            select q).FirstOrDefault();
+                                 where q.ExternalIdentifier.ToLowerInvariant() == parameters.Identifier
+                                       && q.ProviderSystemName.ToLowerInvariant() == parameters.ProviderSystemName.ToLowerInvariant()
+                                 select q).FirstOrDefault();
 
         if (associationRecord == null)
             return null;
@@ -325,8 +325,8 @@ public class ExternalAuthenticationService : IExternalAuthenticationService
         ArgumentNullException.ThrowIfNull(customer);
 
         var query = from p in _externalAuthenticationRecordRepository.Table
-            where p.CustomerId == customer.Id
-            select p;
+                    where p.CustomerId == customer.Id
+                    select p;
         return await Task.FromResult(query.ToList());
     }
 

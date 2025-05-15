@@ -30,7 +30,7 @@ public static class ModuleLoader
             ))
             .ToList();
     }
-    
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void LoadModules(IMvcCoreBuilder mvcCoreBuilder, IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
     {

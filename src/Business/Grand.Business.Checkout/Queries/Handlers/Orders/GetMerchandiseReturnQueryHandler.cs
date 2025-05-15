@@ -19,7 +19,7 @@ public class
         CancellationToken cancellationToken)
     {
         var query = from p in _merchandiseReturnRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(request.StoreId))
             query = query.Where(rr => request.StoreId == rr.StoreId);

@@ -1,12 +1,12 @@
-﻿using Moq;
-using NUnit.Framework;
-using Grand.Business.Common.Services.Seo;
+﻿using Grand.Business.Common.Services.Seo;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Seo;
 using Grand.Domain;
 using Grand.Domain.Localization;
 using Grand.Domain.Seo;
 using Grand.Infrastructure.Models;
+using Moq;
+using NUnit.Framework;
 using NUnit.Framework.Legacy;
 using System.Linq.Expressions;
 
@@ -104,7 +104,7 @@ namespace Grand.Business.Common.Tests.Services.Seo
             // Assert
             ClassicAssert.IsTrue(result.StartsWith("en-"));
         }
-        
+
         [Test]
         public async Task ValidateSeName_SeNameTooLong_TruncatesToMaxLength()
         {
@@ -164,7 +164,7 @@ namespace Grand.Business.Common.Tests.Services.Seo
             // Assert
             ClassicAssert.IsTrue(result.StartsWith("reserved-slug-") && result.Length > "reserved-slug-4".Length);
         }
-        
+
         [Test]
         public async Task TranslationSeNameProperties_ShouldReturnEmptyList_WhenInputListIsEmpty()
         {
@@ -211,7 +211,7 @@ namespace Grand.Business.Common.Tests.Services.Seo
             {
                 new LocalizedSlugModelLocal { SomeProperty = "SomeValue", LanguageId = "1" }
             };
-            
+
             var entity = new TestTransEntity { Id = "1" };
             var seName = "slug";
             Expression<Func<LocalizedSlugModelLocal, string>> keySelector = x => x.SomeProperty;
@@ -227,17 +227,17 @@ namespace Grand.Business.Common.Tests.Services.Seo
             ClassicAssert.AreEqual("1", result[0].LanguageId);
             ClassicAssert.AreEqual("SomeProperty", result[0].LocaleKey);
             ClassicAssert.AreEqual("SomeValue", result[0].LocaleValue);
-            
+
             ClassicAssert.AreEqual("1", result[1].LanguageId);
             ClassicAssert.AreEqual("SeName", result[1].LocaleKey);
             ClassicAssert.AreEqual("somevalue", result[1].LocaleValue);
         }
-        
+
         [Test]
         public async Task SaveSeName_ShouldCallSaveSlugOnce_WhenEntityHasNoLocales()
         {
             // Arrange
-            var entity = new TestTransEntity { Id = "1", SeName = "test-se-name"};
+            var entity = new TestTransEntity { Id = "1", SeName = "test-se-name" };
 
             // Act
             await _seNameService.SaveSeName(entity);
@@ -249,16 +249,14 @@ namespace Grand.Business.Common.Tests.Services.Seo
         public async Task SaveSeName_ShouldCallSaveSlugMultipleTimes_WhenEntityHasLocalesWithDifferentSeName()
         {
             // Arrange
-            var entity = new TestTransEntity { Id = "1", SeName = "main-se-name"};
-            var locale1 = new TranslationEntity
-            {
+            var entity = new TestTransEntity { Id = "1", SeName = "main-se-name" };
+            var locale1 = new TranslationEntity {
                 LocaleKey = nameof(ISlugEntity.SeName),
                 LocaleValue = "locale1-se-name",
                 LanguageId = "en"
             };
             entity.Locales.Add(locale1);
-            var locale2 = new TranslationEntity
-            {
+            var locale2 = new TranslationEntity {
                 LocaleKey = nameof(ISlugEntity.SeName),
                 LocaleValue = "locale2-se-name",
                 LanguageId = "fr"
@@ -278,7 +276,7 @@ namespace Grand.Business.Common.Tests.Services.Seo
             public string LanguageId { get; set; }
             public string SomeProperty { get; set; }
         }
-        
+
         class LocalizedSlugModelLocal : ILocalizedModelLocal, ISlugModelLocal
         {
             public string LanguageId { get; set; }

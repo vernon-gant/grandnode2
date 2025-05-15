@@ -7,14 +7,15 @@ using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Interfaces.Storage;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Customers;
 using Grand.Domain.Media;
 using Grand.Domain.Orders;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.SharedKernel.Attributes;
+using Grand.SharedKernel.Extensions;
 using Grand.Web.Commands.Models.ShoppingCart;
 using Grand.Web.Common.Controllers;
 using Grand.Web.Common.Extensions;
@@ -23,7 +24,6 @@ using Grand.Web.Features.Models.ShoppingCart;
 using Grand.Web.Models.ShoppingCart;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Grand.SharedKernel.Extensions;
 
 namespace Grand.Web.Controllers;
 
@@ -158,7 +158,8 @@ public class ShoppingCartController : BasePublicController
             TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType
         });
 
-        return Json(new {
+        return Json(new
+        {
             enabledattributeids = enabledAttributeIds.ToArray(),
             disabledattributeids = disabledAttributeIds.ToArray(),
             model = orderTotals,
@@ -174,13 +175,15 @@ public class ShoppingCartController : BasePublicController
     {
         var attribute = await _checkoutAttributeService.GetCheckoutAttributeById(attributeId);
         if (attribute is not { AttributeControlTypeId: AttributeControlType.FileUpload })
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 downloadGuid = Guid.Empty
             });
 
         if (file == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No file uploaded",
                 downloadGuid = Guid.Empty
@@ -196,7 +199,8 @@ public class ShoppingCartController : BasePublicController
         {
             var allowedFileExtensions = attribute.ValidationFileAllowedExtensions.Split([','], StringSplitOptions.RemoveEmptyEntries);
             if (!allowedFileExtensions.IsAllowedMediaFileType(fileExtension))
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = _translationService.GetResource("ShoppingCart.ValidationFileAllowed"),
                     downloadGuid = Guid.Empty
@@ -211,7 +215,8 @@ public class ShoppingCartController : BasePublicController
             if (fileBinary.Length > maxFileSizeBytes)
                 //when returning JSON the mime-type must be set to text/plain
                 //otherwise some browsers will pop-up a "Save As" dialog.
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = string.Format(_translationService.GetResource("ShoppingCart.MaximumUploadedFileSize"),
                         attribute.ValidationFileMaximumSize.Value),
@@ -235,7 +240,8 @@ public class ShoppingCartController : BasePublicController
 
         //when returning JSON the mime-type must be set to text/plain
         //otherwise some browsers will pop-up a "Save As" dialog.
-        return Json(new {
+        return Json(new
+        {
             success = true,
             message = _translationService.GetResource("ShoppingCart.FileUploaded"),
             downloadUrl = Url.Action("GetFileUpload", "Download", new { downloadId = download.DownloadGuid }),
@@ -307,7 +313,8 @@ public class ShoppingCartController : BasePublicController
     public virtual async Task<IActionResult> UpdateQuantity(UpdateQuantityModel model)
     {
         if (!ModelState.IsValid)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 warnings = string.Join(',', ModelState.Values.SelectMany(x => x.Errors.Select(x => x.ErrorMessage)))
             });
@@ -334,7 +341,8 @@ public class ShoppingCartController : BasePublicController
             TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType
         });
 
-        return Json(new {
+        return Json(new
+        {
             success = !warnings.Any(),
             warnings = string.Join(", ", warnings),
             totalproducts = string.Format(_translationService.GetResource("ShoppingCart.HeaderQuantity"),
@@ -386,7 +394,8 @@ public class ShoppingCartController : BasePublicController
             Store = _contextAccessor.StoreContext.CurrentStore
         });
         if (!model.ShoppingCartPage)
-            return Json(new {
+            return Json(new
+            {
                 totalproducts = string.Format(_translationService.GetResource("ShoppingCart.HeaderQuantity"),
                     miniShoppingCartmodel.TotalProducts),
                 sidebarshoppingcartmodel = miniShoppingCartmodel
@@ -402,7 +411,8 @@ public class ShoppingCartController : BasePublicController
             TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType
         });
 
-        return Json(new {
+        return Json(new
+        {
             totalproducts = string.Format(_translationService.GetResource("ShoppingCart.HeaderQuantity"),
                 miniShoppingCartmodel.TotalProducts),
             sidebarshoppingcartmodel = miniShoppingCartmodel,
@@ -452,7 +462,8 @@ public class ShoppingCartController : BasePublicController
             TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType
         });
 
-        return Json(new {
+        return Json(new
+        {
             model = shoppingcartmodel,
             sidebarshoppingcartmodel = miniShoppingCart
         });
@@ -536,7 +547,8 @@ public class ShoppingCartController : BasePublicController
         cartModel.DiscountBox.Message = message;
         cartModel.DiscountBox.IsApplied = isApplied;
 
-        return Json(new {
+        return Json(new
+        {
             model = cartModel
         });
     }
@@ -581,7 +593,8 @@ public class ShoppingCartController : BasePublicController
         cartModel.GiftVoucherBox.Message = message;
         cartModel.GiftVoucherBox.IsApplied = isApplied;
 
-        return Json(new {
+        return Json(new
+        {
             model = cartModel
         });
     }
@@ -639,7 +652,8 @@ public class ShoppingCartController : BasePublicController
             TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType
         });
 
-        return Json(new {
+        return Json(new
+        {
             model
         });
     }
@@ -674,7 +688,8 @@ public class ShoppingCartController : BasePublicController
             TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType
         });
 
-        return Json(new {
+        return Json(new
+        {
             model
         });
     }

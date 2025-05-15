@@ -16,7 +16,7 @@ public static class Extensions
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
         builder.ConfigureOpenTelemetry();
-        
+
         builder.Services.AddServiceDiscovery();
 
         builder.Services.ConfigureHttpClientDefaults(http =>
@@ -82,7 +82,7 @@ public static class Extensions
             {
                 o.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
             }).ConfigureResource(resource =>
-            {                
+            {
                 resource.AddAttributes(
                 [
                     new("service.name", "Grandnode")

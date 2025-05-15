@@ -8,11 +8,11 @@ using Grand.Business.Core.Interfaces.Cms;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Storage;
 using Grand.Business.Core.Queries.Catalog;
-using Grand.Domain.Permissions;
 using Grand.Domain.Blogs;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Media;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Infrastructure.Configuration;
 using Grand.Web.Features.Models.Catalog;
@@ -91,8 +91,7 @@ public class GetSearchAutoCompleteHandler : IRequestHandler<GetSearchAutoComplet
             if (_catalogSettings.ShowProductsFromSubcategoriesInSearchBox)
                 //include subcategories
                 categoryIds.AddRange(await _mediator.Send(
-                    new GetChildCategoryIds
-                        { ParentCategoryId = request.CategoryId, Customer = request.Customer, Store = request.Store },
+                    new GetChildCategoryIds { ParentCategoryId = request.CategoryId, Customer = request.Customer, Store = request.Store },
                     cancellationToken));
         }
 
@@ -121,8 +120,8 @@ public class GetSearchAutoCompleteHandler : IRequestHandler<GetSearchAutoComplet
             var pictureUrl = "";
             if (_catalogSettings.ShowProductImagesInSearchAutoComplete)
             {
-                var picture = item.ProductPictures.OrderByDescending(p => p.IsDefault)  
-                    .ThenBy(p => p.DisplayOrder) 
+                var picture = item.ProductPictures.OrderByDescending(p => p.IsDefault)
+                    .ThenBy(p => p.DisplayOrder)
                     .FirstOrDefault();
                 if (picture != null)
                     pictureUrl = await _pictureService.GetPictureUrl(picture.PictureId,
@@ -162,7 +161,7 @@ public class GetSearchAutoCompleteHandler : IRequestHandler<GetSearchAutoComplet
             var brand = await _brandService.GetBrandById(item);
             if (brand is not { Published: true }) continue;
             var allow = true;
-            
+
             if (!_accessControlConfig.IgnoreAcl && !_aclService.Authorize(brand, _contextAccessor.WorkContext.CurrentCustomer))
                 allow = false;
 

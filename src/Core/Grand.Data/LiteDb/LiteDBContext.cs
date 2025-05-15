@@ -12,7 +12,7 @@ public class LiteDBContext : IDatabaseContext
     {
         _database = database;
     }
-   
+
     public async Task<bool> DatabaseExist()
     {
         return await Task.FromResult(_database.CollectionExists(nameof(GrandNodeVersion)));

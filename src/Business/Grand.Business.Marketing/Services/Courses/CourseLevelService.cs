@@ -30,8 +30,8 @@ public class CourseLevelService : ICourseLevelService
     public virtual async Task<IList<CourseLevel>> GetAll()
     {
         var query = from l in _courseLevelRepository.Table
-            orderby l.DisplayOrder
-            select l;
+                    orderby l.DisplayOrder
+                    select l;
 
         return await Task.FromResult(query.ToList());
     }

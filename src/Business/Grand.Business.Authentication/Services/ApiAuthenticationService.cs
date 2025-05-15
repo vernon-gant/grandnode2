@@ -64,7 +64,7 @@ public class ApiAuthenticationService : IApiAuthenticationService
         var authorizeAttributes = endpoint.Metadata.GetOrderedMetadata<AuthorizeAttribute>();
         return authorizeAttributes.Any(attr => attr.AuthenticationSchemes?.Contains(FrontendAPIConfig.AuthenticationScheme) == true);
     }
-    
+
 
     private async Task<Customer> ApiCustomer()
     {

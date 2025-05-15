@@ -74,8 +74,8 @@ public class TaxRateService : ITaxRateService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from tr in _taxRateRepository.Table
-                orderby tr.StoreId, tr.CountryId, tr.StateProvinceId, tr.Zip, tr.TaxCategoryId
-                select tr;
+                        orderby tr.StoreId, tr.CountryId, tr.StateProvinceId, tr.Zip, tr.TaxCategoryId
+                        select tr;
             return await Task.FromResult(new PagedList<TaxRate>(query, pageIndex, pageSize));
         });
     }

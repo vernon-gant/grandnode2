@@ -19,12 +19,12 @@ public class LiteDBRepository<T> : IRepository<T> where T : BaseEntity
     ///     Gets the collection
     /// </summary>
     protected ILiteCollection<T> Collection { get; init; }
-    
+
     /// <summary>
     ///     Mongo Database
     /// </summary>
     protected LiteDatabase Database { get; init; }
-    
+
     #endregion
 
     #region Ctor
@@ -595,12 +595,12 @@ public class LiteDBRepository<T> : IRepository<T> where T : BaseEntity
                 expr = (MemberExpression)expression.Operand;
                 break;
             default:
-            {
-                const string format = "Expression '{0}' not supported.";
-                var message = string.Format(format, Field);
+                {
+                    const string format = "Expression '{0}' not supported.";
+                    var message = string.Format(format, Field);
 
-                throw new ArgumentException(message, nameof(Field));
-            }
+                    throw new ArgumentException(message, nameof(Field));
+                }
         }
 
         return expr.Member.Name;

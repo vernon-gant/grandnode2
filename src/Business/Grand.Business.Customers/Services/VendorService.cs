@@ -68,7 +68,7 @@ public class VendorService : IVendorService
         int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
     {
         var query = from p in _vendorRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrWhiteSpace(name))
             query = query.Where(v => v.Name.ToLower().Contains(name.ToLower()));
@@ -179,8 +179,8 @@ public class VendorService : IVendorService
     public virtual async Task<IList<Vendor>> GetAllVendorsByDiscount(string discountId)
     {
         var query = from c in _vendorRepository.Table
-            where c.AppliedDiscounts.Any(x => x == discountId)
-            select c;
+                    where c.AppliedDiscounts.Any(x => x == discountId)
+                    select c;
         return await Task.FromResult(query.ToList());
     }
 
@@ -203,7 +203,7 @@ public class VendorService : IVendorService
         string message = null, string vendorId = "", int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from p in _vendorReviewRepository.Table
-            select p;
+                    select p;
 
         if (approved.HasValue)
             query = query.Where(c => c.IsApproved == approved.Value);
@@ -335,7 +335,7 @@ public class VendorService : IVendorService
     {
         //vendors
         var query = from p in _vendorRepository.Table
-            select p;
+                    select p;
 
         //searching by keyword
         if (!string.IsNullOrWhiteSpace(keywords))

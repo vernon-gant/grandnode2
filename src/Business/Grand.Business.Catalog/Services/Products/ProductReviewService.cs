@@ -41,7 +41,7 @@ public class ProductReviewService : IProductReviewService
         int pageSize = int.MaxValue)
     {
         var query = from p in _productReviewRepository.Table
-            select p;
+                    select p;
 
         if (approved.HasValue)
             query = query.Where(c => c.IsApproved == approved.Value);

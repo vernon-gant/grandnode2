@@ -49,7 +49,7 @@ public class OutOfStockSubscriptionService : IOutOfStockSubscriptionService
         string storeId = "", int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from p in _outOfStockSubscriptionRepository.Table
-            select p;
+                    select p;
         //customer
         query = query.Where(x => x.CustomerId == customerId);
         //store
@@ -75,12 +75,12 @@ public class OutOfStockSubscriptionService : IOutOfStockSubscriptionService
         IList<CustomAttribute> attributes, string storeId, string warehouseId)
     {
         var query = from biss in _outOfStockSubscriptionRepository.Table
-            orderby biss.CreatedOnUtc descending
-            where biss.CustomerId == customerId &&
-                  biss.ProductId == productId &&
-                  biss.StoreId == storeId &&
-                  biss.WarehouseId == warehouseId
-            select biss;
+                    orderby biss.CreatedOnUtc descending
+                    where biss.CustomerId == customerId &&
+                          biss.ProductId == productId &&
+                          biss.StoreId == storeId &&
+                          biss.WarehouseId == warehouseId
+                    select biss;
 
         var outOfStockSubscriptionlist = await Task.FromResult(query.ToList());
         if (attributes != null && attributes.Any())

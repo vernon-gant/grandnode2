@@ -110,8 +110,7 @@ public class GroupServiceTests
     public async Task IsStaffTest()
     {
         //Arrange
-        var customerGroup = new CustomerGroup
-            { IsSystem = true, SystemName = SystemCustomerGroupNames.Staff, Active = true };
+        var customerGroup = new CustomerGroup { IsSystem = true, SystemName = SystemCustomerGroupNames.Staff, Active = true };
         await _groupService.InsertCustomerGroup(customerGroup);
         var customer = new Customer();
         customer.Groups.Add(customerGroup.Id);
@@ -125,8 +124,7 @@ public class GroupServiceTests
     public async Task IsAdminTest()
     {
         //Arrange
-        var customerGroup = new CustomerGroup
-            { IsSystem = true, SystemName = SystemCustomerGroupNames.Administrators, Active = true };
+        var customerGroup = new CustomerGroup { IsSystem = true, SystemName = SystemCustomerGroupNames.Administrators, Active = true };
         await _groupService.InsertCustomerGroup(customerGroup);
         var customer = new Customer();
         customer.Groups.Add(customerGroup.Id);
@@ -140,8 +138,7 @@ public class GroupServiceTests
     public async Task IsSalesManagerTest()
     {
         //Arrange
-        var customerGroup = new CustomerGroup
-            { IsSystem = true, SystemName = SystemCustomerGroupNames.SalesManager, Active = true };
+        var customerGroup = new CustomerGroup { IsSystem = true, SystemName = SystemCustomerGroupNames.SalesManager, Active = true };
         await _groupService.InsertCustomerGroup(customerGroup);
         var customer = new Customer();
         customer.Groups.Add(customerGroup.Id);
@@ -155,8 +152,7 @@ public class GroupServiceTests
     public async Task IsVendorTest()
     {
         //Arrange
-        var customerGroup = new CustomerGroup
-            { IsSystem = true, SystemName = SystemCustomerGroupNames.Vendors, Active = true };
+        var customerGroup = new CustomerGroup { IsSystem = true, SystemName = SystemCustomerGroupNames.Vendors, Active = true };
         await _groupService.InsertCustomerGroup(customerGroup);
         var customer = new Customer();
         customer.Groups.Add(customerGroup.Id);
@@ -181,8 +177,7 @@ public class GroupServiceTests
     public async Task IsGuestTest()
     {
         //Arrange
-        var customerGroup = new CustomerGroup
-            { IsSystem = true, SystemName = SystemCustomerGroupNames.Guests, Active = true };
+        var customerGroup = new CustomerGroup { IsSystem = true, SystemName = SystemCustomerGroupNames.Guests, Active = true };
         await _groupService.InsertCustomerGroup(customerGroup);
         var customer = new Customer();
         customer.Groups.Add(customerGroup.Id);
@@ -196,8 +191,7 @@ public class GroupServiceTests
     public async Task IsRegisteredTest()
     {
         //Arrange
-        var customerGroup = new CustomerGroup
-            { IsSystem = true, SystemName = SystemCustomerGroupNames.Registered, Active = true };
+        var customerGroup = new CustomerGroup { IsSystem = true, SystemName = SystemCustomerGroupNames.Registered, Active = true };
         await _groupService.InsertCustomerGroup(customerGroup);
         var customer = new Customer();
         customer.Groups.Add(customerGroup.Id);

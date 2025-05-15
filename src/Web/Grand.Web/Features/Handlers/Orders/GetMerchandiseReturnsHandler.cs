@@ -18,13 +18,13 @@ public class GetMerchandiseReturnsHandler : IRequestHandler<GetMerchandiseReturn
     private readonly IOrderService _orderService;
     private readonly IPriceFormatter _priceFormatter;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     public GetMerchandiseReturnsHandler(
         IOrderService orderService,
         IDateTimeService dateTimeService,
         IPriceFormatter priceFormatter,
         IGroupService groupService,
-        IMediator mediator, 
+        IMediator mediator,
         IEnumTranslationService enumTranslationService)
     {
         _orderService = orderService;

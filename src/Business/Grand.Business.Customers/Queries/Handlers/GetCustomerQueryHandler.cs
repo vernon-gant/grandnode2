@@ -18,7 +18,7 @@ public class GetCustomerQueryHandler : IRequestHandler<GetCustomerQuery, IQuerya
     public Task<IQueryable<Customer>> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
     {
         var query = from p in _customerRepository.Table
-            select p;
+                    select p;
 
         if (request.CreatedFromUtc.HasValue)
             query = query.Where(c => request.CreatedFromUtc.Value <= c.CreatedOnUtc);

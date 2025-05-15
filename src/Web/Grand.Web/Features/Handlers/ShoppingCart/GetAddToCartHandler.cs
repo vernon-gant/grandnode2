@@ -149,21 +149,21 @@ public class GetAddToCartHandler : IRequestHandler<GetAddToCart, AddToCartModel>
         switch (request.CartType)
         {
             case ShoppingCartType.ShoppingCart:
-            {
-                var subTotalIncludingTax = request.TaxDisplayType == TaxDisplayType.IncludingTax &&
-                                           !_taxSettings.ForceTaxExclusionFromOrderSubtotal;
-                var shoppingCartSubTotal =
-                    await _orderTotalCalculationService.GetShoppingCartSubTotal(cart, subTotalIncludingTax);
-                model.SubTotalIncludingTax = subTotalIncludingTax;
-                model.SubTotal =
-                    _priceFormatter.FormatPrice(shoppingCartSubTotal.subTotalWithoutDiscount, request.Currency);
-                model.DecimalSubTotal = shoppingCartSubTotal.subTotalWithoutDiscount;
-                if (shoppingCartSubTotal.discountAmount > 0)
-                    model.SubTotalDiscount =
-                        _priceFormatter.FormatPrice(-shoppingCartSubTotal.discountAmount, request.Currency);
+                {
+                    var subTotalIncludingTax = request.TaxDisplayType == TaxDisplayType.IncludingTax &&
+                                               !_taxSettings.ForceTaxExclusionFromOrderSubtotal;
+                    var shoppingCartSubTotal =
+                        await _orderTotalCalculationService.GetShoppingCartSubTotal(cart, subTotalIncludingTax);
+                    model.SubTotalIncludingTax = subTotalIncludingTax;
+                    model.SubTotal =
+                        _priceFormatter.FormatPrice(shoppingCartSubTotal.subTotalWithoutDiscount, request.Currency);
+                    model.DecimalSubTotal = shoppingCartSubTotal.subTotalWithoutDiscount;
+                    if (shoppingCartSubTotal.discountAmount > 0)
+                        model.SubTotalDiscount =
+                            _priceFormatter.FormatPrice(-shoppingCartSubTotal.discountAmount, request.Currency);
 
-                break;
-            }
+                    break;
+                }
             case ShoppingCartType.Auctions:
                 model.IsAuction = true;
                 model.HighestBidValue = request.Product.HighestBid;

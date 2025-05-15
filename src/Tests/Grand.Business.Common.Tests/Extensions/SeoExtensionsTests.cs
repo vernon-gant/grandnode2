@@ -39,10 +39,8 @@ public class SeoExtensionsTests
         };
         //if lang id null , return global se name
         Assert.AreEqual("se-name", product.GetSeName(null));
-        product.Locales.Add(new TranslationEntity
-            { LocaleKey = "SeName", LocaleValue = "se-name-1", LanguageId = "1" });
-        product.Locales.Add(new TranslationEntity
-            { LocaleKey = "SeName", LocaleValue = "se-name-2", LanguageId = "2" });
+        product.Locales.Add(new TranslationEntity { LocaleKey = "SeName", LocaleValue = "se-name-1", LanguageId = "1" });
+        product.Locales.Add(new TranslationEntity { LocaleKey = "SeName", LocaleValue = "se-name-2", LanguageId = "2" });
         Assert.AreEqual("se-name-1", product.GetSeName("1"));
         Assert.AreEqual("se-name-2", product.GetSeName("2"));
     }

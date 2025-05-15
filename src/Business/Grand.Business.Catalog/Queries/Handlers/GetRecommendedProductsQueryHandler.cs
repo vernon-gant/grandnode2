@@ -33,9 +33,9 @@ public class GetRecommendedProductsQueryHandler : IRequestHandler<GetRecommended
                 request.StoreId), async () =>
             {
                 var query = from cr in _customerGroupProductRepository.Table
-                    where request.CustomerGroupIds.Contains(cr.CustomerGroupId)
-                    orderby cr.DisplayOrder
-                    select cr.ProductId;
+                            where request.CustomerGroupIds.Contains(cr.CustomerGroupId)
+                            orderby cr.DisplayOrder
+                            select cr.ProductId;
 
                 var productIds = query.ToList();
 

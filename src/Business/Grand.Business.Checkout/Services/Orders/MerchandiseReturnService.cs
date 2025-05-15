@@ -123,8 +123,8 @@ public class MerchandiseReturnService : IMerchandiseReturnService
         return await _cacheBase.GetAsync(CacheKey.MERCHANDISE_RETURN_ACTIONS_ALL_KEY, async () =>
         {
             var query = from rra in _merchandiseReturnActionRepository.Table
-                orderby rra.DisplayOrder
-                select rra;
+                        orderby rra.DisplayOrder
+                        select rra;
             return await Task.FromResult(query.ToList());
         });
     }
@@ -263,8 +263,8 @@ public class MerchandiseReturnService : IMerchandiseReturnService
         return await _cacheBase.GetAsync(CacheKey.MERCHANDISE_RETURN_REASONS_ALL_KEY, async () =>
         {
             var query = from rra in _merchandiseReturnReasonRepository.Table
-                orderby rra.DisplayOrder
-                select rra;
+                        orderby rra.DisplayOrder
+                        select rra;
             return await Task.FromResult(query.ToList());
         });
     }
@@ -351,9 +351,9 @@ public class MerchandiseReturnService : IMerchandiseReturnService
     public virtual async Task<IList<MerchandiseReturnNote>> GetMerchandiseReturnNotes(string merchandiseReturnId)
     {
         var query = from merchandiseReturnNote in _merchandiseReturnNoteRepository.Table
-            where merchandiseReturnNote.MerchandiseReturnId == merchandiseReturnId
-            orderby merchandiseReturnNote.CreatedOnUtc descending
-            select merchandiseReturnNote;
+                    where merchandiseReturnNote.MerchandiseReturnId == merchandiseReturnId
+                    orderby merchandiseReturnNote.CreatedOnUtc descending
+                    select merchandiseReturnNote;
 
         return await Task.FromResult(query.ToList());
     }

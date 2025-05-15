@@ -61,8 +61,8 @@ public class ProductCategoryService : IProductCategoryService
                     //Limited to customer groups
                     var allowedCustomerGroupsIds = _contextAccessor.WorkContext.CurrentCustomer.GetCustomerGroupIds();
                     query = from p in query
-                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                        select p;
+                            where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                            select p;
                 }
 
                 if (!_accessControlConfig.IgnoreStoreLimitations)
@@ -70,25 +70,25 @@ public class ProductCategoryService : IProductCategoryService
                     //Limited to stores
                     var currentStoreId = _contextAccessor.StoreContext.CurrentStore.Id;
                     query = from p in query
-                        where !p.LimitedToStores || p.Stores.Contains(currentStoreId)
-                        select p;
+                            where !p.LimitedToStores || p.Stores.Contains(currentStoreId)
+                            select p;
                 }
             }
 
             var queryProductCategories = from prod in query
-                from pc in prod.ProductCategories
-                select new ProductsCategory {
-                    CategoryId = pc.CategoryId,
-                    DisplayOrder = pc.DisplayOrder,
-                    Id = pc.Id,
-                    ProductId = prod.Id,
-                    IsFeaturedProduct = pc.IsFeaturedProduct
-                };
+                                         from pc in prod.ProductCategories
+                                         select new ProductsCategory {
+                                             CategoryId = pc.CategoryId,
+                                             DisplayOrder = pc.DisplayOrder,
+                                             Id = pc.Id,
+                                             ProductId = prod.Id,
+                                             IsFeaturedProduct = pc.IsFeaturedProduct
+                                         };
 
             queryProductCategories = from pm in queryProductCategories
-                where pm.CategoryId == categoryId
-                orderby pm.DisplayOrder
-                select pm;
+                                     where pm.CategoryId == categoryId
+                                     orderby pm.DisplayOrder
+                                     select pm;
 
             return Task.FromResult(new PagedList<ProductsCategory>(queryProductCategories, pageIndex, pageSize));
         });

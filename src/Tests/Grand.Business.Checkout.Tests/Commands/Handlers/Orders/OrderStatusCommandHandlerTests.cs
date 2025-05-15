@@ -45,8 +45,7 @@ public class OrderStatusCommandHandlerTests
     public async Task HandleTest()
     {
         //Arrange
-        var command = new SetOrderStatusCommand
-            { Order = new Order { OrderStatusId = (int)OrderStatusSystem.Pending }, Os = OrderStatusSystem.Complete };
+        var command = new SetOrderStatusCommand { Order = new Order { OrderStatusId = (int)OrderStatusSystem.Pending }, Os = OrderStatusSystem.Complete };
         //Act
         await _handler.Handle(command, CancellationToken.None);
         //Assert

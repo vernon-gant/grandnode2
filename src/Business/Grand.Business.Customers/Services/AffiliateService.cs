@@ -60,8 +60,8 @@ public class AffiliateService : IAffiliateService
     public virtual async Task<Affiliate> GetAffiliateByFriendlyUrlName(string friendlyUrlName)
     {
         var query = from a in _affiliateRepository.Table
-            where a.FriendlyUrlName != null && a.FriendlyUrlName.Contains(friendlyUrlName.ToLowerInvariant())
-            select a;
+                    where a.FriendlyUrlName != null && a.FriendlyUrlName.Contains(friendlyUrlName.ToLowerInvariant())
+                    select a;
         var affiliate = await Task.FromResult(query.FirstOrDefault());
         return affiliate;
     }
@@ -78,7 +78,7 @@ public class AffiliateService : IAffiliateService
         bool showHidden = false)
     {
         var query = from p in _affiliateRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrWhiteSpace(friendlyUrlName))
             query = query.Where(a =>
@@ -95,7 +95,7 @@ public class AffiliateService : IAffiliateService
         if (loadOnlyWithOrders)
         {
             var ordersQuery = from p in _orderRepository.Table
-                select p;
+                              select p;
 
             if (ordersCreatedFromUtc.HasValue)
                 ordersQuery = ordersQuery.Where(o => ordersCreatedFromUtc.Value <= o.CreatedOnUtc);

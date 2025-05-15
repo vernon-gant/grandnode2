@@ -26,7 +26,7 @@ public class NewsViewModelService : INewsViewModelService
     private readonly ISeNameService _seNameService;
 
     #endregion
-    
+
     #region Constructors
 
     public NewsViewModelService(INewsService newsService,
@@ -80,7 +80,7 @@ public class NewsViewModelService : INewsViewModelService
     {
         var prevPictureId = newsItem.PictureId;
         newsItem = model.ToEntity(newsItem, _dateTimeService);
-        
+
         newsItem.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, newsItem, x => x.Title);
         newsItem.SeName = await _seNameService.ValidateSeName(newsItem, model.SeName, newsItem.Title, true);
 
@@ -150,5 +150,5 @@ public class NewsViewModelService : INewsViewModelService
         //update totals
         newsItem.CommentCount = newsItem.NewsComments.Count;
         await _newsService.UpdateNews(newsItem);
-    } 
+    }
 }

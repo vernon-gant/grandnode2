@@ -21,12 +21,12 @@ public class EnumTranslationService(ITranslationService translationService, ICon
             throw new ArgumentException("Enumeration type is required.");
 
         var values = from TEnum enumValue in Enum.GetValues(typeof(TEnum))
-            where valuesToExclude == null || !valuesToExclude.Contains(Convert.ToInt32(enumValue))
-            select new
-            {
-                ID = Convert.ToInt32(enumValue),
-                Name = GetTranslationEnum(enumValue)
-            };
+                     where valuesToExclude == null || !valuesToExclude.Contains(Convert.ToInt32(enumValue))
+                     select new
+                     {
+                         ID = Convert.ToInt32(enumValue),
+                         Name = GetTranslationEnum(enumValue)
+                     };
 
         object selectedValue = null;
         if (markCurrentAsSelected)
@@ -34,7 +34,7 @@ public class EnumTranslationService(ITranslationService translationService, ICon
 
         return new SelectList(values, "ID", "Name", selectedValue);
     }
-    
+
     public string GetTranslationEnum<T>(T enumValue) where T : struct
     {
         if (!typeof(T).GetTypeInfo().IsEnum) throw new ArgumentException("T must be enum type");

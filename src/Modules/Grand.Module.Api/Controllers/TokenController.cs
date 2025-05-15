@@ -1,6 +1,6 @@
-﻿using Grand.Module.Api.Commands.Models.Common;
+﻿using Grand.Business.Core.Interfaces.Customers;
+using Grand.Module.Api.Commands.Models.Common;
 using Grand.Module.Api.Models.Common;
-using Grand.Business.Core.Interfaces.Customers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

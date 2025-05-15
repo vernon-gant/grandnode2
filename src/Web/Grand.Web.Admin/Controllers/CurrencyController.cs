@@ -2,8 +2,8 @@
 using Grand.Business.Core.Interfaces.Common.Configuration;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
-using Grand.Domain.Permissions;
 using Grand.Domain.Directory;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure.Caching;
 using Grand.SharedKernel;
 using Grand.Web.Admin.Extensions.Mapping;

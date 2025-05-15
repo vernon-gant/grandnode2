@@ -51,8 +51,8 @@ public class CollectionLayoutService : ICollectionLayoutService
         return await _cacheBase.GetAsync(CacheKey.COLLECTION_LAYOUT_ALL, async () =>
         {
             var query = from pt in _collectionLayoutRepository.Table
-                orderby pt.DisplayOrder
-                select pt;
+                        orderby pt.DisplayOrder
+                        select pt;
             return await Task.FromResult(query.ToList());
         });
     }

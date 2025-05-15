@@ -5,8 +5,8 @@ using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Interfaces.System.Reports;
-using Grand.Domain.Permissions;
 using Grand.Domain.Payments;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Web.Common.DataSource;
 using Grand.Web.Common.Extensions;
@@ -49,7 +49,7 @@ public class ReportsController : BaseVendorController
         IDateTimeService dateTimeService,
         IOrderStatusService orderStatusService,
         ICurrencyService currencyService,
-        ICustomerService customerService, 
+        ICustomerService customerService,
         IEnumTranslationService enumTranslationService)
     {
         _orderReportService = orderReportService;

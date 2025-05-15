@@ -73,7 +73,7 @@ public class BlogService : IBlogService
         string blogPostName = "", string categoryId = "")
     {
         var query = from p in _blogPostRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(categoryId))
         {
@@ -129,9 +129,9 @@ public class BlogService : IBlogService
         //we load all records and only then filter them by tag
         var blogPostsAll = await GetAllBlogPosts(storeId, showHidden: showHidden, tag: tag);
         var taggedBlogPosts = (from blogPost in blogPostsAll
-            let tags = blogPost.ParseTags()
-            where !string.IsNullOrEmpty(tags.FirstOrDefault(t => t.Equals(tag, StringComparison.OrdinalIgnoreCase)))
-            select blogPost).ToList();
+                               let tags = blogPost.ParseTags()
+                               where !string.IsNullOrEmpty(tags.FirstOrDefault(t => t.Equals(tag, StringComparison.OrdinalIgnoreCase)))
+                               select blogPost).ToList();
 
         //server-side paging
         return new PagedList<BlogPost>(taggedBlogPosts, pageIndex, pageSize);
@@ -224,9 +224,9 @@ public class BlogService : IBlogService
     public virtual async Task<IList<BlogComment>> GetAllComments(string customerId, string storeId)
     {
         var query = from c in _blogCommentRepository.Table
-            orderby c.CreatedOnUtc
-            where (customerId == "" || c.CustomerId == customerId) && (storeId == "" || c.StoreId == storeId)
-            select c;
+                    orderby c.CreatedOnUtc
+                    where (customerId == "" || c.CustomerId == customerId) && (storeId == "" || c.StoreId == storeId)
+                    select c;
 
         return await Task.FromResult(query.ToList());
     }
@@ -244,9 +244,9 @@ public class BlogService : IBlogService
     public virtual async Task<IList<BlogComment>> GetBlogCommentsByBlogPostId(string blogPostId)
     {
         var query = from c in _blogCommentRepository.Table
-            where c.BlogPostId == blogPostId
-            orderby c.CreatedOnUtc
-            select c;
+                    where c.BlogPostId == blogPostId
+                    orderby c.CreatedOnUtc
+                    select c;
 
         return await Task.FromResult(query.ToList());
     }
@@ -262,14 +262,14 @@ public class BlogService : IBlogService
             return new List<BlogComment>();
 
         var query = from bc in _blogCommentRepository.Table
-            where commentIds.Contains(bc.Id)
-            select bc;
+                    where commentIds.Contains(bc.Id)
+                    select bc;
         var comments = query.ToList();
         //sort by passed identifiers
         var sortedComments = commentIds.Select(id => comments.FirstOrDefault(comment => comment.Id == id))
             .Where(comment => comment != null)
             .ToList();
-        
+
         return await Task.FromResult(sortedComments);
     }
 
@@ -336,7 +336,7 @@ public class BlogService : IBlogService
     public virtual async Task<IList<BlogCategory>> GetAllBlogCategories(string storeId = "")
     {
         var query = from c in _blogCategoryRepository.Table
-            select c;
+                    select c;
 
         if (!string.IsNullOrEmpty(storeId) && !_accessControlConfig.IgnoreStoreLimitations)
             query = query.Where(b => b.Stores.Contains(storeId) || !b.LimitedToStores);
@@ -456,9 +456,9 @@ public class BlogService : IBlogService
             return new List<BlogProduct>();
 
         var query = from bp in _blogProductRepository.Table
-            where bp.BlogPostId == blogPostId
-            orderby bp.DisplayOrder
-            select bp;
+                    where bp.BlogPostId == blogPostId
+                    orderby bp.DisplayOrder
+                    select bp;
 
         return await Task.FromResult(query.ToList());
     }

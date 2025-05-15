@@ -137,30 +137,30 @@ public class ContactAttributeViewModelService(
                     case AttributeControlType.RadioList:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    {
-                        var selectedAttribute = model.ConditionModel.ConditionAttributes
-                            .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
-                        var selectedValue = selectedAttribute?.SelectedValueId;
-                        customattributes = !string.IsNullOrEmpty(selectedValue)
-                            ? contactAttributeParser.AddContactAttribute(customattributes, attribute, selectedValue)
-                                .ToList()
-                            : contactAttributeParser.AddContactAttribute(customattributes, attribute, string.Empty)
-                                .ToList();
-                    }
+                        {
+                            var selectedAttribute = model.ConditionModel.ConditionAttributes
+                                .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
+                            var selectedValue = selectedAttribute?.SelectedValueId;
+                            customattributes = !string.IsNullOrEmpty(selectedValue)
+                                ? contactAttributeParser.AddContactAttribute(customattributes, attribute, selectedValue)
+                                    .ToList()
+                                : contactAttributeParser.AddContactAttribute(customattributes, attribute, string.Empty)
+                                    .ToList();
+                        }
                         break;
                     case AttributeControlType.Checkboxes:
-                    {
-                        var selectedAttribute = model.ConditionModel.ConditionAttributes
-                            .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
-                        var selectedValues = selectedAttribute?.Values.Where(x => x.Selected).Select(x => x.Value);
-                        if (selectedValues.Any())
-                            foreach (var value in selectedValues)
+                        {
+                            var selectedAttribute = model.ConditionModel.ConditionAttributes
+                                .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
+                            var selectedValues = selectedAttribute?.Values.Where(x => x.Selected).Select(x => x.Value);
+                            if (selectedValues.Any())
+                                foreach (var value in selectedValues)
+                                    customattributes = contactAttributeParser
+                                        .AddContactAttribute(customattributes, attribute, value).ToList();
+                            else
                                 customattributes = contactAttributeParser
-                                    .AddContactAttribute(customattributes, attribute, value).ToList();
-                        else
-                            customattributes = contactAttributeParser
-                                .AddContactAttribute(customattributes, attribute, string.Empty).ToList();
-                    }
+                                    .AddContactAttribute(customattributes, attribute, string.Empty).ToList();
+                        }
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
                     case AttributeControlType.TextBox:

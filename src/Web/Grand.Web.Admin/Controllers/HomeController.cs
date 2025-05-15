@@ -59,14 +59,12 @@ public class HomeController : BaseAdminController
         model.OrdersPending =
             (await _orderReportService.GetOrderAverageReportLine(storeId, os: (int)OrderStatusSystem.Pending))
             .CountOrders;
-        model.AbandonedCarts = (await _mediator.Send(new GetCustomerQuery
-            { StoreId = storeId, LoadOnlyWithShoppingCart = true })).Count();
+        model.AbandonedCarts = (await _mediator.Send(new GetCustomerQuery { StoreId = storeId, LoadOnlyWithShoppingCart = true })).Count();
 
         var lowStockProducts = await _productsReportService.LowStockProducts(storeId: storeId);
         model.LowStockProducts = lowStockProducts.products.Count + lowStockProducts.combinations.Count;
 
-        model.MerchandiseReturns = await _mediator.Send(new GetMerchandiseReturnCountQuery
-            { RequestStatusId = 0, StoreId = storeId });
+        model.MerchandiseReturns = await _mediator.Send(new GetMerchandiseReturnCountQuery { RequestStatusId = 0, StoreId = storeId });
         model.TodayRegisteredCustomers =
             (await _mediator.Send(new GetCustomerQuery {
                 StoreId = storeId,
@@ -167,7 +165,7 @@ public class HomeController : BaseAdminController
         var country = await countryService.GetCountryById(countryId);
         var states = country != null ? country.StateProvinces.ToList() : [];
         var result = (from s in states
-            select new { id = s.Id, name = s.Name }).ToList();
+                      select new { id = s.Id, name = s.Name }).ToList();
         if (addAsterisk.HasValue && addAsterisk.Value)
         {
             //asterisk

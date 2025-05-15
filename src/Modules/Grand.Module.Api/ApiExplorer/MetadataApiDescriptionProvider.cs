@@ -62,7 +62,8 @@ public class MetadataApiDescriptionProvider : IApiDescriptionProvider
             {
                 var apiDescription = CreateApiDescription(action, httpMethod, apiGroup.GroupName);
                 context.Results.Add(apiDescription);
-            };
+            }
+            ;
         }
     }
 

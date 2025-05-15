@@ -67,8 +67,8 @@ public class OrderService : IOrderService
     public virtual Task<Order> GetOrderByOrderItemId(string orderItemId)
     {
         var query = from o in _orderRepository.Table
-            where o.OrderItems.Any(x => x.Id == orderItemId)
-            select o;
+                    where o.OrderItems.Any(x => x.Id == orderItemId)
+                    select o;
 
         return Task.FromResult(query.FirstOrDefault());
     }
@@ -108,8 +108,8 @@ public class OrderService : IOrderService
             return new List<Order>();
 
         var query = from o in _orderRepository.Table
-            where orderIds.Contains(o.Id)
-            select o;
+                    where orderIds.Contains(o.Id)
+                    select o;
         var orders = await Task.FromResult(query.ToList());
         //sort by passed identifiers
         return orderIds.Select(id => orders.FirstOrDefault(order => order.Id == id))
@@ -125,8 +125,8 @@ public class OrderService : IOrderService
     public virtual Task<Order> GetOrderByGuid(Guid orderGuid)
     {
         var query = from o in _orderRepository.Table
-            where o.OrderGuid == orderGuid
-            select o;
+                    where o.OrderGuid == orderGuid
+                    select o;
         return Task.FromResult(query.FirstOrDefault());
     }
 
@@ -261,12 +261,12 @@ public class OrderService : IOrderService
     public virtual Task<OrderItem> GetOrderItemByGuid(Guid orderItemGuid)
     {
         var query = from order in _orderRepository.Table
-            from orderItem in order.OrderItems
-            select orderItem;
+                    from orderItem in order.OrderItems
+                    select orderItem;
 
         query = from orderItem in query
-            where orderItem.OrderItemGuid == orderItemGuid
-            select orderItem;
+                where orderItem.OrderItemGuid == orderItemGuid
+                select orderItem;
 
         return Task.FromResult(query.FirstOrDefault());
     }
@@ -306,9 +306,9 @@ public class OrderService : IOrderService
     public virtual async Task<IList<OrderNote>> GetOrderNotes(string orderId)
     {
         var query = from orderNote in _orderNoteRepository.Table
-            where orderNote.OrderId == orderId
-            orderby orderNote.CreatedOnUtc descending
-            select orderNote;
+                    where orderNote.OrderId == orderId
+                    orderby orderNote.CreatedOnUtc descending
+                    select orderNote;
 
         return await Task.FromResult(query.ToList());
     }

@@ -48,7 +48,7 @@ public class MongoRepository<T> : IRepository<T> where T : BaseEntity
             Collection = Database.GetCollection<T>(typeof(T).Name);
         }
     }
-    
+
     public MongoRepository(IMongoDatabase database, IAuditInfoProvider auditInfoProvider)
     {
         Database = database;

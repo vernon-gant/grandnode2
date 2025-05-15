@@ -3,8 +3,8 @@ using Grand.Business.Core.Interfaces.Common.Stores;
 using Grand.Business.Core.Interfaces.Marketing.Campaigns;
 using Grand.Business.Core.Interfaces.Marketing.Newsletters;
 using Grand.Business.Core.Interfaces.Messages;
-using Grand.Domain.Permissions;
 using Grand.Domain.Messages;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.SharedKernel;
 using Grand.SharedKernel.Extensions;
@@ -91,7 +91,8 @@ public class CampaignController : BaseAdminController
         var history = await _campaignService.GetCampaignHistory(campaign, command.Page - 1, command.PageSize);
 
         var gridModel = new DataSourceResult {
-            Data = history.Select(x => new {
+            Data = history.Select(x => new
+            {
                 x.Email,
                 SentDate = x.CreatedDateUtc
             }),

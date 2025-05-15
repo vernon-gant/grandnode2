@@ -4,8 +4,8 @@ using Grand.Business.Core.Interfaces.Checkout.Payments;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Queries.Checkout.Orders;
-using Grand.Domain.Permissions;
 using Grand.Domain.Payments;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.SharedKernel;
 using Grand.Web.Admin.Models.Orders;
@@ -55,7 +55,7 @@ public class PaymentTransactionController : BaseAdminController
     private readonly IDateTimeService _dateTimeService;
     private readonly IMediator _mediator;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     #endregion Fields
 
     #region Methods
@@ -73,8 +73,7 @@ public class PaymentTransactionController : BaseAdminController
                 .ToList()
         };
         model.PaymentTransactionStatus.Insert(0,
-            new SelectListItem
-                { Text = _translationService.GetResource("Admin.Common.All"), Value = "-1", Selected = true });
+            new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "-1", Selected = true });
         return View(model);
     }
 
@@ -207,17 +206,12 @@ public class PaymentTransactionController : BaseAdminController
             //payment method buttons
             //model.CanCancelOrder = await _mediator.Send(new CanCancelOrderQuery() { Order = order });
             CanCapture = await _mediator.Send(new CanCaptureQuery { PaymentTransaction = paymentTransaction }),
-            CanMarkAsPaid = await _mediator.Send(new CanMarkPaymentTransactionAsPaidQuery
-                { PaymentTransaction = paymentTransaction }),
+            CanMarkAsPaid = await _mediator.Send(new CanMarkPaymentTransactionAsPaidQuery { PaymentTransaction = paymentTransaction }),
             CanRefund = await _mediator.Send(new CanRefundQuery { PaymentTransaction = paymentTransaction }),
-            CanRefundOffline = await _mediator.Send(new CanRefundOfflineQuery
-                { PaymentTransaction = paymentTransaction }),
-            CanPartiallyRefund = await _mediator.Send(new CanPartiallyRefundQuery
-                { PaymentTransaction = paymentTransaction, AmountToRefund = 0 }),
-            CanPartiallyRefundOffline = await _mediator.Send(new CanPartiallyRefundOfflineQuery
-                { PaymentTransaction = paymentTransaction, AmountToRefund = 0 }),
-            CanPartiallyPaidOffline = await _mediator.Send(new CanPartiallyPaidOfflineQuery
-                { PaymentTransaction = paymentTransaction, AmountToPaid = 0 }),
+            CanRefundOffline = await _mediator.Send(new CanRefundOfflineQuery { PaymentTransaction = paymentTransaction }),
+            CanPartiallyRefund = await _mediator.Send(new CanPartiallyRefundQuery { PaymentTransaction = paymentTransaction, AmountToRefund = 0 }),
+            CanPartiallyRefundOffline = await _mediator.Send(new CanPartiallyRefundOfflineQuery { PaymentTransaction = paymentTransaction, AmountToRefund = 0 }),
+            CanPartiallyPaidOffline = await _mediator.Send(new CanPartiallyPaidOfflineQuery { PaymentTransaction = paymentTransaction, AmountToPaid = 0 }),
             CanVoid = await _mediator.Send(new CanVoidQuery { PaymentTransaction = paymentTransaction }),
             CanVoidOffline = await _mediator.Send(new CanVoidOfflineQuery { PaymentTransaction = paymentTransaction }),
             MaxAmountToRefund = paymentTransaction.TransactionAmount - paymentTransaction.RefundedAmount,
@@ -432,11 +426,9 @@ public class PaymentTransactionController : BaseAdminController
 
             var errors = new List<string>();
             if (online)
-                errors = (await _mediator.Send(new PartiallyRefundCommand
-                    { PaymentTransaction = paymentTransaction, AmountToRefund = amountToRefund })).ToList();
+                errors = (await _mediator.Send(new PartiallyRefundCommand { PaymentTransaction = paymentTransaction, AmountToRefund = amountToRefund })).ToList();
             else
-                await _mediator.Send(new PartiallyRefundOfflineCommand
-                    { PaymentTransaction = paymentTransaction, AmountToRefund = amountToRefund });
+                await _mediator.Send(new PartiallyRefundOfflineCommand { PaymentTransaction = paymentTransaction, AmountToRefund = amountToRefund });
 
             if (errors.Count == 0)
             {
@@ -501,8 +493,7 @@ public class PaymentTransactionController : BaseAdminController
             if (amountToPaid > maxAmountToPaid)
                 amountToPaid = maxAmountToPaid;
 
-            await _mediator.Send(new PartiallyPaidOfflineCommand
-                { PaymentTransaction = paymentTransaction, AmountToPaid = amountToPaid });
+            await _mediator.Send(new PartiallyPaidOfflineCommand { PaymentTransaction = paymentTransaction, AmountToPaid = amountToPaid });
 
             ViewBag.RefreshPage = true;
             return View(model);

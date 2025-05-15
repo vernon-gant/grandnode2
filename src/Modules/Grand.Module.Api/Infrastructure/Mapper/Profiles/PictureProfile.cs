@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Grand.Module.Api.DTOs.Common;
 using Grand.Domain.Media;
 using Grand.Infrastructure.Mapper;
+using Grand.Module.Api.DTOs.Common;
 
 namespace Grand.Module.Api.Infrastructure.Mapper.Profiles;
 

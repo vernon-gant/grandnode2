@@ -52,8 +52,8 @@ public class AddressAttributeService : IAddressAttributeService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from aa in _addressAttributeRepository.Table
-                orderby aa.DisplayOrder
-                select aa;
+                        orderby aa.DisplayOrder
+                        select aa;
             return await Task.FromResult(query.ToList());
         });
     }

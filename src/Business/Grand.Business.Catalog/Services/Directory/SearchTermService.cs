@@ -69,8 +69,8 @@ public class SearchTermService : ISearchTermService
             return null;
 
         var query = from st in _searchTermRepository.Table
-            where st.Keyword == keyword && st.StoreId == storeId
-            select st;
+                    where st.Keyword == keyword && st.StoreId == storeId
+                    select st;
         return await Task.FromResult(query.FirstOrDefault());
     }
 
@@ -83,12 +83,13 @@ public class SearchTermService : ISearchTermService
     public virtual async Task<IPagedList<SearchTermReportLine>> GetStats(int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = (from st in _searchTermRepository.Table
-                group st by st.Keyword
+                     group st by st.Keyword
                 into groupedResult
-                select new {
-                    Keyword = groupedResult.Key,
-                    Count = groupedResult.Sum(o => o.Count)
-                })
+                     select new
+                     {
+                         Keyword = groupedResult.Key,
+                         Count = groupedResult.Sum(o => o.Count)
+                     })
             .OrderByDescending(m => m.Count)
             .Select(r => new SearchTermReportLine {
                 Keyword = r.Keyword,

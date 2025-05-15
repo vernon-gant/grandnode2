@@ -33,8 +33,7 @@ public class CountryController : BasePublicController
         if (string.IsNullOrEmpty(countryId))
             return Json(new List<StateProvinceModel>
                 { new() { id = "", name = _translationService.GetResource("Address.SelectState") } });
-        var model = await _mediator.Send(new GetStatesProvince
-            { CountryId = countryId, AddSelectStateItem = addSelectStateItem });
+        var model = await _mediator.Send(new GetStatesProvince { CountryId = countryId, AddSelectStateItem = addSelectStateItem });
         return Json(model);
     }
 

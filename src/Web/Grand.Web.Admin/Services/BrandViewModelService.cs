@@ -17,7 +17,7 @@ namespace Grand.Web.Admin.Services;
 
 public class BrandViewModelService : IBrandViewModelService
 {
-    
+
     #region Fields
 
     private readonly IBrandService _brandService;
@@ -28,7 +28,7 @@ public class BrandViewModelService : IBrandViewModelService
     private readonly IContextAccessor _contextAccessor;
     private readonly ISeNameService _seNameService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     #endregion
 
     #region Constructors
@@ -40,7 +40,7 @@ public class BrandViewModelService : IBrandViewModelService
         IDiscountService discountService,
         IDateTimeService dateTimeService,
         IContextAccessor contextAccessor,
-        ISeNameService seNameService, 
+        ISeNameService seNameService,
         IEnumTranslationService enumTranslationService)
     {
         _brandLayoutService = brandLayoutService;
@@ -96,7 +96,7 @@ public class BrandViewModelService : IBrandViewModelService
         foreach (var discount in allDiscounts)
             if (model.SelectedDiscountIds != null && model.SelectedDiscountIds.Contains(discount.Id))
                 brand.AppliedDiscounts.Add(discount.Id);
-        
+
         //search engine name
         brand.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, brand, x => x.Name);
         brand.SeName = await _seNameService.ValidateSeName(brand, model.SeName, brand.Name, true);
@@ -116,10 +116,10 @@ public class BrandViewModelService : IBrandViewModelService
     {
         var prevPictureId = brand.PictureId;
         brand = model.ToEntity(brand);
-        
+
         brand.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, brand, x => x.Name);
         brand.SeName = await _seNameService.ValidateSeName(brand, model.SeName, brand.Name, true);
-        
+
         //discounts
         var allDiscounts = await _discountService.GetDiscountsQuery(DiscountType.AssignedToBrands);
         foreach (var discount in allDiscounts)
@@ -138,7 +138,7 @@ public class BrandViewModelService : IBrandViewModelService
 
         //update brand
         await _brandService.UpdateBrand(brand);
-        
+
         //search engine name
         await _seNameService.SaveSeName(brand);
 

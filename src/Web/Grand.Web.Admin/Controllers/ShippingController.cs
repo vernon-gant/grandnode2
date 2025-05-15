@@ -4,10 +4,10 @@ using Grand.Business.Core.Interfaces.Common.Configuration;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Stores;
-using Grand.Domain.Permissions;
 using Grand.Domain;
 using Grand.Domain.Customers;
 using Grand.Domain.Directory;
+using Grand.Domain.Permissions;
 using Grand.Domain.Shipping;
 using Grand.Web.Admin.Extensions.Mapping;
 using Grand.Web.Admin.Extensions.Mapping.Settings;
@@ -76,19 +76,16 @@ public class ShippingController : BaseAdminController
 
     protected virtual async Task PrepareAddressWarehouseModel(WarehouseModel model)
     {
-        model.Address.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.Address.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.Address.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = c.Id == model.Address.CountryId });
+            model.Address.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = c.Id == model.Address.CountryId });
         //states
         var states = !string.IsNullOrEmpty(model.Address.CountryId)
             ? (await _countryService.GetCountryById(model.Address.CountryId))?.StateProvinces
             : new List<StateProvince>();
         if (states?.Count > 0)
             foreach (var s in states)
-                model.Address.AvailableStates.Add(new SelectListItem
-                    { Text = s.Name, Value = s.Id, Selected = s.Id == model.Address.StateProvinceId });
+                model.Address.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == model.Address.StateProvinceId });
 
         model.Address.CountryEnabled = true;
         model.Address.StateProvinceEnabled = true;
@@ -103,19 +100,16 @@ public class ShippingController : BaseAdminController
 
     protected virtual async Task PreparePickupPointModel(PickupPointModel model)
     {
-        model.Address.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.Address.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.Address.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = c.Id == model.Address.CountryId });
+            model.Address.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = c.Id == model.Address.CountryId });
         //states
         var states = !string.IsNullOrEmpty(model.Address.CountryId)
             ? (await _countryService.GetCountryById(model.Address.CountryId))?.StateProvinces
             : new List<StateProvince>();
         if (states?.Count > 0)
             foreach (var s in states)
-                model.Address.AvailableStates.Add(new SelectListItem
-                    { Text = s.Name, Value = s.Id, Selected = s.Id == model.Address.StateProvinceId });
+                model.Address.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == model.Address.StateProvinceId });
 
         model.Address.CountryEnabled = true;
         model.Address.StateProvinceEnabled = true;
@@ -128,7 +122,8 @@ public class ShippingController : BaseAdminController
         model.Address.CompanyEnabled = true;
 
         model.AvailableStores.Add(new SelectListItem {
-            Text = _translationService.GetResource("Admin.Configuration.Shipping.PickupPoint.SelectStore"), Value = ""
+            Text = _translationService.GetResource("Admin.Configuration.Shipping.PickupPoint.SelectStore"),
+            Value = ""
         });
         foreach (var c in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = c.Shortcut, Value = c.Id });
@@ -326,19 +321,16 @@ public class ShippingController : BaseAdminController
         else
             model.ShippingOriginAddress = new AddressModel();
 
-        model.ShippingOriginAddress.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.ShippingOriginAddress.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.ShippingOriginAddress.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = originAddress != null && c.Id == originAddress.CountryId });
+            model.ShippingOriginAddress.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = originAddress != null && c.Id == originAddress.CountryId });
 
         var states = originAddress != null && !string.IsNullOrEmpty(originAddress.CountryId)
             ? (await _countryService.GetCountryById(originAddress.CountryId))?.StateProvinces
             : new List<StateProvince>();
         if (states?.Count > 0)
             foreach (var s in states)
-                model.ShippingOriginAddress.AvailableStates.Add(new SelectListItem
-                    { Text = s.Name, Value = s.Id, Selected = s.Id == originAddress.StateProvinceId });
+                model.ShippingOriginAddress.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == originAddress.StateProvinceId });
 
         model.ShippingOriginAddress.CountryEnabled = true;
         model.ShippingOriginAddress.StateProvinceEnabled = true;
@@ -712,22 +704,22 @@ public class ShippingController : BaseAdminController
             model.AvailableCustomerGroups.Add(new CustomerGroupModel { Id = r.Id, Name = r.Name });
 
         foreach (var country in countries)
-        foreach (var shippingMethod in shippingMethods)
-        {
-            var restricted = shippingMethod.CountryRestrictionExists(country.Id);
-            if (!model.Restricted.ContainsKey(country.Id))
-                model.Restricted[country.Id] = new Dictionary<string, bool>();
-            model.Restricted[country.Id][shippingMethod.Id] = restricted;
-        }
+            foreach (var shippingMethod in shippingMethods)
+            {
+                var restricted = shippingMethod.CountryRestrictionExists(country.Id);
+                if (!model.Restricted.ContainsKey(country.Id))
+                    model.Restricted[country.Id] = new Dictionary<string, bool>();
+                model.Restricted[country.Id][shippingMethod.Id] = restricted;
+            }
 
         foreach (var role in customerGroups)
-        foreach (var shippingMethod in shippingMethods)
-        {
-            var restricted = shippingMethod.CustomerGroupRestrictionExists(role.Id);
-            if (!model.RestictedGroup.ContainsKey(role.Id))
-                model.RestictedGroup[role.Id] = new Dictionary<string, bool>();
-            model.RestictedGroup[role.Id][shippingMethod.Id] = restricted;
-        }
+            foreach (var shippingMethod in shippingMethods)
+            {
+                var restricted = shippingMethod.CustomerGroupRestrictionExists(role.Id);
+                if (!model.RestictedGroup.ContainsKey(role.Id))
+                    model.RestictedGroup[role.Id] = new Dictionary<string, bool>();
+                model.RestictedGroup[role.Id][shippingMethod.Id] = restricted;
+            }
 
 
         return View(model);

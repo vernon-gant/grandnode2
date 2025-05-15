@@ -124,8 +124,7 @@ public class ExternalAuthenticationServiceTests
         await _externalAuthenticationService.AssociateCustomer(expectedCustomer,
             new ExternalAuthParam { ProviderSystemName = "ExternalAuthenticationProviderTest", Identifier = "1" });
         //Act
-        var customer = await _externalAuthenticationService.GetCustomer(new ExternalAuthParam
-            { ProviderSystemName = "ExternalAuthenticationProviderTest", Identifier = "1" });
+        var customer = await _externalAuthenticationService.GetCustomer(new ExternalAuthParam { ProviderSystemName = "ExternalAuthenticationProviderTest", Identifier = "1" });
         //Assert
         Assert.IsNotNull(customer);
         Assert.AreEqual(customer.Username, expectedCustomer.Username);
@@ -149,8 +148,7 @@ public class ExternalAuthenticationServiceTests
     {
         //Arrange
         var customer = new Customer { Username = "John", Active = true };
-        var externalAuthParam = new ExternalAuthParam
-            { ProviderSystemName = "ExternalAuthenticationProviderTest", Identifier = "1" };
+        var externalAuthParam = new ExternalAuthParam { ProviderSystemName = "ExternalAuthenticationProviderTest", Identifier = "1" };
         await _externalAuthenticationService.AssociateCustomer(customer, externalAuthParam);
         //Act
         await _externalAuthenticationService.DeleteExternalAuthentication(

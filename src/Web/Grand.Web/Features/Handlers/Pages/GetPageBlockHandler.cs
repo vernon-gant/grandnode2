@@ -49,7 +49,7 @@ public class GetPageBlockHandler : IRequestHandler<GetPageBlock, PageModel>
             ? null
             : ToModel(page, _contextAccessor.WorkContext.WorkingLanguage, request.Password);
     }
-    
+
     private PageModel ToModel(Page entity, Language language,
         string password = "")
     {

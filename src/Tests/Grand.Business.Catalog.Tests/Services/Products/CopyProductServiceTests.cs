@@ -20,7 +20,7 @@ public class CopyProductServiceTests
     private SeoSettings _settings;
     private Mock<ISlugService> _slugServiceMock;
     private ISeNameService _seNameService;
-    
+
     [TestInitialize]
     public void Init()
     {

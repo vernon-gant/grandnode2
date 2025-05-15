@@ -17,7 +17,7 @@ public class GetOrderQueryHandler : IRequestHandler<GetOrderQuery, IQueryable<Or
     public Task<IQueryable<Order>> Handle(GetOrderQuery request, CancellationToken cancellationToken)
     {
         var query = from p in _orderRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(request.OrderId))
             query = query.Where(o => o.Id == request.OrderId);

@@ -513,8 +513,7 @@ public class BlogController : BaseAdminController
         //stores
         var storeId = _contextAccessor.WorkContext.CurrentCustomer.StaffStoreId;
 
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in (await _storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });

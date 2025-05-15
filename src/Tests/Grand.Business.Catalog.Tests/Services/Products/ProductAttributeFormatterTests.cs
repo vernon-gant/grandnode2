@@ -89,8 +89,7 @@ public class ProductAttributeFormatterTests
     {
         //Arrange
         var product = new Product();
-        var productAttributeMapping = new ProductAttributeMapping
-            { Id = "1", AttributeControlTypeId = AttributeControlType.Checkboxes };
+        var productAttributeMapping = new ProductAttributeMapping { Id = "1", AttributeControlTypeId = AttributeControlType.Checkboxes };
         productAttributeMapping.ProductAttributeValues.Add(new ProductAttributeValue { Id = "1", Name = "aa" });
         product.ProductAttributeMappings.Add(productAttributeMapping);
         //Act

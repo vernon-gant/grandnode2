@@ -29,7 +29,7 @@ public class OrderStatusService : IOrderStatusService
         var orderStatuses = await _cacheBase.GetAsync(CacheKey.ORDER_STATUS_ALL, async () =>
         {
             var query = from p in _orderStatusRepository.Table
-                select p;
+                        select p;
 
             query = query.OrderBy(l => l.DisplayOrder);
             return await Task.FromResult(query.ToList());

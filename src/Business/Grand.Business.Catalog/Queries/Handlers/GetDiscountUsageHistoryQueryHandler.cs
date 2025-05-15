@@ -21,7 +21,7 @@ public class
         CancellationToken cancellationToken)
     {
         var query = from d in _discountUsageHistoryRepository.Table
-            select d;
+                    select d;
 
         if (!string.IsNullOrEmpty(request.DiscountId))
             query = query.Where(duh => duh.DiscountId == request.DiscountId);

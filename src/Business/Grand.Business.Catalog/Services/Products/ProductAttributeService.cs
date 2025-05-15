@@ -62,8 +62,8 @@ public class ProductAttributeService : IProductAttributeService
         return await _cacheBase.GetAsync(key, () =>
         {
             var query = from pa in _productAttributeRepository.Table
-                orderby pa.Name
-                select pa;
+                        orderby pa.Name
+                        select pa;
             return Task.FromResult(new PagedList<ProductAttribute>(query, pageIndex, pageSize));
         });
     }

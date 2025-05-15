@@ -1,5 +1,5 @@
-﻿using Grand.Module.Api.Models;
-using Grand.Domain;
+﻿using Grand.Domain;
+using Grand.Module.Api.Models;
 using MediatR;
 
 namespace Grand.Module.Api.Queries.Models.Common;

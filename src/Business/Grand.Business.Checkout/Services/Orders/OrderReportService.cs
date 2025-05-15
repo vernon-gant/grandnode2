@@ -64,7 +64,7 @@ public class OrderReportService : IOrderReportService
         int? os = null, PaymentStatus? ps = null, ShippingStatus? ss = null, DateTime? startTimeUtc = null, DateTime? endTimeUtc = null)
     {
         var query = from p in _orderRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(o => !o.Deleted);
         if (!string.IsNullOrEmpty(storeId))
@@ -88,13 +88,14 @@ public class OrderReportService : IOrderReportService
         if (string.IsNullOrEmpty(vendorId))
         {
             var report = (from oq in query
-                    group oq by oq.BillingAddress.CountryId
+                          group oq by oq.BillingAddress.CountryId
                     into result
-                    select new {
-                        CountryId = result.Key,
-                        TotalOrders = result.Count(),
-                        SumOrders = result.Sum(o => o.OrderTotal / o.CurrencyRate)
-                    }
+                          select new
+                          {
+                              CountryId = result.Key,
+                              TotalOrders = result.Count(),
+                              SumOrders = result.Sum(o => o.OrderTotal / o.CurrencyRate)
+                          }
                 )
                 .OrderByDescending(x => x.SumOrders)
                 .Select(r => new OrderByCountryReportLine {
@@ -107,25 +108,28 @@ public class OrderReportService : IOrderReportService
         }
 
         var vendorQuery = from p in query
-            from item in p.OrderItems
-            select new {
-                item.VendorId, OrderCode = p.Code,
-                p.BillingAddress.CountryId,
-                item.Quantity,
-                item.PriceInclTax,
-                p.Rate
-            };
+                          from item in p.OrderItems
+                          select new
+                          {
+                              item.VendorId,
+                              OrderCode = p.Code,
+                              p.BillingAddress.CountryId,
+                              item.Quantity,
+                              item.PriceInclTax,
+                              p.Rate
+                          };
 
         vendorQuery = vendorQuery.Where(x => x.VendorId == vendorId);
 
         var vendorReport = (from oq in vendorQuery
-                group oq by oq.CountryId
+                            group oq by oq.CountryId
                 into result
-                select new {
-                    CountryId = result.Key,
-                    TotalOrders = result.Count(),
-                    SumOrders = result.Sum(y => y.PriceInclTax / y.Rate)
-                }
+                            select new
+                            {
+                                CountryId = result.Key,
+                                TotalOrders = result.Count(),
+                                SumOrders = result.Sum(y => y.PriceInclTax / y.Rate)
+                            }
             )
             .OrderByDescending(x => x.SumOrders)
             .Select(r => new OrderByCountryReportLine {
@@ -155,7 +159,7 @@ public class OrderReportService : IOrderReportService
         var endTime = new DateTime(endTimeUtc.Value.Year, endTimeUtc.Value.Month, endTimeUtc.Value.Day, 23, 59, 00);
 
         var builderquery = from p in _orderRepository.Table
-            select p;
+                           select p;
 
         builderquery = builderquery.Where(o => !o.Deleted);
         builderquery = builderquery.Where(o => o.CreatedOnUtc >= startTimeUtc.Value && o.CreatedOnUtc <= endTime);
@@ -236,7 +240,7 @@ public class OrderReportService : IOrderReportService
         string tagId = null)
     {
         var builderquery = from p in _orderRepository.Table
-            select p;
+                           select p;
 
         builderquery = builderquery.Where(o => !o.Deleted);
         if (!string.IsNullOrEmpty(storeId))
@@ -412,7 +416,7 @@ public class OrderReportService : IOrderReportService
         bool showHidden = false)
     {
         var builderquery = from p in _orderRepository.Table
-            select p;
+                           select p;
 
         builderquery = builderquery.Where(o => !o.Deleted);
 
@@ -440,14 +444,15 @@ public class OrderReportService : IOrderReportService
             builderquery = builderquery.Where(o => createdToUtc.Value >= o.CreatedOnUtc);
 
         var query = from p in builderquery
-            from item in p.OrderItems
-            select new {
-                item.VendorId,
-                item.ProductId,
-                item.Quantity,
-                item.PriceInclTax,
-                p.Rate
-            };
+                    from item in p.OrderItems
+                    select new
+                    {
+                        item.VendorId,
+                        item.ProductId,
+                        item.Quantity,
+                        item.PriceInclTax,
+                        p.Rate
+                    };
 
         if (!string.IsNullOrEmpty(vendorId)) query = query.Where(x => x.VendorId == vendorId);
 
@@ -482,12 +487,12 @@ public class OrderReportService : IOrderReportService
             : _dateTimeService.ConvertToUtcTime(currentdate, _dateTimeService.CurrentTimeZone);
 
         var query = from o in _orderRepository.Table
-            where !o.Deleted && o.CreatedOnUtc >= date
-                             && (string.IsNullOrEmpty(storeId) || o.StoreId == storeId)
-                             && (string.IsNullOrEmpty(salesEmployeeId) || o.SeId == salesEmployeeId)
-            group o by 1
+                    where !o.Deleted && o.CreatedOnUtc >= date
+                                     && (string.IsNullOrEmpty(storeId) || o.StoreId == storeId)
+                                     && (string.IsNullOrEmpty(salesEmployeeId) || o.SeId == salesEmployeeId)
+                    group o by 1
             into g
-            select new ReportPeriodOrder { Amount = g.Sum(x => x.OrderTotal / x.CurrencyRate), Count = g.Count() };
+                    select new ReportPeriodOrder { Amount = g.Sum(x => x.OrderTotal / x.CurrencyRate), Count = g.Count() };
 
         var report = query.FirstOrDefault() ?? new ReportPeriodOrder();
         report.Date = date;
@@ -507,13 +512,14 @@ public class OrderReportService : IOrderReportService
         int recordsToReturn = 5, bool showHidden = false)
     {
         var product = from p in _productAlsoPurchasedRepository.Table
-            where p.ProductId == productId
-            group p by p.ProductId2
+                      where p.ProductId == productId
+                      group p by p.ProductId2
             into g
-            select new {
-                ProductId = g.Key,
-                ProductsPurchased = g.Sum(x => x.Quantity)
-            };
+                      select new
+                      {
+                          ProductId = g.Key,
+                          ProductsPurchased = g.Sum(x => x.Quantity)
+                      };
         product = product.OrderByDescending(x => x.ProductsPurchased);
         if (recordsToReturn > 0)
             product = product.Take(recordsToReturn);
@@ -542,23 +548,23 @@ public class OrderReportService : IOrderReportService
         createdToUtc ??= DateTime.MaxValue;
 
         var query = (from order in _orderRepository.Table
-            where
-                (string.IsNullOrEmpty(storeId) || order.StoreId == storeId) &&
-                createdFromUtc.Value <= order.CreatedOnUtc &&
-                createdToUtc.Value >= order.CreatedOnUtc &&
-                !order.Deleted
-            from orderItem in order.OrderItems
-            select new { orderItem.ProductId }).ToList().Distinct().Select(x => x.ProductId);
+                     where
+                         (string.IsNullOrEmpty(storeId) || order.StoreId == storeId) &&
+                         createdFromUtc.Value <= order.CreatedOnUtc &&
+                         createdToUtc.Value >= order.CreatedOnUtc &&
+                         !order.Deleted
+                     from orderItem in order.OrderItems
+                     select new { orderItem.ProductId }).ToList().Distinct().Select(x => x.ProductId);
 
         var qproducts = from p in _productRepository.Table
-            orderby p.Name
-            where !query.Contains(p.Id) &&
-                  //include only simple products
-                  p.ProductTypeId == ProductType.SimpleProduct &&
-                  (vendorId == "" || p.VendorId == vendorId) &&
-                  (string.IsNullOrEmpty(storeId) || p.Stores.Contains(storeId) || p.LimitedToStores == false) &&
-                  (showHidden || p.Published)
-            select p;
+                        orderby p.Name
+                        where !query.Contains(p.Id) &&
+                              //include only simple products
+                              p.ProductTypeId == ProductType.SimpleProduct &&
+                              (vendorId == "" || p.VendorId == vendorId) &&
+                              (string.IsNullOrEmpty(storeId) || p.Stores.Contains(storeId) || p.LimitedToStores == false) &&
+                              (showHidden || p.Published)
+                        select p;
 
         return await PagedList<Product>.Create(qproducts, pageIndex, pageSize);
     }

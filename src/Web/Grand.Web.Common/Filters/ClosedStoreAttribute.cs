@@ -1,7 +1,7 @@
 ﻿using Grand.Business.Core.Interfaces.Cms;
 using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Data;
+using Grand.Domain.Permissions;
 using Grand.Domain.Stores;
 using Grand.Infrastructure;
 using Microsoft.AspNetCore.Mvc;

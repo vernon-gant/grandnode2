@@ -99,7 +99,7 @@ public class KnowledgebaseViewModelService : IKnowledgebaseViewModelService
     public virtual async Task<KnowledgebaseCategory> InsertKnowledgebaseCategoryModel(KnowledgebaseCategoryModel model)
     {
         var knowledgeBaseCategory = model.ToEntity();
-        
+
         knowledgeBaseCategory.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, knowledgeBaseCategory, x => x.Name);
         knowledgeBaseCategory.SeName = await _seNameService.ValidateSeName(knowledgeBaseCategory, model.SeName, knowledgeBaseCategory.Name, true);
 
@@ -144,10 +144,10 @@ public class KnowledgebaseViewModelService : IKnowledgebaseViewModelService
         knowledgeBaseArticle.SeName = await _seNameService.ValidateSeName(knowledgeBaseArticle, model.SeName, knowledgeBaseArticle.Name, true);
 
         knowledgeBaseArticle.AllowComments = model.AllowComments;
-        
+
         await _knowledgebaseService.InsertKnowledgebaseArticle(knowledgeBaseArticle);
         await _seNameService.SaveSeName(knowledgeBaseArticle);
-        
+
         return knowledgeBaseArticle;
     }
 
@@ -157,7 +157,7 @@ public class KnowledgebaseViewModelService : IKnowledgebaseViewModelService
         knowledgeBaseArticle = model.ToEntity(knowledgeBaseArticle);
         knowledgeBaseArticle.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, knowledgeBaseArticle, x => x.Name);
         knowledgeBaseArticle.SeName = await _seNameService.ValidateSeName(knowledgeBaseArticle, model.SeName, knowledgeBaseArticle.Name, true);
-        
+
         knowledgeBaseArticle.AllowComments = model.AllowComments;
 
         await _knowledgebaseService.UpdateKnowledgebaseArticle(knowledgeBaseArticle);

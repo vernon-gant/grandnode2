@@ -31,38 +31,38 @@ public static class OrderExtensions
         switch (product.DownloadActivationTypeId)
         {
             case DownloadActivationType.WhenOrderIsPaid:
-            {
-                if (order.PaymentStatusId == PaymentStatus.Paid && order.PaidDateUtc.HasValue)
                 {
-                    //expiration date
-                    if (product.DownloadExpirationDays.HasValue)
+                    if (order.PaymentStatusId == PaymentStatus.Paid && order.PaidDateUtc.HasValue)
                     {
-                        if (order.PaidDateUtc.Value.AddDays(product.DownloadExpirationDays.Value) > DateTime.UtcNow)
+                        //expiration date
+                        if (product.DownloadExpirationDays.HasValue)
+                        {
+                            if (order.PaidDateUtc.Value.AddDays(product.DownloadExpirationDays.Value) > DateTime.UtcNow)
+                                return true;
+                        }
+                        else
+                        {
                             return true;
-                    }
-                    else
-                    {
-                        return true;
+                        }
                     }
                 }
-            }
                 break;
             case DownloadActivationType.Manually:
-            {
-                if (orderItem.IsDownloadActivated)
                 {
-                    //expiration date
-                    if (product.DownloadExpirationDays.HasValue)
+                    if (orderItem.IsDownloadActivated)
                     {
-                        if (order.CreatedOnUtc.AddDays(product.DownloadExpirationDays.Value) > DateTime.UtcNow)
+                        //expiration date
+                        if (product.DownloadExpirationDays.HasValue)
+                        {
+                            if (order.CreatedOnUtc.AddDays(product.DownloadExpirationDays.Value) > DateTime.UtcNow)
+                                return true;
+                        }
+                        else
+                        {
                             return true;
-                    }
-                    else
-                    {
-                        return true;
+                        }
                     }
                 }
-            }
                 break;
         }
 

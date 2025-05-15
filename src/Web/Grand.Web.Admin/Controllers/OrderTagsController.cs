@@ -75,8 +75,10 @@ public class OrderTagsController : BaseAdminController
             (await _orderService.SearchOrders(pageIndex: command.Page - 1, pageSize: command.PageSize,
                 orderTagId: tag.Id)).ToList();
         var gridModel = new DataSourceResult {
-            Data = orders.Select(x => new {
-                x.Id, x.OrderNumber
+            Data = orders.Select(x => new
+            {
+                x.Id,
+                x.OrderNumber
             }),
             Total = orders.Count
         };

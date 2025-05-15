@@ -49,7 +49,7 @@ public class PluginTranslateResource(ITranslationService translationService, ILa
     {
         if (!string.IsNullOrEmpty(name))
             name = name.ToLowerInvariant();
-        
+
         foreach (var lang in await languageService.GetAllLanguages(true))
         {
             var resource = await translationService.GetTranslateResourceByName(name, lang.Id);

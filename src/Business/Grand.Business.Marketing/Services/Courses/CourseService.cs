@@ -42,8 +42,8 @@ public class CourseService : ICourseService
     public virtual async Task<IPagedList<Course>> GetAll(int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from q in _courseRepository.Table
-            orderby q.DisplayOrder
-            select q;
+                    orderby q.DisplayOrder
+                    select q;
 
         return await PagedList<Course>.Create(query, pageIndex, pageSize);
     }
@@ -51,7 +51,7 @@ public class CourseService : ICourseService
     public virtual async Task<IList<Course>> GetByCustomer(Customer customer, string storeId)
     {
         var query = from c in _courseRepository.Table
-            select c;
+                    select c;
 
         query = query.Where(c => c.Published);
 
@@ -63,15 +63,15 @@ public class CourseService : ICourseService
                 //ACL (access control list)
                 var allowedCustomerGroupsIds = customer.GetCustomerGroupIds();
                 query = from p in query
-                    where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                    select p;
+                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                        select p;
             }
 
             if (!string.IsNullOrEmpty(storeId) && !_accessControlConfig.IgnoreStoreLimitations)
                 //Store acl
                 query = from p in query
-                    where !p.LimitedToStores || p.Stores.Contains(storeId)
-                    select p;
+                        where !p.LimitedToStores || p.Stores.Contains(storeId)
+                        select p;
         }
 
         //courses without assigned product

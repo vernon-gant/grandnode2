@@ -427,8 +427,7 @@ public class DiscountServiceTests
         };
         await _discountCouponRepository.InsertAsync(discountCoupon);
         var customer = new Customer();
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST123", StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST123", StoreId = "" });
         //Act
         var result = await _discountValidationService.ValidateDiscount(discount, customer, new Store(),
             new Currency { CurrencyCode = "USD" });
@@ -454,8 +453,7 @@ public class DiscountServiceTests
         };
         await _discountCouponRepository.InsertAsync(discountCoupon);
         var customer = new Customer();
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
         //Act
         var result = await _discountValidationService.ValidateDiscount(discount, customer, new Store(),
             new Currency { CurrencyCode = "USD" });
@@ -480,8 +478,7 @@ public class DiscountServiceTests
         };
         await _discountCouponRepository.InsertAsync(discountCoupon);
         var customer = new Customer();
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
         //Act
         var result = await _discountValidationService.ValidateDiscount(discount, customer, new Store(),
             new Currency { CurrencyCode = "USD" });
@@ -507,8 +504,7 @@ public class DiscountServiceTests
         };
         await _discountCouponRepository.InsertAsync(discountCoupon);
         var customer = new Customer();
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
         //Act
         var result = await _discountValidationService.ValidateDiscount(discount, customer, new Store(),
             new Currency { CurrencyCode = "USD" });
@@ -533,8 +529,7 @@ public class DiscountServiceTests
         };
         await _discountCouponRepository.InsertAsync(discountCoupon);
         var customer = new Customer();
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.DiscountCoupons, Value = "TEST12", StoreId = "" });
         //Act
         var result = await _discountValidationService.ValidateDiscount(discount, customer, new Store(),
             new Currency { CurrencyCode = "USD" });

@@ -1,7 +1,7 @@
-﻿using Grand.Module.Api.Commands.Models.Common;
+﻿using Grand.Infrastructure.Configuration;
+using Grand.Module.Api.Commands.Models.Common;
 using Grand.Module.Api.Infrastructure.Extensions;
 using Grand.Module.Api.Jwt;
-using Grand.Infrastructure.Configuration;
 using MediatR;
 
 namespace Grand.Module.Api.Commands.Handlers.Common;

@@ -25,8 +25,8 @@ public class CourseActionService : ICourseActionService
     public virtual async Task<CourseAction> GetCourseAction(string customerId, string lessonId)
     {
         var query = from a in _courseActionRepository.Table
-            where a.CustomerId == customerId && a.LessonId == lessonId
-            select a;
+                    where a.CustomerId == customerId && a.LessonId == lessonId
+                    select a;
 
         return await Task.FromResult(query.FirstOrDefault());
     }
@@ -34,8 +34,8 @@ public class CourseActionService : ICourseActionService
     public virtual async Task<bool> CustomerLessonCompleted(string customerId, string lessonId)
     {
         var query = await Task.FromResult((from a in _courseActionRepository.Table
-            where a.CustomerId == customerId && a.LessonId == lessonId
-            select a).FirstOrDefault());
+                                           where a.CustomerId == customerId && a.LessonId == lessonId
+                                           select a).FirstOrDefault());
 
         return query is { Finished: true };
     }

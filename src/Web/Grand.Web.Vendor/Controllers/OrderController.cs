@@ -2,8 +2,8 @@
 using Grand.Business.Core.Interfaces.Checkout.Orders;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Pdf;
-using Grand.Domain.Permissions;
 using Grand.Domain.Orders;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Web.Common.DataSource;
 using Grand.Web.Common.Security.Authorization;
@@ -77,10 +77,11 @@ public class OrderController : BaseVendorController
             showHidden: true)).products;
 
         var result = (from p in products
-                select new {
-                    label = p.Name,
-                    productid = p.Id
-                })
+                      select new
+                      {
+                          label = p.Name,
+                          productid = p.Id
+                      })
             .ToList();
         return Json(result);
     }

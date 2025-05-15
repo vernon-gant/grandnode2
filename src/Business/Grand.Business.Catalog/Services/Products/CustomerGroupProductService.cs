@@ -123,9 +123,9 @@ public class CustomerGroupProductService : ICustomerGroupProductService
     public virtual async Task<CustomerGroupProduct> GetCustomerGroupProductById(string id)
     {
         var query = from cr in _customerGroupProductRepository.Table
-            where cr.Id == id
-            orderby cr.DisplayOrder
-            select cr;
+                    where cr.Id == id
+                    orderby cr.DisplayOrder
+                    select cr;
 
         return await Task.FromResult(query.FirstOrDefault());
     }

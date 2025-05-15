@@ -23,7 +23,7 @@ public class StartupApplication : IStartupApplication
     }
 
     public void Configure(WebApplication application, IWebHostEnvironment webHostEnvironment)
-    {        
+    {
     }
 
     public int Priority => 100;

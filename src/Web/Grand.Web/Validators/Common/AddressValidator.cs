@@ -77,8 +77,7 @@ public class AddressValidator : BaseGrandValidator<AddressModel>
                 .WithMessage(translationService.GetResource("Address.Fields.Fax.Required"));
         RuleFor(x => x).CustomAsync(async (x, context, _) =>
         {
-            var customAttributes = await mediator.Send(new GetParseCustomAddressAttributes
-                { SelectedAttributes = x.SelectedAttributes });
+            var customAttributes = await mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = x.SelectedAttributes });
             var customAttributeWarnings = await addressAttributeParser.GetAttributeWarnings(customAttributes);
             foreach (var error in customAttributeWarnings) context.AddFailure(error);
         });

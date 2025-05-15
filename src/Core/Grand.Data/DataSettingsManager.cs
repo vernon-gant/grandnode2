@@ -18,7 +18,7 @@ public sealed class DataSettingsManager
 
     private bool? _databaseIsInstalled;
 
-    
+
     public static void Initialize(string settingsPath)
     {
         if (_instance == null)

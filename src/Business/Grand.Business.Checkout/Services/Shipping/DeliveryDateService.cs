@@ -57,8 +57,8 @@ public class DeliveryDateService : IDeliveryDateService
         return await _cacheBase.GetAsync(CacheKey.DELIVERYDATE_ALL, async () =>
         {
             var query = from dd in _deliveryDateRepository.Table
-                orderby dd.DisplayOrder
-                select dd;
+                        orderby dd.DisplayOrder
+                        select dd;
             return await Task.FromResult(query.ToList());
         });
     }

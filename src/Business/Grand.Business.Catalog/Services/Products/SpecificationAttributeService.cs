@@ -86,8 +86,8 @@ public class SpecificationAttributeService : ISpecificationAttributeService
         int pageSize = int.MaxValue)
     {
         var query = from sa in _specificationAttributeRepository.Table
-            orderby sa.DisplayOrder
-            select sa;
+                    orderby sa.DisplayOrder
+                    select sa;
         return await PagedList<SpecificationAttribute>.Create(query, pageIndex, pageSize);
     }
 
@@ -167,8 +167,8 @@ public class SpecificationAttributeService : ISpecificationAttributeService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _specificationAttributeRepository.Table
-                where p.SpecificationAttributeOptions.Any(x => x.Id == specificationAttributeOptionId)
-                select p;
+                        where p.SpecificationAttributeOptions.Any(x => x.Id == specificationAttributeOptionId)
+                        select p;
             return await Task.FromResult(query.FirstOrDefault());
         });
     }
@@ -277,7 +277,7 @@ public class SpecificationAttributeService : ISpecificationAttributeService
         string specificationAttributeOptionId = "")
     {
         var query = from p in _productRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(productId))
             query = query.Where(psa => psa.Id == productId);

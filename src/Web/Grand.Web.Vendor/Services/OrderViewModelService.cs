@@ -56,7 +56,7 @@ public class OrderViewModelService : IOrderViewModelService
     private readonly IOrderTagService _orderTagService;
     private readonly IOrderStatusService _orderStatusService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     #endregion
 
     #region Ctor
@@ -150,8 +150,7 @@ public class OrderViewModelService : IOrderViewModelService
         }
 
         //order's tags
-        model.AvailableOrderTags.Add(new SelectListItem
-            { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
+        model.AvailableOrderTags.Add(new SelectListItem { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
         foreach (var s in await _orderTagService.GetAllOrderTags())
             model.AvailableOrderTags.Add(new SelectListItem { Text = s.Name, Value = s.Id });
 
@@ -169,14 +168,12 @@ public class OrderViewModelService : IOrderViewModelService
         }
 
         //warehouses
-        model.AvailableWarehouses.Add(new SelectListItem
-            { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
+        model.AvailableWarehouses.Add(new SelectListItem { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
         foreach (var w in await _warehouseService.GetAllWarehouses())
             model.AvailableWarehouses.Add(new SelectListItem { Text = w.Name, Value = w.Id });
 
         //payment methods
-        model.AvailablePaymentMethods.Add(new SelectListItem
-            { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
+        model.AvailablePaymentMethods.Add(new SelectListItem { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
         foreach (var pm in await _paymentService.LoadAllPaymentMethods())
             model.AvailablePaymentMethods.Add(new SelectListItem { Text = pm.FriendlyName, Value = pm.SystemName });
 
@@ -601,8 +598,8 @@ public class OrderViewModelService : IOrderViewModelService
 
         if (picture == null)
         {
-            var pp = product.ProductPictures.OrderByDescending(p => p.IsDefault) 
-                .ThenBy(p => p.DisplayOrder) 
+            var pp = product.ProductPictures.OrderByDescending(p => p.IsDefault)
+                .ThenBy(p => p.DisplayOrder)
                 .FirstOrDefault();
             if (pp != null)
                 picture = await _pictureService.GetPictureById(pp.PictureId);
@@ -610,5 +607,5 @@ public class OrderViewModelService : IOrderViewModelService
 
         return picture;
     }
-    
+
 }

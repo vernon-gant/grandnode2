@@ -116,7 +116,7 @@ public class MessageTemplateService : IMessageTemplateService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _messageTemplateRepository.Table
-                select p;
+                        select p;
 
             query = query.Where(t => t.Name == messageTemplateName);
             query = query.OrderBy(t => t.Id);
@@ -143,7 +143,7 @@ public class MessageTemplateService : IMessageTemplateService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _messageTemplateRepository.Table
-                select p;
+                        select p;
 
             query = query.OrderBy(t => t.Name);
 
@@ -152,8 +152,8 @@ public class MessageTemplateService : IMessageTemplateService
                 return await Task.FromResult(query.ToList());
 
             query = from p in query
-                where !p.LimitedToStores || p.Stores.Contains(storeId)
-                select p;
+                    where !p.LimitedToStores || p.Stores.Contains(storeId)
+                    select p;
             query = query.OrderBy(t => t.Name);
 
             return await Task.FromResult(query.ToList());

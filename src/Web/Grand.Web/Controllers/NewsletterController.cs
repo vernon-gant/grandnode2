@@ -24,7 +24,8 @@ public class NewsletterController : BasePublicController
     {
         var model = await _mediator.Send(new SubscribeNewsletterCommand { Email = email, Subscribe = subscribe });
         if (model.NewsletterCategory == null)
-            return Json(new {
+            return Json(new
+            {
                 model.Success,
                 model.Result,
                 Showcategories = model.ShowCategories,
@@ -33,7 +34,8 @@ public class NewsletterController : BasePublicController
         model.ShowCategories = true;
         model.ResultCategory =
             await this.RenderPartialViewToString("NewsletterCategory", model.NewsletterCategory, true);
-        return Json(new {
+        return Json(new
+        {
             model.Success,
             model.Result,
             Showcategories = model.ShowCategories,
@@ -45,7 +47,8 @@ public class NewsletterController : BasePublicController
     public virtual async Task<IActionResult> SaveCategories(NewsletterCategoryModel model)
     {
         var result = await _mediator.Send(new SubscriptionCategoryCommand { Model = model });
-        return Json(new {
+        return Json(new
+        {
             Success = result.success,
             Message = result.message
         });

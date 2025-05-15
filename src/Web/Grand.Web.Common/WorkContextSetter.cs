@@ -147,7 +147,7 @@ public class WorkContextSetter : IWorkContextSetter
     public virtual async Task<IWorkContext> InitializeWorkContext(string storeId = null)
     {
         var currentStore = await CurrentStore(storeId);
-        var workContext = new CurrentWorkContext {            
+        var workContext = new CurrentWorkContext {
             CurrentCustomer = await CurrentCustomer(currentStore)
         };
         if (workContext.CurrentCustomer != null)

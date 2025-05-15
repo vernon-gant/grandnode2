@@ -64,19 +64,17 @@ public class DatePickerDropDownsTagHelper : TagHelper
         model.SelectListDay.Add(
             new SelectListItem { Value = "0", Text = _translationService.GetResource("Common.Day") });
         for (var i = 1; i <= 31; i++)
-            model.SelectListDay.Add(new SelectListItem
-                { Value = i.ToString(), Text = i.ToString(), Selected = SelectedDay == i });
+            model.SelectListDay.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = SelectedDay == i });
 
-        model.SelectListMonth.Add(new SelectListItem
-            { Value = "0", Text = _translationService.GetResource("Common.Month") });
+        model.SelectListMonth.Add(new SelectListItem { Value = "0", Text = _translationService.GetResource("Common.Month") });
         for (var i = 1; i <= 12; i++)
             model.SelectListMonth.Add(new SelectListItem {
-                Value = i.ToString(), Text = CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i),
+                Value = i.ToString(),
+                Text = CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(i),
                 Selected = SelectedMonth == i
             });
 
-        model.SelectListYear.Add(new SelectListItem
-            { Value = "0", Text = _translationService.GetResource("Common.Year") });
+        model.SelectListYear.Add(new SelectListItem { Value = "0", Text = _translationService.GetResource("Common.Year") });
 
         if (Begin_Year == 0)
             Begin_Year = DateTime.UtcNow.Year - 100;
@@ -85,12 +83,10 @@ public class DatePickerDropDownsTagHelper : TagHelper
 
         if (End_Year > Begin_Year)
             for (var i = Begin_Year; i <= End_Year; i++)
-                model.SelectListYear.Add(new SelectListItem
-                    { Value = i.ToString(), Text = i.ToString(), Selected = SelectedYear == i });
+                model.SelectListYear.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = SelectedYear == i });
         else
             for (var i = Begin_Year; i >= End_Year; i--)
-                model.SelectListYear.Add(new SelectListItem
-                    { Value = i.ToString(), Text = i.ToString(), Selected = SelectedYear == i });
+                model.SelectListYear.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString(), Selected = SelectedYear == i });
         output.Content.SetHtmlContent((await _htmlHelper.PartialAsync(PartialViewName, model)).ToHtmlString());
     }
 }

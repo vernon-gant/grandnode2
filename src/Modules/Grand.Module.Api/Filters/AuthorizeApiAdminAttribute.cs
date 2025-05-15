@@ -1,6 +1,6 @@
 ﻿using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Data;
+using Grand.Domain.Permissions;
 using Grand.Domain.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -82,7 +82,7 @@ public class AuthorizeApiAdminAttribute : TypeFilterAttribute
         }
 
         #endregion
-        
+
     }
 
     #endregion

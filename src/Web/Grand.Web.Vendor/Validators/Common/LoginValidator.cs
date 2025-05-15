@@ -71,26 +71,26 @@ public class LoginValidator : BaseGrandValidator<LoginModel>
                     context.AddFailure(translationService.GetResource("Account.Login.WrongCredentials.LockedOut"));
                     break;
                 case not null:
-                {
-                    var pwd = customer.PasswordFormatId switch {
-                        PasswordFormat.Clear => x.Password,
-                        PasswordFormat.Encrypted =>
-                            encryptionService.EncryptText(x.Password, customer.PasswordSalt),
-                        PasswordFormat.Hashed => encryptionService.CreatePasswordHash(x.Password,
-                            customer.PasswordSalt,
-                            customerSettings.HashedPasswordFormat),
-                        _ => throw new Exception("PasswordFormat not supported")
-                    };
-                    var isValid = pwd == customer.Password;
-                    if (!isValid)
                     {
-                        context.AddFailure(translationService.GetResource("Account.Login.WrongCredentials"));
-                        await contextAccessor.HttpContext!.RequestServices.GetRequiredService<IMediator>()
-                            .Publish(new CustomerLoginFailedEvent(customer), _);
-                    }
+                        var pwd = customer.PasswordFormatId switch {
+                            PasswordFormat.Clear => x.Password,
+                            PasswordFormat.Encrypted =>
+                                encryptionService.EncryptText(x.Password, customer.PasswordSalt),
+                            PasswordFormat.Hashed => encryptionService.CreatePasswordHash(x.Password,
+                                customer.PasswordSalt,
+                                customerSettings.HashedPasswordFormat),
+                            _ => throw new Exception("PasswordFormat not supported")
+                        };
+                        var isValid = pwd == customer.Password;
+                        if (!isValid)
+                        {
+                            context.AddFailure(translationService.GetResource("Account.Login.WrongCredentials"));
+                            await contextAccessor.HttpContext!.RequestServices.GetRequiredService<IMediator>()
+                                .Publish(new CustomerLoginFailedEvent(customer), _);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
         });
 

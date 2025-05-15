@@ -11,7 +11,7 @@ public class AdminThemeContext : ThemeContextBase
     private readonly StoreInformationSettings _storeInformationSettings;
     private string _themeName;
 
-    public AdminThemeContext(IHttpContextAccessor contextAccessor, ICookieOptionsFactory cookieOptionsFactory,StoreInformationSettings storeInformationSettings) : 
+    public AdminThemeContext(IHttpContextAccessor contextAccessor, ICookieOptionsFactory cookieOptionsFactory, StoreInformationSettings storeInformationSettings) :
         base(contextAccessor, cookieOptionsFactory)
     {
         _storeInformationSettings = storeInformationSettings;

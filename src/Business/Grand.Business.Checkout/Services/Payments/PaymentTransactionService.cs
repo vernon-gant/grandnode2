@@ -105,7 +105,7 @@ public class PaymentTransactionService : IPaymentTransactionService
         string authorizationTransactionId, string paymentMethodSystemName)
     {
         var query = from p in _repositoryPaymentTransaction.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(authorizationTransactionId))
             query = query.Where(c => c.AuthorizationTransactionId == authorizationTransactionId);

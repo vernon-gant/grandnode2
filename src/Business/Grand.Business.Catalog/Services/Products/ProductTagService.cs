@@ -47,7 +47,7 @@ public class ProductTagService : IProductTagService
         return await _cacheBase.GetAsync(CacheKey.PRODUCTTAG_COUNT_KEY, async () =>
         {
             var query = from pt in _productTagRepository.Table
-                select pt;
+                        select pt;
 
             var dictionary = query.ToList().ToDictionary(item => item.Id, item => item.Count);
             return await Task.FromResult(dictionary);

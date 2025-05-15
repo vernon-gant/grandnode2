@@ -197,12 +197,12 @@ public class CheckoutController : BasePublicController
                         Language = _contextAccessor.WorkContext.WorkingLanguage,
                         Store = _contextAccessor.StoreContext.CurrentStore,
                         SelectedCountryId = model.BillingNewAddress.CountryId,
-                        OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                            { SelectedAttributes = model.BillingNewAddress.SelectedAttributes })
+                        OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.BillingNewAddress.SelectedAttributes })
                     });
 
                     billingAddressModel.NewAddressPreselected = true;
-                    return Json(new {
+                    return Json(new
+                    {
                         update_section = new UpdateSectionJsonModel {
                             name = "billing",
                             model = billingAddressModel
@@ -230,8 +230,7 @@ public class CheckoutController : BasePublicController
                             ? model.BillingNewAddress.ToEntity()
                             : model.BillingNewAddress.ToEntity(_contextAccessor.WorkContext.CurrentCustomer, addressSettings);
 
-                    address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                        { SelectedAttributes = model.BillingNewAddress.SelectedAttributes });
+                    address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.BillingNewAddress.SelectedAttributes });
                     address.AddressType = _addressSettings.AddressTypeEnabled ? AddressType.Billing : AddressType.Any;
 
                     _contextAccessor.WorkContext.CurrentCustomer.Addresses.Add(address);
@@ -322,7 +321,7 @@ public class CheckoutController : BasePublicController
                         _contextAccessor.StoreContext.CurrentStore.Id);
                 }
                 else
-                    //set value indicating that "pick up in store" option has not been chosen
+                //set value indicating that "pick up in store" option has not been chosen
                 {
                     await _customerService.UpdateUserField(_contextAccessor.WorkContext.CurrentCustomer,
                         SystemCustomerFieldNames.SelectedPickupPoint, "", _contextAccessor.StoreContext.CurrentStore.Id);
@@ -353,12 +352,12 @@ public class CheckoutController : BasePublicController
                             Language = _contextAccessor.WorkContext.WorkingLanguage,
                             Store = _contextAccessor.StoreContext.CurrentStore,
                             SelectedCountryId = model.ShippingNewAddress.CountryId,
-                            OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                                { SelectedAttributes = model.ShippingNewAddress.SelectedAttributes })
+                            OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.ShippingNewAddress.SelectedAttributes })
                         });
 
                         shippingAddressModel.NewAddressPreselected = true;
-                        return Json(new {
+                        return Json(new
+                        {
                             update_section = new UpdateSectionJsonModel {
                                 name = "shipping",
                                 model = shippingAddressModel
@@ -385,8 +384,7 @@ public class CheckoutController : BasePublicController
                                 ? model.ShippingNewAddress.ToEntity()
                                 : model.ShippingNewAddress.ToEntity(_contextAccessor.WorkContext.CurrentCustomer, addressSettings);
 
-                        address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                            { SelectedAttributes = model.ShippingNewAddress.SelectedAttributes });
+                        address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.ShippingNewAddress.SelectedAttributes });
                         address.AddressType = _addressSettings.AddressTypeEnabled
                             ? model.BillToTheSameAddress ? AddressType.Any : AddressType.Shipping
                             : AddressType.Any;
@@ -422,7 +420,8 @@ public class CheckoutController : BasePublicController
             if (!billingAddressModel.ExistingAddresses.Any())
                 billingAddressModel.NewAddressPreselected = true;
 
-            return Json(new {
+            return Json(new
+            {
                 update_section = new UpdateSectionJsonModel {
                     name = "billing",
                     model = billingAddressModel
@@ -555,10 +554,13 @@ public class CheckoutController : BasePublicController
                     SystemCustomerFieldNames.SelectedPaymentMethod, null, _contextAccessor.StoreContext.CurrentStore.Id);
 
                 var confirmOrderModel = await _mediator.Send(new GetConfirmOrder {
-                    Cart = cart, Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage,
+                    Cart = cart,
+                    Customer = _contextAccessor.WorkContext.CurrentCustomer,
+                    Language = _contextAccessor.WorkContext.WorkingLanguage,
                     Store = _contextAccessor.StoreContext.CurrentStore
                 });
-                return Json(new {
+                return Json(new
+                {
                     update_section = new UpdateSectionJsonModel {
                         name = "confirm-order",
                         model = confirmOrderModel
@@ -622,10 +624,13 @@ public class CheckoutController : BasePublicController
                         _contextAccessor.StoreContext.CurrentStore.Id);
 
                 var confirmOrderModel = await _mediator.Send(new GetConfirmOrder {
-                    Cart = cart, Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage,
+                    Cart = cart,
+                    Customer = _contextAccessor.WorkContext.CurrentCustomer,
+                    Language = _contextAccessor.WorkContext.WorkingLanguage,
                     Store = _contextAccessor.StoreContext.CurrentStore
                 });
-                return Json(new {
+                return Json(new
+                {
                     update_section = new UpdateSectionJsonModel {
                         name = "confirm-order",
                         model = confirmOrderModel
@@ -636,7 +641,8 @@ public class CheckoutController : BasePublicController
 
             //If we got this far, something failed, redisplay form
             var paymentInfoModel = await _mediator.Send(new GetPaymentInfo { PaymentMethod = paymentMethod });
-            return Json(new {
+            return Json(new
+            {
                 update_section = new UpdateSectionJsonModel {
                     name = "payment-info",
                     model = paymentInfoModel
@@ -694,11 +700,13 @@ public class CheckoutController : BasePublicController
 
             //prevent 2 orders being placed within an X seconds time frame
             if (!await _mediator.Send(new GetMinOrderPlaceIntervalValid {
-                    Customer = _contextAccessor.WorkContext.CurrentCustomer,
-                    Store = _contextAccessor.StoreContext.CurrentStore
-                }))
-                return Json(new {
-                    error = 1, message = _translationService.GetResource("Checkout.MinOrderPlacementInterval")
+                Customer = _contextAccessor.WorkContext.CurrentCustomer,
+                Store = _contextAccessor.StoreContext.CurrentStore
+            }))
+                return Json(new
+                {
+                    error = 1,
+                    message = _translationService.GetResource("Checkout.MinOrderPlacementInterval")
                 });
 
             var placeOrderResult = await _mediator.Send(new PlaceOrderCommand());
@@ -717,7 +725,8 @@ public class CheckoutController : BasePublicController
                     //Redirection will not work because it's AJAX request.
                     var storeLocation = _contextAccessor.StoreContext.CurrentHost.Url.TrimEnd('/');
                     //redirect
-                    return Json(new {
+                    return Json(new
+                    {
                         redirect =
                             $"{storeLocation}/checkout/CompleteRedirectionPayment?paymentTransactionId={placeOrderResult.PaymentTransaction.Id}"
                     });
@@ -730,13 +739,16 @@ public class CheckoutController : BasePublicController
 
             //error
             var confirmOrderModel = await _mediator.Send(new GetConfirmOrder {
-                Cart = cart, Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage,
+                Cart = cart,
+                Customer = _contextAccessor.WorkContext.CurrentCustomer,
+                Language = _contextAccessor.WorkContext.WorkingLanguage,
                 Store = _contextAccessor.StoreContext.CurrentStore
             });
             foreach (var error in placeOrderResult.Errors)
                 confirmOrderModel.Warnings.Add(error);
 
-            return Json(new {
+            return Json(new
+            {
                 update_section = new UpdateSectionJsonModel {
                     name = "confirm-order",
                     model = confirmOrderModel
@@ -786,7 +798,7 @@ public class CheckoutController : BasePublicController
             var redirectUrl = await _paymentService.PostRedirectPayment(paymentTransaction);
             if (!string.IsNullOrEmpty(redirectUrl))
                 return Redirect(redirectUrl);
-            
+
             return RedirectToRoute("CheckoutCompleted", new { orderId = order.Id });
         }
         catch (Exception exc)
@@ -881,7 +893,8 @@ public class CheckoutController : BasePublicController
         if ((!_shippingSettings.SkipShippingMethodSelectionIfOnlyOne ||
              shippingMethodModel.ShippingMethods.Count != 1) &&
             (!_shippingSettings.AllowPickUpInStore || string.IsNullOrEmpty(selectedPickupPoint)))
-            return Json(new {
+            return Json(new
+            {
                 update_section = new UpdateSectionJsonModel {
                     name = "shipping-method",
                     model = shippingMethodModel
@@ -903,8 +916,7 @@ public class CheckoutController : BasePublicController
     {
         //Check whether payment workflow is required
         //we ignore loyalty points during cart total calculation
-        var isPaymentWorkflowRequired = await _mediator.Send(new GetIsPaymentWorkflowRequired
-            { Cart = cart, UseLoyaltyPoints = false });
+        var isPaymentWorkflowRequired = await _mediator.Send(new GetIsPaymentWorkflowRequired { Cart = cart, UseLoyaltyPoints = false });
         if (isPaymentWorkflowRequired)
         {
             //filter by country
@@ -926,7 +938,8 @@ public class CheckoutController : BasePublicController
 
             if (!_paymentSettings.SkipPaymentIfOnlyOne ||
                 paymentMethodModel.PaymentMethods.Count != 1 || paymentMethodModel.DisplayLoyaltyPoints)
-                return Json(new {
+                return Json(new
+                {
                     update_section = new UpdateSectionJsonModel {
                         name = "payment-method",
                         model = paymentMethodModel
@@ -958,10 +971,13 @@ public class CheckoutController : BasePublicController
             SystemCustomerFieldNames.SelectedPaymentMethod, null, _contextAccessor.StoreContext.CurrentStore.Id);
 
         var confirmOrderModel = await _mediator.Send(new GetConfirmOrder {
-            Cart = cart, Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage,
+            Cart = cart,
+            Customer = _contextAccessor.WorkContext.CurrentCustomer,
+            Language = _contextAccessor.WorkContext.WorkingLanguage,
             Store = _contextAccessor.StoreContext.CurrentStore
         });
-        return Json(new {
+        return Json(new
+        {
             update_section = new UpdateSectionJsonModel {
                 name = "confirm-order",
                 model = confirmOrderModel
@@ -979,10 +995,13 @@ public class CheckoutController : BasePublicController
              && _paymentSettings.SkipPaymentInfo))
         {
             var confirmOrderModel = await _mediator.Send(new GetConfirmOrder {
-                Cart = cart, Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage,
+                Cart = cart,
+                Customer = _contextAccessor.WorkContext.CurrentCustomer,
+                Language = _contextAccessor.WorkContext.WorkingLanguage,
                 Store = _contextAccessor.StoreContext.CurrentStore
             });
-            return Json(new {
+            return Json(new
+            {
                 update_section = new UpdateSectionJsonModel {
                     name = "confirm-order",
                     model = confirmOrderModel
@@ -993,7 +1012,8 @@ public class CheckoutController : BasePublicController
 
         //return payment info page
         var paymenInfoModel = await _mediator.Send(new GetPaymentInfo { PaymentMethod = paymentMethod });
-        return Json(new {
+        return Json(new
+        {
             update_section = new UpdateSectionJsonModel {
                 name = "payment-info",
                 model = paymenInfoModel

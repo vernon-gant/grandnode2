@@ -70,7 +70,8 @@ public class ActionCartController : BasePublicController
     {
         //we can't add grouped products 
         if (product.ProductTypeId == ProductType.GroupedProduct)
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("Product", new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
             });
 
@@ -79,13 +80,15 @@ public class ActionCartController : BasePublicController
             //products with "minimum order quantity" more than a specified qty
             case ShoppingCartType.ShoppingCart when product.OrderMinimumQuantity > quantity:
                 //we cannot add to the cart such products from category pages
-                return Json(new {
+                return Json(new
+                {
                     redirect = Url.RouteUrl("Product",
                         new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
                 });
             case ShoppingCartType.ShoppingCart when product.EnteredPrice:
                 //cannot be added to the cart (requires a customer to enter price)
-                return Json(new {
+                return Json(new
+                {
                     redirect = Url.RouteUrl("Product",
                         new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
                 });
@@ -94,13 +97,15 @@ public class ActionCartController : BasePublicController
         var allowedQuantities = product.ParseAllowedQuantities();
         if (cartType == ShoppingCartType.ShoppingCart && allowedQuantities.Length > 0)
             //cannot be added to the cart (requires a customer to select a quantity from drop down list)
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("Product", new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
             });
 
         if (cartType != ShoppingCartType.Wishlist && product.ProductAttributeMappings.Any())
             //product has some attributes
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("Product", new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
             });
 
@@ -120,19 +125,22 @@ public class ActionCartController : BasePublicController
         {
             //you can't add group products
             case ProductType.GroupedProduct:
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = "Grouped products couldn't be added to the cart"
                 });
             //you can't add reservation product to wishlist
             case ProductType.Reservation when shoppingCartTypeId == ShoppingCartType.Wishlist:
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = "Reservation products couldn't be added to the wishlist"
                 });
             //you can't add auction product to wishlist
             case ProductType.Auction when shoppingCartTypeId == ShoppingCartType.Wishlist:
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = "Auction products couldn't be added to the wishlist"
                 });
@@ -140,7 +148,8 @@ public class ActionCartController : BasePublicController
 
         //check available date
         if (product.AvailableEndDateTimeUtc.HasValue && product.AvailableEndDateTimeUtc.Value < DateTime.UtcNow)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = _translationService.GetResource("ShoppingCart.NotAvailable")
             });
@@ -169,7 +178,8 @@ public class ActionCartController : BasePublicController
         var product = await _productService.GetProductById(model.ProductId);
         if (product == null)
             //no product found
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No product found with the specified ID"
             });
@@ -204,7 +214,8 @@ public class ActionCartController : BasePublicController
 
             if (addToCartWarnings.Any())
                 //cannot be added to the cart
-                return Json(new {
+                return Json(new
+                {
                     redirect = Url.RouteUrl("Product",
                         new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
                 });
@@ -227,7 +238,8 @@ public class ActionCartController : BasePublicController
 
         if (addToCart.warnings.Any())
             //cannot be added to the cart
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("Product", new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
             });
 
@@ -247,72 +259,76 @@ public class ActionCartController : BasePublicController
         switch (model.ShoppingCartTypeId)
         {
             case ShoppingCartType.Wishlist:
-            {
-                if (_shoppingCartSettings.DisplayWishlistAfterAddingProduct || model.ForceRedirection)
-                    //redirect to the wishlist page
-                    return Json(new {
-                        redirect = Url.RouteUrl("Wishlist")
+                {
+                    if (_shoppingCartSettings.DisplayWishlistAfterAddingProduct || model.ForceRedirection)
+                        //redirect to the wishlist page
+                        return Json(new
+                        {
+                            redirect = Url.RouteUrl("Wishlist")
+                        });
+
+                    //display notification message and update appropriate blocks
+                    var qty = (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
+                        ShoppingCartType.Wishlist)).Sum(x => x.Quantity);
+                    var updatetopwishlistsectionhtml =
+                        string.Format(_translationService.GetResource("Wishlist.HeaderQuantity"), qty);
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = string.Format(
+                            _translationService.GetResource("Products.ProductHasBeenAddedToTheWishlist.Link"),
+                            Url.RouteUrl("Wishlist")),
+                        updatetopwishlistsectionhtml,
+                        wishlistqty = qty,
+                        model = addtoCartModel
                     });
-
-                //display notification message and update appropriate blocks
-                var qty = (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
-                    ShoppingCartType.Wishlist)).Sum(x => x.Quantity);
-                var updatetopwishlistsectionhtml =
-                    string.Format(_translationService.GetResource("Wishlist.HeaderQuantity"), qty);
-
-                return Json(new {
-                    success = true,
-                    message = string.Format(
-                        _translationService.GetResource("Products.ProductHasBeenAddedToTheWishlist.Link"),
-                        Url.RouteUrl("Wishlist")),
-                    updatetopwishlistsectionhtml,
-                    wishlistqty = qty,
-                    model = addtoCartModel
-                });
-            }
+                }
             case ShoppingCartType.ShoppingCart:
             default:
-            {
-                if (_shoppingCartSettings.DisplayCartAfterAddingProduct || model.ForceRedirection)
-                    //redirect to the shopping cart page
-                    return Json(new {
-                        redirect = Url.RouteUrl("ShoppingCart")
-                    });
+                {
+                    if (_shoppingCartSettings.DisplayCartAfterAddingProduct || model.ForceRedirection)
+                        //redirect to the shopping cart page
+                        return Json(new
+                        {
+                            redirect = Url.RouteUrl("ShoppingCart")
+                        });
 
-                //display notification message and update appropriate blocks
-                var shoppingCartTypes = new List<ShoppingCartType> {
+                    //display notification message and update appropriate blocks
+                    var shoppingCartTypes = new List<ShoppingCartType> {
                     ShoppingCartType.ShoppingCart,
                     ShoppingCartType.Auctions
                 };
-                if (_shoppingCartSettings.AllowOnHoldCart)
-                    shoppingCartTypes.Add(ShoppingCartType.OnHoldCart);
+                    if (_shoppingCartSettings.AllowOnHoldCart)
+                        shoppingCartTypes.Add(ShoppingCartType.OnHoldCart);
 
-                var updatetopcartsectionhtml = string.Format(
-                    _translationService.GetResource("ShoppingCart.HeaderQuantity"),
-                    (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
-                        shoppingCartTypes.ToArray()))
-                    .Sum(x => x.Quantity));
+                    var updatetopcartsectionhtml = string.Format(
+                        _translationService.GetResource("ShoppingCart.HeaderQuantity"),
+                        (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
+                            shoppingCartTypes.ToArray()))
+                        .Sum(x => x.Quantity));
 
-                var miniShoppingCartmodel = _shoppingCartSettings.MiniShoppingCartEnabled
-                    ? await _mediator.Send(new GetMiniShoppingCart {
-                        Customer = _contextAccessor.WorkContext.CurrentCustomer,
-                        Currency = _contextAccessor.WorkContext.WorkingCurrency,
-                        Language = _contextAccessor.WorkContext.WorkingLanguage,
-                        TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType,
-                        Store = _contextAccessor.StoreContext.CurrentStore
-                    })
-                    : null;
+                    var miniShoppingCartmodel = _shoppingCartSettings.MiniShoppingCartEnabled
+                        ? await _mediator.Send(new GetMiniShoppingCart {
+                            Customer = _contextAccessor.WorkContext.CurrentCustomer,
+                            Currency = _contextAccessor.WorkContext.WorkingCurrency,
+                            Language = _contextAccessor.WorkContext.WorkingLanguage,
+                            TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType,
+                            Store = _contextAccessor.StoreContext.CurrentStore
+                        })
+                        : null;
 
-                return Json(new {
-                    success = true,
-                    message = string.Format(
-                        _translationService.GetResource("Products.ProductHasBeenAddedToTheCart.Link"),
-                        Url.RouteUrl("ShoppingCart")),
-                    updatetopcartsectionhtml,
-                    sidebarshoppingcartmodel = miniShoppingCartmodel,
-                    model = addtoCartModel
-                });
-            }
+                    return Json(new
+                    {
+                        success = true,
+                        message = string.Format(
+                            _translationService.GetResource("Products.ProductHasBeenAddedToTheCart.Link"),
+                            Url.RouteUrl("ShoppingCart")),
+                        updatetopcartsectionhtml,
+                        sidebarshoppingcartmodel = miniShoppingCartmodel,
+                        model = addtoCartModel
+                    });
+                }
         }
     }
 
@@ -321,7 +337,8 @@ public class ActionCartController : BasePublicController
     {
         var product = await _productService.GetProductById(model.ProductId);
         if (product == null)
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("HomePage")
             });
 
@@ -332,8 +349,7 @@ public class ActionCartController : BasePublicController
         double? customerEnteredPriceConverted = null;
         if (product.EnteredPrice) customerEnteredPriceConverted = await GetCustomerEnteredPrice(model);
         //product attributes
-        var attributes = await _mediator.Send(new GetParseProductAttributes
-            { Product = product, Attributes = model.Attributes });
+        var attributes = await _mediator.Send(new GetParseProductAttributes { Product = product, Attributes = model.Attributes });
         //gift voucher 
         if (product.IsGiftVoucher)
             attributes = GiftVoucherExtensions.AddGiftVoucherAttribute(attributes,
@@ -356,37 +372,39 @@ public class ActionCartController : BasePublicController
             switch (product.IntervalUnitId)
             {
                 case IntervalUnit.Hour or IntervalUnit.Minute when string.IsNullOrEmpty(model.Reservation):
-                    return Json(new {
+                    return Json(new
+                    {
                         success = false,
                         message = _translationService.GetResource("Product.Addtocart.Reservation.Required")
                     });
                 case IntervalUnit.Hour or IntervalUnit.Minute:
-                {
-                    var productReservationService =
-                        HttpContext.RequestServices.GetRequiredService<IProductReservationService>();
-                    var reservation = await productReservationService.GetProductReservation(model.Reservation);
-                    if (reservation == null)
-                        return Json(new {
-                            success = false,
-                            message = "No reservation found"
-                        });
-                    duration = reservation.Duration;
-                    rentalStartDate = reservation.Date;
-                    parameter = reservation.Parameter;
-                    break;
-                }
+                    {
+                        var productReservationService =
+                            HttpContext.RequestServices.GetRequiredService<IProductReservationService>();
+                        var reservation = await productReservationService.GetProductReservation(model.Reservation);
+                        if (reservation == null)
+                            return Json(new
+                            {
+                                success = false,
+                                message = "No reservation found"
+                            });
+                        duration = reservation.Duration;
+                        rentalStartDate = reservation.Date;
+                        parameter = reservation.Parameter;
+                        break;
+                    }
                 case IntervalUnit.Day:
-                {
-                    const string datePickerFormat = "MM/dd/yyyy";
-                    if (!string.IsNullOrEmpty(model.ReservationDatepickerFrom))
-                        rentalStartDate = DateTime.ParseExact(model.ReservationDatepickerFrom, datePickerFormat,
-                            CultureInfo.InvariantCulture);
-                    if (!string.IsNullOrEmpty(model.ReservationDatepickerTo))
-                        rentalEndDate = DateTime.ParseExact(model.ReservationDatepickerTo, datePickerFormat,
-                            CultureInfo.InvariantCulture);
+                    {
+                        const string datePickerFormat = "MM/dd/yyyy";
+                        if (!string.IsNullOrEmpty(model.ReservationDatepickerFrom))
+                            rentalStartDate = DateTime.ParseExact(model.ReservationDatepickerFrom, datePickerFormat,
+                                CultureInfo.InvariantCulture);
+                        if (!string.IsNullOrEmpty(model.ReservationDatepickerTo))
+                            rentalEndDate = DateTime.ParseExact(model.ReservationDatepickerTo, datePickerFormat,
+                                CultureInfo.InvariantCulture);
 
-                    break;
-                }
+                        break;
+                    }
             }
 
         //save item
@@ -415,7 +433,8 @@ public class ActionCartController : BasePublicController
         if (addToCartWarnings.Any())
             //cannot be added to the cart/wishlist
             //display warnings
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = addToCartWarnings.ToArray()
             });
@@ -443,74 +462,78 @@ public class ActionCartController : BasePublicController
         switch (model.ShoppingCartTypeId)
         {
             case ShoppingCartType.Wishlist:
-            {
-                if (_shoppingCartSettings.DisplayWishlistAfterAddingProduct)
-                    //redirect to the wishlist page
-                    return Json(new {
-                        redirect = Url.RouteUrl("Wishlist")
+                {
+                    if (_shoppingCartSettings.DisplayWishlistAfterAddingProduct)
+                        //redirect to the wishlist page
+                        return Json(new
+                        {
+                            redirect = Url.RouteUrl("Wishlist")
+                        });
+
+                    //display notification message and update appropriate blocks
+                    var qty = (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
+                        ShoppingCartType.Wishlist)).Sum(x => x.Quantity);
+                    var updatetopwishlistsectionhtml =
+                        string.Format(_translationService.GetResource("Wishlist.HeaderQuantity"), qty);
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = string.Format(
+                            _translationService.GetResource("Products.ProductHasBeenAddedToTheWishlist.Link"),
+                            Url.RouteUrl("Wishlist")),
+                        updatetopwishlistsectionhtml,
+                        wishlistqty = qty,
+                        model = addtoCartModel
                     });
-
-                //display notification message and update appropriate blocks
-                var qty = (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
-                    ShoppingCartType.Wishlist)).Sum(x => x.Quantity);
-                var updatetopwishlistsectionhtml =
-                    string.Format(_translationService.GetResource("Wishlist.HeaderQuantity"), qty);
-
-                return Json(new {
-                    success = true,
-                    message = string.Format(
-                        _translationService.GetResource("Products.ProductHasBeenAddedToTheWishlist.Link"),
-                        Url.RouteUrl("Wishlist")),
-                    updatetopwishlistsectionhtml,
-                    wishlistqty = qty,
-                    model = addtoCartModel
-                });
-            }
+                }
             case ShoppingCartType.ShoppingCart:
             default:
-            {
-                if (_shoppingCartSettings.DisplayCartAfterAddingProduct)
-                    //redirect to the shopping cart page
-                    return Json(new {
-                        redirect = Url.RouteUrl("ShoppingCart")
-                    });
+                {
+                    if (_shoppingCartSettings.DisplayCartAfterAddingProduct)
+                        //redirect to the shopping cart page
+                        return Json(new
+                        {
+                            redirect = Url.RouteUrl("ShoppingCart")
+                        });
 
-                //display notification message and update appropriate blocks
-                var shoppingCartTypes = new List<ShoppingCartType> {
+                    //display notification message and update appropriate blocks
+                    var shoppingCartTypes = new List<ShoppingCartType> {
                     ShoppingCartType.ShoppingCart,
                     ShoppingCartType.Auctions
                 };
-                if (_shoppingCartSettings.AllowOnHoldCart)
-                    shoppingCartTypes.Add(ShoppingCartType.OnHoldCart);
+                    if (_shoppingCartSettings.AllowOnHoldCart)
+                        shoppingCartTypes.Add(ShoppingCartType.OnHoldCart);
 
-                var updatetopcartsectionhtml = string.Format(
-                    _translationService.GetResource("ShoppingCart.HeaderQuantity"),
-                    (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
-                        shoppingCartTypes.ToArray()))
-                    .Sum(x => x.Quantity));
+                    var updatetopcartsectionhtml = string.Format(
+                        _translationService.GetResource("ShoppingCart.HeaderQuantity"),
+                        (await _shoppingCartService.GetShoppingCart(_contextAccessor.StoreContext.CurrentStore.Id,
+                            shoppingCartTypes.ToArray()))
+                        .Sum(x => x.Quantity));
 
-                var miniShoppingCartmodel = _shoppingCartSettings.MiniShoppingCartEnabled
-                    ? await _mediator.Send(new GetMiniShoppingCart {
-                        Customer = _contextAccessor.WorkContext.CurrentCustomer,
-                        Currency = _contextAccessor.WorkContext.WorkingCurrency,
-                        Language = _contextAccessor.WorkContext.WorkingLanguage,
-                        TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType,
-                        Store = _contextAccessor.StoreContext.CurrentStore
-                    })
-                    : null;
+                    var miniShoppingCartmodel = _shoppingCartSettings.MiniShoppingCartEnabled
+                        ? await _mediator.Send(new GetMiniShoppingCart {
+                            Customer = _contextAccessor.WorkContext.CurrentCustomer,
+                            Currency = _contextAccessor.WorkContext.WorkingCurrency,
+                            Language = _contextAccessor.WorkContext.WorkingLanguage,
+                            TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType,
+                            Store = _contextAccessor.StoreContext.CurrentStore
+                        })
+                        : null;
 
-                return Json(new {
-                    success = true,
-                    message = string.Format(
-                        _translationService.GetResource("Products.ProductHasBeenAddedToTheCart.Link"),
-                        Url.RouteUrl("ShoppingCart")),
-                    updatetopcartsectionhtml,
-                    sidebarshoppingcartmodel = miniShoppingCartmodel,
-                    refreshreservation = product.ProductTypeId == ProductType.Reservation &&
-                                         product.IntervalUnitId != IntervalUnit.Day,
-                    model = addtoCartModel
-                });
-            }
+                    return Json(new
+                    {
+                        success = true,
+                        message = string.Format(
+                            _translationService.GetResource("Products.ProductHasBeenAddedToTheCart.Link"),
+                            Url.RouteUrl("ShoppingCart")),
+                        updatetopcartsectionhtml,
+                        sidebarshoppingcartmodel = miniShoppingCartmodel,
+                        refreshreservation = product.ProductTypeId == ProductType.Reservation &&
+                                             product.IntervalUnitId != IntervalUnit.Day,
+                        model = addtoCartModel
+                    });
+                }
         }
 
         #endregion
@@ -522,14 +545,16 @@ public class ActionCartController : BasePublicController
         var cart = _contextAccessor.WorkContext.CurrentCustomer.ShoppingCartItems.FirstOrDefault(sci =>
             sci.Id == model.ShoppingCartItemId);
         if (cart == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No item cart found with the specified ID"
             });
 
         var product = await _productService.GetProductById(cart.ProductId);
         if (product == null)
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("HomePage")
             });
 
@@ -537,19 +562,22 @@ public class ActionCartController : BasePublicController
         {
             //you can't add group products
             case ProductType.GroupedProduct:
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = "Grouped products couldn't be added to the cart"
                 });
             //you can't add reservation product to wishlist
             case ProductType.Reservation when cart.ShoppingCartTypeId == ShoppingCartType.Wishlist:
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = "Reservation products couldn't be added to the wishlist"
                 });
             //you can't add auction product to wishlist
             case ProductType.Auction:
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = "Auction products couldn't be added to the wishlist"
                 });
@@ -557,7 +585,8 @@ public class ActionCartController : BasePublicController
 
         //check available date
         if (product.AvailableEndDateTimeUtc.HasValue && product.AvailableEndDateTimeUtc.Value < DateTime.UtcNow)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = _translationService.GetResource("ShoppingCart.NotAvailable")
             });
@@ -574,8 +603,7 @@ public class ActionCartController : BasePublicController
         #endregion
 
         //product attributes
-        var attributes = await _mediator.Send(new GetParseProductAttributes
-            { Product = product, Attributes = model.Attributes });
+        var attributes = await _mediator.Send(new GetParseProductAttributes { Product = product, Attributes = model.Attributes });
 
         //gift voucher 
         if (product.IsGiftVoucher)
@@ -598,36 +626,38 @@ public class ActionCartController : BasePublicController
             switch (product.IntervalUnitId)
             {
                 case IntervalUnit.Hour or IntervalUnit.Minute when string.IsNullOrEmpty(model.Reservation):
-                    return Json(new {
+                    return Json(new
+                    {
                         success = false,
                         message = _translationService.GetResource("Product.Addtocart.Reservation.Required")
                     });
                 case IntervalUnit.Hour or IntervalUnit.Minute:
-                {
-                    var productReservationService =
-                        HttpContext.RequestServices.GetRequiredService<IProductReservationService>();
-                    var reservation = await productReservationService.GetProductReservation(model.Reservation);
-                    if (reservation == null)
-                        return Json(new {
-                            success = false,
-                            message = "No reservation found"
-                        });
+                    {
+                        var productReservationService =
+                            HttpContext.RequestServices.GetRequiredService<IProductReservationService>();
+                        var reservation = await productReservationService.GetProductReservation(model.Reservation);
+                        if (reservation == null)
+                            return Json(new
+                            {
+                                success = false,
+                                message = "No reservation found"
+                            });
 
-                    rentalStartDate = reservation.Date;
-                    break;
-                }
+                        rentalStartDate = reservation.Date;
+                        break;
+                    }
                 case IntervalUnit.Day:
-                {
-                    const string datePickerFormat = "MM/dd/yyyy";
-                    if (!string.IsNullOrEmpty(model.ReservationDatepickerFrom))
-                        rentalStartDate = DateTime.ParseExact(model.ReservationDatepickerFrom, datePickerFormat,
-                            CultureInfo.InvariantCulture);
-                    if (!string.IsNullOrEmpty(model.ReservationDatepickerTo))
-                        rentalEndDate = DateTime.ParseExact(model.ReservationDatepickerTo, datePickerFormat,
-                            CultureInfo.InvariantCulture);
+                    {
+                        const string datePickerFormat = "MM/dd/yyyy";
+                        if (!string.IsNullOrEmpty(model.ReservationDatepickerFrom))
+                            rentalStartDate = DateTime.ParseExact(model.ReservationDatepickerFrom, datePickerFormat,
+                                CultureInfo.InvariantCulture);
+                        if (!string.IsNullOrEmpty(model.ReservationDatepickerTo))
+                            rentalEndDate = DateTime.ParseExact(model.ReservationDatepickerTo, datePickerFormat,
+                                CultureInfo.InvariantCulture);
 
-                    break;
-                }
+                        break;
+                    }
             }
 
         //save item
@@ -642,30 +672,34 @@ public class ActionCartController : BasePublicController
 
         if (addToCartWarnings.Any())
             //cannot be updated the cart/wishlist
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = addToCartWarnings.ToArray()
             });
 
-        return Json(new {
+        return Json(new
+        {
             success = true,
             message = ""
         });
     }
-    
+
     [HttpGet]
     public virtual async Task<IActionResult> GetItemCart(string shoppingCartId)
     {
         var cart = _contextAccessor.WorkContext.CurrentCustomer.ShoppingCartItems.FirstOrDefault(sci => sci.Id == shoppingCartId);
         if (cart == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No item cart found with the specified ID"
             });
 
         var product = await _productService.GetProductById(cart.ProductId);
         if (product == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No product found with the specified ID"
             });
@@ -673,7 +707,8 @@ public class ActionCartController : BasePublicController
 
         //availability dates
         if (!product.IsAvailable() && product.ProductTypeId != ProductType.Auction)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No product found with the specified ID"
             });
@@ -684,10 +719,12 @@ public class ActionCartController : BasePublicController
             //is this one an associated products?
             var parentGroupedProduct = await _productService.GetProductById(product.ParentGroupedProductId);
             if (parentGroupedProduct == null)
-                return Json(new {
+                return Json(new
+                {
                     redirect = Url.RouteUrl("HomePage")
                 });
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("Product", new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
             });
         }
@@ -699,8 +736,10 @@ public class ActionCartController : BasePublicController
             UpdateCartItem = cart
         });
 
-        return Json(new {
-            success = true, model
+        return Json(new
+        {
+            success = true,
+            model
         });
     }
 
@@ -710,7 +749,8 @@ public class ActionCartController : BasePublicController
     {
         var customer = _contextAccessor.WorkContext.CurrentCustomer;
         if (!await _groupService.IsRegistered(customer))
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = _translationService.GetResource("ShoppingCart.Mustberegisteredtobid")
             });
@@ -722,7 +762,8 @@ public class ActionCartController : BasePublicController
         bid = Math.Round(bid, 2);
 
         if (bid <= 0)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = _translationService.GetResource("ShoppingCart.BidMustBeHigher")
             });
@@ -731,7 +772,8 @@ public class ActionCartController : BasePublicController
         ArgumentNullException.ThrowIfNull(product);
 
         if (product.HighestBidder == customer.Id)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = _translationService.GetResource("ShoppingCart.AlreadyHighestBidder")
             });
@@ -759,7 +801,8 @@ public class ActionCartController : BasePublicController
             var toReturn = "";
             foreach (var warning in warnings) toReturn += warning + "</br>";
 
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = toReturn
             });
@@ -780,7 +823,8 @@ public class ActionCartController : BasePublicController
             TaxDisplayType = _contextAccessor.WorkContext.TaxDisplayType
         });
 
-        return Json(new {
+        return Json(new
+        {
             success = true,
             message = _translationService.GetResource("ShoppingCart.Yourbidhasbeenplaced"),
             model = addtoCartModel

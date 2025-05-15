@@ -39,7 +39,7 @@ public class OrderTagService : IOrderTagService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from ot in _orderTagRepository.Table
-                select ot;
+                        select ot;
 
             var dictionary = query.ToList().ToDictionary(tag => tag.Id, tag => tag.Count);
             return await Task.FromResult(dictionary);

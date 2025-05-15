@@ -36,7 +36,7 @@ public class MerchandiseReturnServiceTests
         _mediatorMock = new Mock<IMediator>();
 
         var query = from p in _repository.Table
-            select p;
+                    select p;
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetMerchandiseReturnQuery>(), default))
             .Returns(Task.FromResult(query));
 

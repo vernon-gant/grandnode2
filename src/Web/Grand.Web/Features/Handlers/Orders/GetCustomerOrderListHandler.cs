@@ -21,7 +21,7 @@ public class GetCustomerOrderListHandler : IRequestHandler<GetCustomerOrderList,
     private readonly IOrderStatusService _orderStatusService;
     private readonly IPriceFormatter _priceFormatter;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     public GetCustomerOrderListHandler(
         IDateTimeService dateTimeService,
         IGroupService groupService,
@@ -30,7 +30,7 @@ public class GetCustomerOrderListHandler : IRequestHandler<GetCustomerOrderList,
         IOrderStatusService orderStatusService,
         IOrderService orderService,
         ICurrencyService currencyService,
-        OrderSettings orderSettings, 
+        OrderSettings orderSettings,
         IEnumTranslationService enumTranslationService)
     {
         _dateTimeService = dateTimeService;

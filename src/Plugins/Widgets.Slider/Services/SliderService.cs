@@ -53,8 +53,8 @@ public class SliderService : ISliderService
         return await _cacheBase.GetAsync(cacheKey, async () =>
         {
             var query = from s in _repositoryPictureSlider.Table
-                where s.SliderTypeId == sliderType && s.Published
-                select s;
+                        where s.SliderTypeId == sliderType && s.Published
+                        select s;
 
             if (!string.IsNullOrEmpty(objectEntry))
                 query = query.Where(x => x.ObjectEntry == objectEntry);

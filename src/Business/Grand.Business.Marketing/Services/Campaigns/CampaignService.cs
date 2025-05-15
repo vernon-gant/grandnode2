@@ -97,8 +97,8 @@ public class CampaignService(
     public virtual async Task<IList<Campaign>> GetAllCampaigns()
     {
         var query = from c in campaignRepository.Table
-            orderby c.CreatedOnUtc
-            select c;
+                    orderby c.CreatedOnUtc
+                    select c;
         return await Task.FromResult(query.ToList());
     }
 
@@ -108,9 +108,9 @@ public class CampaignService(
         ArgumentNullException.ThrowIfNull(campaign);
 
         var query = from c in campaignHistoryRepository.Table
-            where c.CampaignId == campaign.Id
-            orderby c.CreatedDateUtc descending
-            select c;
+                    where c.CampaignId == campaign.Id
+                    orderby c.CreatedDateUtc descending
+                    select c;
         return await PagedList<CampaignHistory>.Create(query, pageIndex, pageSize);
     }
 
@@ -127,23 +127,23 @@ public class CampaignService(
             campaign.CustomerTags.Count > 0 || campaign.CustomerGroups.Count > 0)
         {
             var query = from o in newsLetterSubscriptionRepository.Table
-                where o.Active && o.CustomerId != "" &&
-                      (o.StoreId == campaign.StoreId || string.IsNullOrEmpty(campaign.StoreId))
-                join c in customerRepository.Table on o.CustomerId equals c.Id into joined
-                from customers in joined
-                select new CampaignCustomerHelp {
-                    CustomerEmail = customers.Email,
-                    Email = o.Email,
-                    CustomerId = customers.Id,
-                    CreatedOnUtc = customers.CreatedOnUtc,
-                    CustomerTags = customers.CustomerTags,
-                    CustomerGroups = customers.Groups,
-                    NewsletterCategories = o.Categories,
-                    HasShoppingCartItems = customers.ShoppingCartItems.Any(),
-                    LastActivityDateUtc = customers.LastActivityDateUtc,
-                    LastPurchaseDateUtc = customers.LastPurchaseDateUtc,
-                    NewsLetterSubscriptionGuid = o.NewsLetterSubscriptionGuid
-                };
+                        where o.Active && o.CustomerId != "" &&
+                              (o.StoreId == campaign.StoreId || string.IsNullOrEmpty(campaign.StoreId))
+                        join c in customerRepository.Table on o.CustomerId equals c.Id into joined
+                        from customers in joined
+                        select new CampaignCustomerHelp {
+                            CustomerEmail = customers.Email,
+                            Email = o.Email,
+                            CustomerId = customers.Id,
+                            CreatedOnUtc = customers.CreatedOnUtc,
+                            CustomerTags = customers.CustomerTags,
+                            CustomerGroups = customers.Groups,
+                            NewsletterCategories = o.Categories,
+                            HasShoppingCartItems = customers.ShoppingCartItems.Any(),
+                            LastActivityDateUtc = customers.LastActivityDateUtc,
+                            LastPurchaseDateUtc = customers.LastPurchaseDateUtc,
+                            NewsLetterSubscriptionGuid = o.NewsLetterSubscriptionGuid
+                        };
 
             //create date
             if (campaign.CustomerCreatedDateFrom.HasValue)
@@ -199,15 +199,16 @@ public class CampaignService(
                     query = query.Where(x => x.NewsletterCategories.Contains(item));
             model = await PagedList<NewsLetterSubscription>.Create(
                 query.Select(x => new NewsLetterSubscription {
-                    CustomerId = x.CustomerId, Email = x.Email,
+                    CustomerId = x.CustomerId,
+                    Email = x.Email,
                     NewsLetterSubscriptionGuid = x.NewsLetterSubscriptionGuid
                 }), pageIndex, pageSize);
         }
         else
         {
             var query = from o in newsLetterSubscriptionRepository.Table
-                where o.Active && (o.StoreId == campaign.StoreId || string.IsNullOrEmpty(campaign.StoreId))
-                select o;
+                        where o.Active && (o.StoreId == campaign.StoreId || string.IsNullOrEmpty(campaign.StoreId))
+                        select o;
 
             if (campaign.NewsletterCategories.Count > 0)
                 foreach (var item in campaign.NewsletterCategories)
@@ -278,8 +279,11 @@ public class CampaignService(
 
             await queuedEmailService.InsertQueuedEmail(email);
             await InsertCampaignHistory(new CampaignHistory {
-                CampaignId = campaign.Id, CustomerId = subscription.CustomerId, Email = subscription.Email,
-                CreatedDateUtc = DateTime.UtcNow, StoreId = campaign.StoreId
+                CampaignId = campaign.Id,
+                CustomerId = subscription.CustomerId,
+                Email = subscription.Email,
+                CreatedDateUtc = DateTime.UtcNow,
+                StoreId = campaign.StoreId
             });
 
             totalEmailsSent++;

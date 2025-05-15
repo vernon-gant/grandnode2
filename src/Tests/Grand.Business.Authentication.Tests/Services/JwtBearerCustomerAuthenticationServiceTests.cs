@@ -3,9 +3,9 @@ using Grand.Business.Core.Interfaces.Authentication;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Customers;
-using Grand.Domain.Permissions;
 using Grand.Domain.Common;
 using Grand.Domain.Customers;
+using Grand.Domain.Permissions;
 using Grand.Domain.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -131,8 +131,7 @@ public class JwtBearerCustomerAuthenticationServiceTests
     public async Task Valid_Customer_ReturnTrue()
     {
         var customer = new Customer { Username = "John", Active = true };
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.PasswordToken, Value = "123", StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.PasswordToken, Value = "123", StoreId = "" });
         _customerServiceMock.Setup(c => c.GetCustomerByEmail(It.IsAny<string>()))
             .Returns(() => Task.FromResult(customer));
         _refreshTokenServiceMock.Setup(c => c.GetCustomerRefreshToken(customer)).Returns(() =>

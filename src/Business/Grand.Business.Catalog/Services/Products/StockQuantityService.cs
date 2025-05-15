@@ -109,13 +109,13 @@ public class StockQuantityService : IStockQuantityService
             switch (product.BackorderModeId)
             {
                 case BackorderMode.NoBackorders:
-                {
-                    return ("Products.Availability.Attributes.OutOfStock", null);
-                }
+                    {
+                        return ("Products.Availability.Attributes.OutOfStock", null);
+                    }
                 case BackorderMode.AllowQtyBelowZero:
-                {
-                    return ("Products.Availability.Attributes.Backordering", null);
-                }
+                    {
+                        return ("Products.Availability.Attributes.Backordering", null);
+                    }
             }
 
             if (!combination.AllowOutOfStockOrders) return ("Products.Availability.Attributes.OutOfStock", null);
@@ -146,13 +146,13 @@ public class StockQuantityService : IStockQuantityService
         switch (product.BackorderModeId)
         {
             case BackorderMode.NoBackorders:
-            {
-                return ("Products.Availability.OutOfStock", null);
-            }
+                {
+                    return ("Products.Availability.OutOfStock", null);
+                }
             case BackorderMode.AllowQtyBelowZero:
-            {
-                return ("Products.Availability.Backordering", null);
-            }
+                {
+                    return ("Products.Availability.Backordering", null);
+                }
         }
 
         return (stockMessage, null);

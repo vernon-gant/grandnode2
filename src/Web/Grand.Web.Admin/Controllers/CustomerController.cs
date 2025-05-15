@@ -7,11 +7,11 @@ using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Interfaces.ExportImport;
 using Grand.Business.Core.Interfaces.Messages;
-using Grand.Domain.Permissions;
 using Grand.Business.Core.Utilities.Customers;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Customers;
+using Grand.Domain.Permissions;
 using Grand.Domain.Tax;
 using Grand.Infrastructure;
 using Grand.SharedKernel;
@@ -87,46 +87,46 @@ public class CustomerController : BaseAdminController
             {
                 case AttributeControlType.DropdownList:
                 case AttributeControlType.RadioList:
-                {
-                    var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(ctrlAttributes))
-                        customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                            attribute, ctrlAttributes).ToList();
-                }
+                    {
+                        var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(ctrlAttributes))
+                            customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                attribute, ctrlAttributes).ToList();
+                    }
                     break;
                 case AttributeControlType.Checkboxes:
-                {
-                    var cblAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(cblAttributes))
-                        foreach (var item in cblAttributes.Split(','))
-                            if (!string.IsNullOrEmpty(item))
-                                customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                                    attribute, item).ToList();
-                }
+                    {
+                        var cblAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(cblAttributes))
+                            foreach (var item in cblAttributes.Split(','))
+                                if (!string.IsNullOrEmpty(item))
+                                    customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                        attribute, item).ToList();
+                    }
                     break;
                 case AttributeControlType.ReadonlyCheckboxes:
-                {
-                    //load read-only (already server-side selected) values
-                    var attributeValues = attribute.CustomerAttributeValues;
-                    foreach (var selectedAttributeId in attributeValues
-                                 .Where(v => v.IsPreSelected)
-                                 .Select(v => v.Id)
-                                 .ToList())
-                        customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                            attribute, selectedAttributeId).ToList();
-                }
+                    {
+                        //load read-only (already server-side selected) values
+                        var attributeValues = attribute.CustomerAttributeValues;
+                        foreach (var selectedAttributeId in attributeValues
+                                     .Where(v => v.IsPreSelected)
+                                     .Select(v => v.Id)
+                                     .ToList())
+                            customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                attribute, selectedAttributeId).ToList();
+                    }
                     break;
                 case AttributeControlType.TextBox:
                 case AttributeControlType.MultilineTextbox:
-                {
-                    var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(ctrlAttributes))
                     {
-                        var enteredText = ctrlAttributes.Trim();
-                        customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                            attribute, enteredText).ToList();
+                        var ctrlAttributes = model.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(ctrlAttributes))
+                        {
+                            var enteredText = ctrlAttributes.Trim();
+                            customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                attribute, enteredText).ToList();
+                        }
                     }
-                }
                     break;
                 case AttributeControlType.Datepicker:
                 case AttributeControlType.ColorSquares:

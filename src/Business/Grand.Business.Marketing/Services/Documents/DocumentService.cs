@@ -35,7 +35,7 @@ public class DocumentService : IDocumentService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from d in _documentRepository.Table
-            select d;
+                    select d;
 
         if (!string.IsNullOrWhiteSpace(name))
             query = query.Where(m => m.Name != null && m.Name.ToLower().Contains(name.ToLower()));

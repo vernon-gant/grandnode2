@@ -51,8 +51,8 @@ public class BrandLayoutService : IBrandLayoutService
         return await _cacheBase.GetAsync(CacheKey.BRAND_LAYOUT_ALL, async () =>
         {
             var query = from pt in _brandLayoutRepository.Table
-                orderby pt.DisplayOrder
-                select pt;
+                        orderby pt.DisplayOrder
+                        select pt;
             return await Task.FromResult(query.ToList());
         });
     }

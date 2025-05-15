@@ -1,8 +1,8 @@
 ﻿using Grand.Business.Core.Interfaces.Catalog.Directory;
 using Grand.Business.Core.Interfaces.Common.Configuration;
 using Grand.Business.Core.Interfaces.Common.Localization;
-using Grand.Domain.Permissions;
 using Grand.Domain.Directory;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure.Caching;
 using Grand.Web.Admin.Extensions.Mapping;
 using Grand.Web.Admin.Models.Directory;
@@ -109,8 +109,7 @@ public class MeasureController : BaseAdminController
             throw new ArgumentException("No weight found with the specified id");
 
         if (weight.Id == _measureSettings.BaseWeightId)
-            return Json(new DataSourceResult
-                { Errors = _translationService.GetResource("Admin.Configuration.Measures.Weights.CantDeletePrimary") });
+            return Json(new DataSourceResult { Errors = _translationService.GetResource("Admin.Configuration.Measures.Weights.CantDeletePrimary") });
 
         await _measureService.DeleteMeasureWeight(weight);
 

@@ -26,7 +26,7 @@ public class OpenApiStartup : IStartupApplication
             application.MapScalarApiReference(options =>
             {
                 options.WithTitle("OpenApi Playground");
-                options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);   
+                options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
             });
         }
     }

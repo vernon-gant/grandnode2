@@ -38,18 +38,18 @@ public class OrderPlacedEventHandler : INotificationHandler<OrderPlacedEvent>
     private Task InsertProductAlsoPurchased(Order order)
     {
         foreach (var item in order.OrderItems)
-        foreach (var it in order.OrderItems.Where(x => x.ProductId != item.ProductId))
-        {
-            var productPurchase = new ProductAlsoPurchased {
-                ProductId = item.ProductId,
-                OrderId = order.Id,
-                CreatedOrderOnUtc = order.CreatedOnUtc,
-                Quantity = it.Quantity,
-                StoreId = order.StoreId,
-                ProductId2 = it.ProductId
-            };
-            _productAlsoPurchasedRepository.InsertAsync(productPurchase);
-        }
+            foreach (var it in order.OrderItems.Where(x => x.ProductId != item.ProductId))
+            {
+                var productPurchase = new ProductAlsoPurchased {
+                    ProductId = item.ProductId,
+                    OrderId = order.Id,
+                    CreatedOrderOnUtc = order.CreatedOnUtc,
+                    Quantity = it.Quantity,
+                    StoreId = order.StoreId,
+                    ProductId2 = it.ProductId
+                };
+                _productAlsoPurchasedRepository.InsertAsync(productPurchase);
+            }
 
         return Task.CompletedTask;
     }

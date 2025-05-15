@@ -408,7 +408,8 @@ public class ProductViewModelService : IProductViewModelService
         });
         foreach (var tc in taxCategories)
             model.AvailableTaxCategories.Add(new SelectListItem {
-                Text = tc.Name, Value = tc.Id,
+                Text = tc.Name,
+                Value = tc.Id,
                 Selected = product != null && !setPredefinedValues && tc.Id == product.TaxCategoryId
             });
 
@@ -416,12 +417,14 @@ public class ProductViewModelService : IProductViewModelService
         var measureWeights = await _measureService.GetAllMeasureWeights();
         foreach (var mw in measureWeights)
             model.AvailableBasepriceUnits.Add(new SelectListItem {
-                Text = mw.Name, Value = mw.Id,
+                Text = mw.Name,
+                Value = mw.Id,
                 Selected = product != null && !setPredefinedValues && mw.Id == product.BasepriceUnitId
             });
         foreach (var mw in measureWeights)
             model.AvailableBasepriceBaseUnits.Add(new SelectListItem {
-                Text = mw.Name, Value = mw.Id,
+                Text = mw.Name,
+                Value = mw.Id,
                 Selected = product != null && !setPredefinedValues && mw.Id == product.BasepriceBaseUnitId
             });
 
@@ -429,8 +432,7 @@ public class ProductViewModelService : IProductViewModelService
         var units = await _measureService.GetAllMeasureUnits();
         model.AvailableUnits.Add(new SelectListItem { Text = "---", Value = "" });
         foreach (var un in units)
-            model.AvailableUnits.Add(new SelectListItem
-                { Text = un.Name, Value = un.Id, Selected = product != null && un.Id == product.UnitId });
+            model.AvailableUnits.Add(new SelectListItem { Text = un.Name, Value = un.Id, Selected = product != null && un.Id == product.UnitId });
 
         //default values
         if (setPredefinedValues)
@@ -549,8 +551,7 @@ public class ProductViewModelService : IProductViewModelService
         var model = new ProductListModel();
 
         //warehouses
-        model.AvailableWarehouses.Add(new SelectListItem
-            { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
+        model.AvailableWarehouses.Add(new SelectListItem { Text = _translationService.GetResource("Vendor.Common.All"), Value = " " });
         foreach (var wh in await _warehouseService.GetAllWarehouses())
             model.AvailableWarehouses.Add(new SelectListItem { Text = wh.Name, Value = wh.Id });
 
@@ -565,7 +566,8 @@ public class ProductViewModelService : IProductViewModelService
         //2 - unpublished only
         //4 - mark as new
         model.AvailablePublishedOptions.Add(new SelectListItem {
-            Text = _translationService.GetResource("Vendor.Catalog.Products.List.SearchPublished.All"), Value = " "
+            Text = _translationService.GetResource("Vendor.Catalog.Products.List.SearchPublished.All"),
+            Value = " "
         });
         model.AvailablePublishedOptions.Add(new SelectListItem {
             Text = _translationService.GetResource("Vendor.Catalog.Products.List.SearchPublished.PublishedOnly"),
@@ -709,8 +711,10 @@ public class ProductViewModelService : IProductViewModelService
     {
         var prevStockQuantity = _stockQuantityService.GetTotalStockQuantity(product, total: true);
         var prevMultiWarehouseStock = product.ProductWarehouseInventory.Select(i => new ProductWarehouseInventory {
-                WarehouseId = i.WarehouseId, StockQuantity = i.StockQuantity, ReservedQuantity = i.ReservedQuantity
-            })
+            WarehouseId = i.WarehouseId,
+            StockQuantity = i.StockQuantity,
+            ReservedQuantity = i.ReservedQuantity
+        })
             .ToList();
 
         //product
@@ -1402,8 +1406,7 @@ public class ProductViewModelService : IProductViewModelService
             {
                 var name = predefinedValue.GetTranslation(x => x.Name, lang.Id, false);
                 if (!string.IsNullOrEmpty(name))
-                    pav.Locales.Add(new TranslationEntity
-                        { LanguageId = lang.Id, LocaleKey = "Name", LocaleValue = name });
+                    pav.Locales.Add(new TranslationEntity { LanguageId = lang.Id, LocaleKey = "Name", LocaleValue = name });
             }
 
             productAttributeMapping.ProductAttributeValues.Add(pav);
@@ -1498,22 +1501,22 @@ public class ProductViewModelService : IProductViewModelService
                         case AttributeControlType.Checkboxes:
                         case AttributeControlType.ColorSquares:
                         case AttributeControlType.ImageSquares:
-                        {
-                            if (productAttributeMapping.ConditionAttribute.Any())
                             {
-                                //clear default selection
-                                foreach (var item in attributeModel.Values)
-                                    item.IsPreSelected = false;
+                                if (productAttributeMapping.ConditionAttribute.Any())
+                                {
+                                    //clear default selection
+                                    foreach (var item in attributeModel.Values)
+                                        item.IsPreSelected = false;
 
-                                //select new values
-                                var selectedValues =
-                                    product.ParseProductAttributeValues(productAttributeMapping.ConditionAttribute);
-                                foreach (var attributeValue in selectedValues)
-                                foreach (var item in attributeModel.Values)
-                                    if (attributeValue.Id == item.Id)
-                                        item.IsPreSelected = true;
+                                    //select new values
+                                    var selectedValues =
+                                        product.ParseProductAttributeValues(productAttributeMapping.ConditionAttribute);
+                                    foreach (var attributeValue in selectedValues)
+                                        foreach (var item in attributeModel.Values)
+                                            if (attributeValue.Id == item.Id)
+                                                item.IsPreSelected = true;
+                                }
                             }
-                        }
                             break;
                         case AttributeControlType.ReadonlyCheckboxes:
                         case AttributeControlType.TextBox:
@@ -1548,48 +1551,48 @@ public class ProductViewModelService : IProductViewModelService
                     case AttributeControlType.RadioList:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    {
-                        var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
-                            ?.Value;
-                        if (!string.IsNullOrEmpty(ctrlAttributes))
-                            customAttributes = ProductExtensions.AddProductAttribute(
-                                customAttributes,
-                                attribute, ctrlAttributes).ToList();
-                        else
-                            customAttributes = ProductExtensions.AddProductAttribute(
-                                customAttributes,
-                                attribute, "").ToList();
-                    }
-                        break;
-                    case AttributeControlType.Checkboxes:
-                    {
-                        var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
-                            ?.Value;
-                        if (!string.IsNullOrEmpty(cblAttributes))
                         {
-                            var anyValueSelected = false;
-                            foreach (var item in cblAttributes.Split([','],
-                                         StringSplitOptions.RemoveEmptyEntries))
-                                if (!string.IsNullOrEmpty(item))
-                                {
-                                    customAttributes = ProductExtensions.AddProductAttribute(
-                                        customAttributes,
-                                        attribute, item).ToList();
-                                    anyValueSelected = true;
-                                }
-
-                            if (!anyValueSelected)
+                            var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
+                                ?.Value;
+                            if (!string.IsNullOrEmpty(ctrlAttributes))
+                                customAttributes = ProductExtensions.AddProductAttribute(
+                                    customAttributes,
+                                    attribute, ctrlAttributes).ToList();
+                            else
                                 customAttributes = ProductExtensions.AddProductAttribute(
                                     customAttributes,
                                     attribute, "").ToList();
                         }
-                        else
+                        break;
+                    case AttributeControlType.Checkboxes:
                         {
-                            customAttributes = ProductExtensions.AddProductAttribute(
-                                customAttributes,
-                                attribute, "").ToList();
+                            var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
+                                ?.Value;
+                            if (!string.IsNullOrEmpty(cblAttributes))
+                            {
+                                var anyValueSelected = false;
+                                foreach (var item in cblAttributes.Split([','],
+                                             StringSplitOptions.RemoveEmptyEntries))
+                                    if (!string.IsNullOrEmpty(item))
+                                    {
+                                        customAttributes = ProductExtensions.AddProductAttribute(
+                                            customAttributes,
+                                            attribute, item).ToList();
+                                        anyValueSelected = true;
+                                    }
+
+                                if (!anyValueSelected)
+                                    customAttributes = ProductExtensions.AddProductAttribute(
+                                        customAttributes,
+                                        attribute, "").ToList();
+                            }
+                            else
+                            {
+                                customAttributes = ProductExtensions.AddProductAttribute(
+                                    customAttributes,
+                                    attribute, "").ToList();
+                            }
                         }
-                    }
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
                     case AttributeControlType.TextBox:
@@ -1915,40 +1918,40 @@ public class ProductViewModelService : IProductViewModelService
                     case AttributeControlType.RadioList:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    {
-                        var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
-                            ?.Value;
-                        if (!string.IsNullOrEmpty(ctrlAttributes))
-                            customAttributes = ProductExtensions.AddProductAttribute(
-                                customAttributes,
-                                attribute, ctrlAttributes).ToList();
-                    }
+                        {
+                            var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
+                                ?.Value;
+                            if (!string.IsNullOrEmpty(ctrlAttributes))
+                                customAttributes = ProductExtensions.AddProductAttribute(
+                                    customAttributes,
+                                    attribute, ctrlAttributes).ToList();
+                        }
                         break;
                     case AttributeControlType.Checkboxes:
-                    {
-                        var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
-                            ?.Value;
-                        if (!string.IsNullOrEmpty(cblAttributes))
-                            foreach (var item in cblAttributes.Split([','],
-                                         StringSplitOptions.RemoveEmptyEntries))
-                                if (!string.IsNullOrEmpty(item))
-                                    customAttributes = ProductExtensions.AddProductAttribute(
-                                        customAttributes,
-                                        attribute, item).ToList();
-                    }
+                        {
+                            var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)
+                                ?.Value;
+                            if (!string.IsNullOrEmpty(cblAttributes))
+                                foreach (var item in cblAttributes.Split([','],
+                                             StringSplitOptions.RemoveEmptyEntries))
+                                    if (!string.IsNullOrEmpty(item))
+                                        customAttributes = ProductExtensions.AddProductAttribute(
+                                            customAttributes,
+                                            attribute, item).ToList();
+                        }
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
-                    {
-                        //load read-only (already server-side selected) values
-                        var attributeValues = attribute.ProductAttributeValues;
-                        foreach (var selectedAttributeId in attributeValues
-                                     .Where(v => v.IsPreSelected)
-                                     .Select(v => v.Id)
-                                     .ToList())
-                            customAttributes = ProductExtensions.AddProductAttribute(
-                                customAttributes,
-                                attribute, selectedAttributeId).ToList();
-                    }
+                        {
+                            //load read-only (already server-side selected) values
+                            var attributeValues = attribute.ProductAttributeValues;
+                            foreach (var selectedAttributeId in attributeValues
+                                         .Where(v => v.IsPreSelected)
+                                         .Select(v => v.Id)
+                                         .ToList())
+                                customAttributes = ProductExtensions.AddProductAttribute(
+                                    customAttributes,
+                                    attribute, selectedAttributeId).ToList();
+                        }
                         break;
                 }
 

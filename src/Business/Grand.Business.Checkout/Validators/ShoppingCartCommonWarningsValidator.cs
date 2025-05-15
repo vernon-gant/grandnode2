@@ -31,20 +31,20 @@ public class ShoppingCartCommonWarningsValidator : AbstractValidator<ShoppingCar
             switch (value.ShoppingCartType)
             {
                 case ShoppingCartType.ShoppingCart:
-                {
-                    if (value.ShoppingCarts.Count >= shoppingCartSettings.MaximumShoppingCartItems)
-                        context.AddFailure(string.Format(
-                            translationService.GetResource("ShoppingCart.MaximumShoppingCartItems"),
-                            shoppingCartSettings.MaximumShoppingCartItems));
-                }
+                    {
+                        if (value.ShoppingCarts.Count >= shoppingCartSettings.MaximumShoppingCartItems)
+                            context.AddFailure(string.Format(
+                                translationService.GetResource("ShoppingCart.MaximumShoppingCartItems"),
+                                shoppingCartSettings.MaximumShoppingCartItems));
+                    }
                     break;
                 case ShoppingCartType.Wishlist:
-                {
-                    if (value.ShoppingCarts.Count >= shoppingCartSettings.MaximumWishlistItems)
-                        context.AddFailure(string.Format(
-                            translationService.GetResource("ShoppingCart.MaximumWishlistItems"),
-                            shoppingCartSettings.MaximumWishlistItems));
-                }
+                    {
+                        if (value.ShoppingCarts.Count >= shoppingCartSettings.MaximumWishlistItems)
+                            context.AddFailure(string.Format(
+                                translationService.GetResource("ShoppingCart.MaximumWishlistItems"),
+                                shoppingCartSettings.MaximumWishlistItems));
+                    }
                     break;
             }
 

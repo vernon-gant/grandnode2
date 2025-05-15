@@ -73,8 +73,7 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 
     [HttpGet]
@@ -137,8 +136,7 @@ public class DownloadController : BasePublicController
             var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
                 ? download.ContentType
                 : "application/octet-stream";
-            return new FileContentResult(download.DownloadBinary, contentType)
-                { FileDownloadName = fileName + download.Extension };
+            return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
         }
 
         using var memoryStream = new MemoryStream();
@@ -216,8 +214,7 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 
     [HttpGet]
@@ -244,8 +241,7 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 
     [HttpGet]
@@ -279,8 +275,7 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 
     [HttpGet]
@@ -319,8 +314,7 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 
     [HttpGet]
@@ -353,8 +347,7 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 
     [HttpGet]
@@ -388,8 +381,7 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 
     [HttpGet]
@@ -422,7 +414,6 @@ public class DownloadController : BasePublicController
         var contentType = !string.IsNullOrWhiteSpace(download.ContentType)
             ? download.ContentType
             : "application/octet-stream";
-        return new FileContentResult(download.DownloadBinary, contentType)
-            { FileDownloadName = fileName + download.Extension };
+        return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
     }
 }

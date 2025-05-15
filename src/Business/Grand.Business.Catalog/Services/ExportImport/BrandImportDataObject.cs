@@ -17,7 +17,7 @@ public class BrandImportDataObject : IImportDataObject<BrandDto>
     private readonly IPictureService _pictureService;
     private readonly ISlugService _slugService;
     private readonly ISeNameService _seNameService;
-    
+
     public BrandImportDataObject(
         IBrandService brandService,
         IPictureService pictureService,

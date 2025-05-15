@@ -27,8 +27,7 @@ public class GetStatesProvinceHandler : IRequestHandler<GetStatesProvince, IList
         var states =
             await _countryService.GetStateProvincesByCountryId(request.CountryId, _contextAccessor.WorkContext.WorkingLanguage.Id);
         var model = (from s in states
-            select new StateProvinceModel
-                { id = s.Id, name = s.GetTranslation(x => x.Name, _contextAccessor.WorkContext.WorkingLanguage.Id) }).ToList();
+                     select new StateProvinceModel { id = s.Id, name = s.GetTranslation(x => x.Name, _contextAccessor.WorkContext.WorkingLanguage.Id) }).ToList();
         if (request.AddSelectStateItem)
             model.Insert(0,
                 new StateProvinceModel { id = "", name = _translationService.GetResource("Address.SelectState") });

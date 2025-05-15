@@ -51,69 +51,93 @@ public class ShoppingCartInventoryProductValidator : AbstractValidator<ShoppingC
                 switch (value.Product.ManageInventoryMethodId)
                 {
                     case ManageInventoryMethod.DontManageStock:
-                    {
-                        //do nothing
-                    }
+                        {
+                            //do nothing
+                        }
                         break;
                     case ManageInventoryMethod.ManageStock:
-                    {
-                        if (value.Product.BackorderModeId == BackorderMode.NoBackorders)
                         {
-                            var qty = value.ShoppingCartItem.Quantity;
+                            if (value.Product.BackorderModeId == BackorderMode.NoBackorders)
+                            {
+                                var qty = value.ShoppingCartItem.Quantity;
 
-                            qty += value.Customer.ShoppingCartItems
-                                .Where(x => x.ShoppingCartTypeId == value.ShoppingCartItem.ShoppingCartTypeId &&
-                                            x.WarehouseId == warehouseId &&
-                                            x.ProductId == value.ShoppingCartItem.ProductId &&
-                                            x.StoreId == value.ShoppingCartItem.StoreId &&
-                                            x.Id != value.ShoppingCartItem.Id)
-                                .Sum(x => x.Quantity);
+                                qty += value.Customer.ShoppingCartItems
+                                    .Where(x => x.ShoppingCartTypeId == value.ShoppingCartItem.ShoppingCartTypeId &&
+                                                x.WarehouseId == warehouseId &&
+                                                x.ProductId == value.ShoppingCartItem.ProductId &&
+                                                x.StoreId == value.ShoppingCartItem.StoreId &&
+                                                x.Id != value.ShoppingCartItem.Id)
+                                    .Sum(x => x.Quantity);
 
-                            var maximumQuantityCanBeAdded =
-                                stockQuantityService.GetTotalStockQuantity(value.Product, warehouseId: warehouseId);
-                            if (maximumQuantityCanBeAdded < qty)
-                                context.AddFailure(maximumQuantityCanBeAdded <= 0
-                                    ? translationService.GetResource("ShoppingCart.OutOfStock")
-                                    : string.Format(
-                                        translationService.GetResource("ShoppingCart.QuantityExceedsStock"),
-                                        maximumQuantityCanBeAdded));
+                                var maximumQuantityCanBeAdded =
+                                    stockQuantityService.GetTotalStockQuantity(value.Product, warehouseId: warehouseId);
+                                if (maximumQuantityCanBeAdded < qty)
+                                    context.AddFailure(maximumQuantityCanBeAdded <= 0
+                                        ? translationService.GetResource("ShoppingCart.OutOfStock")
+                                        : string.Format(
+                                            translationService.GetResource("ShoppingCart.QuantityExceedsStock"),
+                                            maximumQuantityCanBeAdded));
+                            }
                         }
-                    }
                         break;
                     case ManageInventoryMethod.ManageStockByBundleProducts:
-                    {
-                        foreach (var item in value.Product.BundleProducts)
                         {
-                            var qty = value.ShoppingCartItem.Quantity * item.Quantity;
-                            var p1 = await productService.GetProductById(item.ProductId);
-                            if (p1 is not { BackorderModeId: BackorderMode.NoBackorders }) continue;
-                            if (p1.ManageInventoryMethodId == ManageInventoryMethod.ManageStock)
+                            foreach (var item in value.Product.BundleProducts)
                             {
-                                var maximumQuantityCanBeAdded =
-                                    stockQuantityService.GetTotalStockQuantity(p1, warehouseId: warehouseId);
-                                if (maximumQuantityCanBeAdded < qty)
-                                    context.AddFailure(string.Format(
-                                        translationService.GetResource("ShoppingCart.OutOfStock.BundleProduct"),
-                                        p1.Name));
-                            }
+                                var qty = value.ShoppingCartItem.Quantity * item.Quantity;
+                                var p1 = await productService.GetProductById(item.ProductId);
+                                if (p1 is not { BackorderModeId: BackorderMode.NoBackorders }) continue;
+                                if (p1.ManageInventoryMethodId == ManageInventoryMethod.ManageStock)
+                                {
+                                    var maximumQuantityCanBeAdded =
+                                        stockQuantityService.GetTotalStockQuantity(p1, warehouseId: warehouseId);
+                                    if (maximumQuantityCanBeAdded < qty)
+                                        context.AddFailure(string.Format(
+                                            translationService.GetResource("ShoppingCart.OutOfStock.BundleProduct"),
+                                            p1.Name));
+                                }
 
-                            if (p1.ManageInventoryMethodId != ManageInventoryMethod.ManageStockByAttributes)
-                                continue;
-                            var combination = p1.FindProductAttributeCombination(value.ShoppingCartItem.Attributes);
+                                if (p1.ManageInventoryMethodId != ManageInventoryMethod.ManageStockByAttributes)
+                                    continue;
+                                var combination = p1.FindProductAttributeCombination(value.ShoppingCartItem.Attributes);
+                                if (combination != null)
+                                {
+                                    //combination exists - check stock level
+                                    var stockQuantity =
+                                        stockQuantityService.GetTotalStockQuantityForCombination(p1, combination,
+                                            warehouseId: warehouseId);
+                                    if (!combination.AllowOutOfStockOrders && stockQuantity < qty)
+                                        context.AddFailure(stockQuantity <= 0
+                                            ? string.Format(
+                                                translationService.GetResource(
+                                                    "ShoppingCart.OutOfStock.BundleProduct"), p1.Name)
+                                            : string.Format(
+                                                translationService.GetResource(
+                                                    "ShoppingCart.QuantityExceedsStock.BundleProduct"), p1.Name,
+                                                stockQuantity));
+                                }
+                                else
+                                {
+                                    context.AddFailure(translationService.GetResource("ShoppingCart.Combination.NotExist"));
+                                }
+                            }
+                        }
+                        break;
+                    case ManageInventoryMethod.ManageStockByAttributes:
+                        {
+                            var combination =
+                                value.Product.FindProductAttributeCombination(value.ShoppingCartItem.Attributes);
                             if (combination != null)
                             {
                                 //combination exists - check stock level
                                 var stockQuantity =
-                                    stockQuantityService.GetTotalStockQuantityForCombination(p1, combination,
+                                    stockQuantityService.GetTotalStockQuantityForCombination(value.Product, combination,
                                         warehouseId: warehouseId);
-                                if (!combination.AllowOutOfStockOrders && stockQuantity < qty)
+                                if (!combination.AllowOutOfStockOrders && stockQuantity < value.ShoppingCartItem.Quantity)
                                     context.AddFailure(stockQuantity <= 0
-                                        ? string.Format(
-                                            translationService.GetResource(
-                                                "ShoppingCart.OutOfStock.BundleProduct"), p1.Name)
+                                        ? translationService.GetResource("ShoppingCart.OutOfStock")
                                         : string.Format(
-                                            translationService.GetResource(
-                                                "ShoppingCart.QuantityExceedsStock.BundleProduct"), p1.Name,
+                                            translationService.GetResource("ShoppingCart.QuantityExceedsStock"),
                                             stockQuantity));
                             }
                             else
@@ -121,30 +145,6 @@ public class ShoppingCartInventoryProductValidator : AbstractValidator<ShoppingC
                                 context.AddFailure(translationService.GetResource("ShoppingCart.Combination.NotExist"));
                             }
                         }
-                    }
-                        break;
-                    case ManageInventoryMethod.ManageStockByAttributes:
-                    {
-                        var combination =
-                            value.Product.FindProductAttributeCombination(value.ShoppingCartItem.Attributes);
-                        if (combination != null)
-                        {
-                            //combination exists - check stock level
-                            var stockQuantity =
-                                stockQuantityService.GetTotalStockQuantityForCombination(value.Product, combination,
-                                    warehouseId: warehouseId);
-                            if (!combination.AllowOutOfStockOrders && stockQuantity < value.ShoppingCartItem.Quantity)
-                                context.AddFailure(stockQuantity <= 0
-                                    ? translationService.GetResource("ShoppingCart.OutOfStock")
-                                    : string.Format(
-                                        translationService.GetResource("ShoppingCart.QuantityExceedsStock"),
-                                        stockQuantity));
-                        }
-                        else
-                        {
-                            context.AddFailure(translationService.GetResource("ShoppingCart.Combination.NotExist"));
-                        }
-                    }
                         break;
                 }
         });

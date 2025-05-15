@@ -32,8 +32,8 @@ public class CourseLessonService : ICourseLessonService
         ArgumentNullException.ThrowIfNullOrEmpty(courseId);
 
         var query = from c in _courseLessonRepository.Table
-            where c.CourseId == courseId
-            select c;
+                    where c.CourseId == courseId
+                    select c;
 
         return await Task.FromResult(query.ToList());
     }

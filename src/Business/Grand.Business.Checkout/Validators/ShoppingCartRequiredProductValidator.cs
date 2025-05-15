@@ -35,9 +35,9 @@ public class ShoppingCartRequiredProductValidator : AbstractValidator<ShoppingCa
             }
 
             foreach (var rp in from rp in requiredProducts
-                     let alreadyInTheCart = cart.Any(sci => sci.ProductId == rp.Id)
-                     where !alreadyInTheCart
-                     select rp)
+                               let alreadyInTheCart = cart.Any(sci => sci.ProductId == rp.Id)
+                               where !alreadyInTheCart
+                               select rp)
                 context.AddFailure(string.Format(translationService.GetResource("ShoppingCart.RequiredProductWarning"),
                     rp.Name));
         });

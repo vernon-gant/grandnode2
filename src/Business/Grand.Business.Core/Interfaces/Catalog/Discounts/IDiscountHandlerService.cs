@@ -29,5 +29,5 @@ public interface IDiscountHandlerService
     /// <returns></returns>
     Task<(List<ApplyDiscount> appliedDiscount, double discountAmount)> GetDiscountAmount(Product product, Customer customer, Store store, Currency currency,
         double productPriceWithoutDiscount);
-    
+
 }

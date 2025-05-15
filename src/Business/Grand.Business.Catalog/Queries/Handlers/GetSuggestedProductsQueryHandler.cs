@@ -27,9 +27,9 @@ public class GetSuggestedProductsQueryHandler : IRequestHandler<GetSuggestedProd
             string.Format(CacheKey.PRODUCTS_CUSTOMER_TAG, string.Join(",", request.CustomerTagIds)), async () =>
             {
                 var query = from cr in _customerTagProductRepository.Table
-                    where request.CustomerTagIds.Contains(cr.CustomerTagId)
-                    orderby cr.DisplayOrder
-                    select cr.ProductId;
+                            where request.CustomerTagIds.Contains(cr.CustomerTagId)
+                            orderby cr.DisplayOrder
+                            select cr.ProductId;
 
                 var productIds = query.Take(request.ProductsNumber).ToList();
 

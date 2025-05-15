@@ -38,52 +38,52 @@ public class GetParseCustomAttributesHandler : IRequestHandler<GetParseCustomAtt
             {
                 case AttributeControlType.DropdownList:
                 case AttributeControlType.RadioList:
-                {
-                    var ctrlAttributes = request.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(ctrlAttributes))
-                        customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                            attribute, ctrlAttributes).ToList();
-                }
+                    {
+                        var ctrlAttributes = request.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(ctrlAttributes))
+                            customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                attribute, ctrlAttributes).ToList();
+                    }
                     break;
                 case AttributeControlType.Checkboxes:
-                {
-                    var cblAttributes = request.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(cblAttributes))
-                        foreach (var item in cblAttributes.Split(','))
-                            if (!string.IsNullOrEmpty(item))
-                                customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                                    attribute, item).ToList();
-                }
+                    {
+                        var cblAttributes = request.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(cblAttributes))
+                            foreach (var item in cblAttributes.Split(','))
+                                if (!string.IsNullOrEmpty(item))
+                                    customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                        attribute, item).ToList();
+                    }
                     break;
                 case AttributeControlType.ReadonlyCheckboxes:
-                {
-                    //load read-only (already server-side selected) values
-                    var attributeValues = attribute.CustomerAttributeValues;
-                    foreach (var selectedAttributeId in attributeValues
-                                 .Where(v => v.IsPreSelected)
-                                 .Select(v => v.Id)
-                                 .ToList())
-                        customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                            attribute, selectedAttributeId).ToList();
-                }
+                    {
+                        //load read-only (already server-side selected) values
+                        var attributeValues = attribute.CustomerAttributeValues;
+                        foreach (var selectedAttributeId in attributeValues
+                                     .Where(v => v.IsPreSelected)
+                                     .Select(v => v.Id)
+                                     .ToList())
+                            customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                attribute, selectedAttributeId).ToList();
+                    }
                     break;
                 case AttributeControlType.TextBox:
                 case AttributeControlType.MultilineTextbox:
                 case AttributeControlType.Hidden:
-                {
-                    var ctrlAttributes = request.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                    if (!string.IsNullOrEmpty(ctrlAttributes))
                     {
-                        var enteredText = ctrlAttributes.Trim();
-                        customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                            attribute, enteredText).ToList();
+                        var ctrlAttributes = request.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                        if (!string.IsNullOrEmpty(ctrlAttributes))
+                        {
+                            var enteredText = ctrlAttributes.Trim();
+                            customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                attribute, enteredText).ToList();
+                        }
+                        else
+                        {
+                            customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
+                                attribute, "").ToList();
+                        }
                     }
-                    else
-                    {
-                        customAttributes = _customerAttributeParser.AddCustomerAttribute(customAttributes,
-                            attribute, "").ToList();
-                    }
-                }
                     break;
                 case AttributeControlType.Datepicker:
                 case AttributeControlType.ColorSquares:

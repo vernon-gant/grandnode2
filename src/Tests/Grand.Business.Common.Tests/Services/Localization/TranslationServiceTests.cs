@@ -68,12 +68,9 @@ public class TranslationServiceTests
     public async Task GetAllResourcesTest()
     {
         //Arrange
-        await _translationService.InsertTranslateResource(new TranslationResource
-            { LanguageId = "1", Name = "test1", Value = "val1" });
-        await _translationService.InsertTranslateResource(new TranslationResource
-            { LanguageId = "1", Name = "test2", Value = "val2" });
-        await _translationService.InsertTranslateResource(new TranslationResource
-            { LanguageId = "2", Name = "test3", Value = "val3" });
+        await _translationService.InsertTranslateResource(new TranslationResource { LanguageId = "1", Name = "test1", Value = "val1" });
+        await _translationService.InsertTranslateResource(new TranslationResource { LanguageId = "1", Name = "test2", Value = "val2" });
+        await _translationService.InsertTranslateResource(new TranslationResource { LanguageId = "2", Name = "test3", Value = "val3" });
 
         //Act
         var result = _translationService.GetAllResources("1");
@@ -129,12 +126,9 @@ public class TranslationServiceTests
     public async Task GetResourceTest()
     {
         //Arrange
-        await _translationService.InsertTranslateResource(new TranslationResource
-            { Name = "name1", Value = "value1", LanguageId = "1" });
-        await _translationService.InsertTranslateResource(new TranslationResource
-            { Name = "name2", Value = "value2", LanguageId = "1" });
-        await _translationService.InsertTranslateResource(new TranslationResource
-            { Name = "name3", Value = "value3", LanguageId = "2" });
+        await _translationService.InsertTranslateResource(new TranslationResource { Name = "name1", Value = "value1", LanguageId = "1" });
+        await _translationService.InsertTranslateResource(new TranslationResource { Name = "name2", Value = "value2", LanguageId = "1" });
+        await _translationService.InsertTranslateResource(new TranslationResource { Name = "name3", Value = "value3", LanguageId = "2" });
 
         //Act
         var result = _translationService.GetResource("name1");
@@ -148,8 +142,7 @@ public class TranslationServiceTests
     public async Task ExportResourcesToXmlTest()
     {
         //Arrange
-        await _translationService.InsertTranslateResource(new TranslationResource
-            { Name = "name1", Value = "value1", LanguageId = "1" });
+        await _translationService.InsertTranslateResource(new TranslationResource { Name = "name1", Value = "value1", LanguageId = "1" });
 
         //Act
         var result = await _translationService.ExportResourcesToXml(new Language { Id = "1", Name = "en" });

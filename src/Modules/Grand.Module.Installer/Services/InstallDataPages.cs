@@ -166,7 +166,7 @@ public partial class InstallationService
         pages.ForEach(x => _pageRepository.Insert(x));
 
         var lpages = from p in _pageRepository.Table
-            select p;
+                     select p;
         //search engine names
         foreach (var page in lpages)
         {

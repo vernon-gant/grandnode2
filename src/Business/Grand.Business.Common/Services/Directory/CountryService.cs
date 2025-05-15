@@ -64,7 +64,7 @@ public class CountryService : ICountryService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _countryRepository.Table
-                select p;
+                        select p;
 
             if (!showHidden)
                 query = query.Where(c => c.Published);
@@ -72,8 +72,8 @@ public class CountryService : ICountryService
             if (!showHidden && !_accessControlConfig.IgnoreStoreLimitations && !string.IsNullOrEmpty(storeId))
                 //Store acl
                 query = from p in query
-                    where !p.LimitedToStores || p.Stores.Contains(storeId)
-                    select p;
+                        where !p.LimitedToStores || p.Stores.Contains(storeId)
+                        select p;
 
             var countries = await Task.FromResult(query.OrderBy(x => x.DisplayOrder).ThenBy(x => x.Name).ToList());
             if (!string.IsNullOrEmpty(languageId))
@@ -138,8 +138,8 @@ public class CountryService : ICountryService
             return new List<Country>();
 
         var query = from c in _countryRepository.Table
-            where countryIds.Contains(c.Id)
-            select c;
+                    where countryIds.Contains(c.Id)
+                    select c;
         var countries = await Task.FromResult(query.ToList());
         //sort by passed identifiers
         return countryIds.Select(id => countries.FirstOrDefault(country => country.Id == id))

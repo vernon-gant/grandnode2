@@ -51,8 +51,8 @@ public class ProductLayoutService : IProductLayoutService
         return await _cacheBase.GetAsync(CacheKey.PRODUCT_LAYOUT_ALL, async () =>
         {
             var query = from pt in _productLayoutRepository.Table
-                orderby pt.DisplayOrder
-                select pt;
+                        orderby pt.DisplayOrder
+                        select pt;
             return await Task.FromResult(query.ToList());
         });
     }

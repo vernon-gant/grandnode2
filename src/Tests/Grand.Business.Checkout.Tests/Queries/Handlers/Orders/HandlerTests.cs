@@ -57,8 +57,7 @@ public class HandlerTests
         var canCaptureQueryHandler = new CanCaptureQueryHandler(_paymentServiceMock.Object);
         //Act
         var result = await canCaptureQueryHandler.Handle(
-            new CanCaptureQuery
-                { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Authorized } },
+            new CanCaptureQuery { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Authorized } },
             CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -71,8 +70,7 @@ public class HandlerTests
         var canCaptureQueryHandler = new CanCaptureQueryHandler(_paymentServiceMock.Object);
         //Act
         var result = await canCaptureQueryHandler.Handle(
-            new CanCaptureQuery
-                { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Paid } },
+            new CanCaptureQuery { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Paid } },
             CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -85,8 +83,7 @@ public class HandlerTests
         var canMarkPaymentTransactionAsAuthorizedQueryHandler = new CanMarkPaymentTransactionAsAuthorizedQueryHandler();
         //Act
         var result = await canMarkPaymentTransactionAsAuthorizedQueryHandler.Handle(
-            new CanMarkPaymentTransactionAsAuthorizedQuery
-                { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Canceled } },
+            new CanMarkPaymentTransactionAsAuthorizedQuery { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Canceled } },
             CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -99,8 +96,7 @@ public class HandlerTests
         var canMarkPaymentTransactionAsAuthorizedQueryHandler = new CanMarkPaymentTransactionAsAuthorizedQueryHandler();
         //Act
         var result = await canMarkPaymentTransactionAsAuthorizedQueryHandler.Handle(
-            new CanMarkPaymentTransactionAsAuthorizedQuery
-                { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending } },
+            new CanMarkPaymentTransactionAsAuthorizedQuery { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending } },
             CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -113,8 +109,7 @@ public class HandlerTests
         var canMarkPaymentTransactionAsPaidQueryHandler = new CanMarkPaymentTransactionAsPaidQueryHandler();
         //Act
         var result = await canMarkPaymentTransactionAsPaidQueryHandler.Handle(
-            new CanMarkPaymentTransactionAsPaidQuery
-                { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Authorized } },
+            new CanMarkPaymentTransactionAsPaidQuery { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Authorized } },
             CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -127,8 +122,7 @@ public class HandlerTests
         var canMarkPaymentTransactionAsPaidQueryHandler = new CanMarkPaymentTransactionAsPaidQueryHandler();
         //Act
         var result = await canMarkPaymentTransactionAsPaidQueryHandler.Handle(
-            new CanMarkPaymentTransactionAsPaidQuery
-                { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Canceled } },
+            new CanMarkPaymentTransactionAsPaidQuery { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Canceled } },
             CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -142,8 +136,7 @@ public class HandlerTests
         //Act
         var result = await canPartiallyPaidOfflineQueryHandler.Handle(
             new CanPartiallyPaidOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 20 },
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 20 },
                 AmountToPaid = 10
             }, CancellationToken.None);
         //Assert
@@ -158,8 +151,7 @@ public class HandlerTests
         //Act
         var result = await canPartiallyPaidOfflineQueryHandler.Handle(
             new CanPartiallyPaidOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 20 },
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 20 },
                 AmountToPaid = 10
             }, CancellationToken.None);
         //Assert
@@ -174,8 +166,7 @@ public class HandlerTests
         //Act
         var result = await canPartiallyRefundOfflineQueryHandler.Handle(
             new CanPartiallyRefundOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 20 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 20 }
             }, CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -189,8 +180,7 @@ public class HandlerTests
         //Act
         var result = await canPartiallyRefundOfflineQueryHandler.Handle(
             new CanPartiallyRefundOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 20 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 20 }
             }, CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -204,8 +194,7 @@ public class HandlerTests
         //Act
         var result = await canPartiallyRefundQueryHandler.Handle(
             new CanPartiallyRefundQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -218,8 +207,7 @@ public class HandlerTests
         var canPartiallyRefundQueryHandler = new CanPartiallyRefundQueryHandler(_paymentServiceMock.Object);
         //Act
         var result = await canPartiallyRefundQueryHandler.Handle(
-            new CanPartiallyRefundQuery
-                { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending } },
+            new CanPartiallyRefundQuery { PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending } },
             CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -233,8 +221,7 @@ public class HandlerTests
         //Act
         var result = await canRefundOfflineQueryHandler.Handle(
             new CanRefundOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -248,8 +235,7 @@ public class HandlerTests
         //Act
         var result = await canRefundOfflineQueryHandler.Handle(
             new CanRefundOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -263,8 +249,7 @@ public class HandlerTests
         //Act
         var result = await canRefundQueryHandler.Handle(
             new CanRefundQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -278,8 +263,7 @@ public class HandlerTests
         //Act
         var result = await canRefundQueryHandler.Handle(
             new CanRefundQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Pending, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -293,8 +277,7 @@ public class HandlerTests
         //Act
         var result = await canVoidOfflineQueryHandler.Handle(
             new CanVoidOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Authorized, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Authorized, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -308,8 +291,7 @@ public class HandlerTests
         //Act
         var result = await canVoidOfflineQueryHandler.Handle(
             new CanVoidOfflineQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.PartialPaid, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.PartialPaid, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsFalse(result);
@@ -323,8 +305,7 @@ public class HandlerTests
         //Act
         var result = await canVoidQueryHandler.Handle(
             new CanVoidQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Authorized, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Authorized, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsTrue(result);
@@ -338,8 +319,7 @@ public class HandlerTests
         //Act
         var result = await canVoidQueryHandler.Handle(
             new CanVoidQuery {
-                PaymentTransaction = new PaymentTransaction
-                    { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
+                PaymentTransaction = new PaymentTransaction { TransactionStatus = TransactionStatus.Paid, TransactionAmount = 10 }
             }, CancellationToken.None);
         //Assert
         Assert.IsFalse(result);

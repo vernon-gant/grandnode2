@@ -69,7 +69,7 @@ public class CustomerViewModelService : ICustomerViewModelService
     private readonly IVendorService _vendorService;
     private readonly IContextAccessor _contextAccessor;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     public CustomerViewModelService(
         ICustomerService customerService,
         IGroupService groupService,
@@ -97,7 +97,7 @@ public class CustomerViewModelService : ICustomerViewModelService
         TaxSettings taxSettings,
         LoyaltyPointsSettings loyaltyPointsSettings,
         AddressSettings addressSettings,
-        CommonSettings commonSettings, 
+        CommonSettings commonSettings,
         IEnumTranslationService enumTranslationService)
     {
         _customerService = customerService;
@@ -139,8 +139,7 @@ public class CustomerViewModelService : ICustomerViewModelService
             CompanyEnabled = _customerSettings.CompanyEnabled,
             PhoneEnabled = _customerSettings.PhoneEnabled,
             ZipPostalCodeEnabled = _customerSettings.ZipPostalCodeEnabled,
-            AvailableCustomerGroups = customerGroups.Select(cr => new SelectListItem
-                { Text = cr.Name, Value = cr.Id.ToString(), Selected = cr.Id == registered.Id }).ToList(),
+            AvailableCustomerGroups = customerGroups.Select(cr => new SelectListItem { Text = cr.Name, Value = cr.Id.ToString(), Selected = cr.Id == registered.Id }).ToList(),
             AvailableCustomerTags = (await _customerTagService.GetAllCustomerTags())
                 .Select(ct => new SelectListItem { Text = ct.Name, Value = ct.Id.ToString() }).ToList(),
             SearchCustomerGroupIds = new List<string> { customerGroups.FirstOrDefault(x => x.Id == registered.Id)?.Id }
@@ -291,8 +290,7 @@ public class CustomerViewModelService : ICustomerViewModelService
         //countries and states
         if (_customerSettings.CountryEnabled)
         {
-            model.AvailableCountries.Add(new SelectListItem
-                { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+            model.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
             foreach (var c in await _countryService.GetAllCountries(showHidden: true))
                 model.AvailableCountries.Add(new SelectListItem {
                     Text = c.Name,
@@ -304,12 +302,10 @@ public class CustomerViewModelService : ICustomerViewModelService
             {
                 //states
                 var states = (await _countryService.GetCountryById(model.CountryId))?.StateProvinces;
-                model.AvailableStates.Add(new SelectListItem
-                    { Text = _translationService.GetResource("Admin.Address.SelectState"), Value = "" });
+                model.AvailableStates.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectState"), Value = "" });
                 if (states != null)
                     foreach (var s in states)
-                        model.AvailableStates.Add(new SelectListItem
-                            { Text = s.Name, Value = s.Id, Selected = s.Id == model.StateProvinceId });
+                        model.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == model.StateProvinceId });
             }
         }
 
@@ -389,45 +385,32 @@ public class CustomerViewModelService : ICustomerViewModelService
         };
 
         //user fields
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.FirstName, Value = model.FirstName, StoreId = "" });
-        customer.UserFields.Add(new UserField
-            { Key = SystemCustomerFieldNames.LastName, Value = model.LastName, StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.FirstName, Value = model.FirstName, StoreId = "" });
+        customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.LastName, Value = model.LastName, StoreId = "" });
 
         if (_customerSettings.GenderEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.Gender, Value = model.Gender, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.Gender, Value = model.Gender, StoreId = "" });
 
         if (_customerSettings.DateOfBirthEnabled && model.DateOfBirth.HasValue)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.DateOfBirth, Value = model.DateOfBirth.ToString(), StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.DateOfBirth, Value = model.DateOfBirth.ToString(), StoreId = "" });
         if (_customerSettings.CompanyEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.Company, Value = model.Company, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.Company, Value = model.Company, StoreId = "" });
         if (_customerSettings.StreetAddressEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.StreetAddress, Value = model.StreetAddress, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.StreetAddress, Value = model.StreetAddress, StoreId = "" });
         if (_customerSettings.StreetAddress2Enabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.StreetAddress2, Value = model.StreetAddress2, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.StreetAddress2, Value = model.StreetAddress2, StoreId = "" });
         if (_customerSettings.ZipPostalCodeEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.ZipPostalCode, Value = model.ZipPostalCode, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.ZipPostalCode, Value = model.ZipPostalCode, StoreId = "" });
         if (_customerSettings.CityEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.City, Value = model.City, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.City, Value = model.City, StoreId = "" });
         if (_customerSettings.CountryEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.CountryId, Value = model.CountryId, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.CountryId, Value = model.CountryId, StoreId = "" });
         if (_customerSettings.CountryEnabled && _customerSettings.StateProvinceEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.StateProvinceId, Value = model.StateProvinceId, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.StateProvinceId, Value = model.StateProvinceId, StoreId = "" });
         if (_customerSettings.PhoneEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.Phone, Value = model.Phone, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.Phone, Value = model.Phone, StoreId = "" });
         if (_customerSettings.FaxEnabled)
-            customer.UserFields.Add(new UserField
-                { Key = SystemCustomerFieldNames.Fax, Value = model.Fax, StoreId = "" });
+            customer.UserFields.Add(new UserField { Key = SystemCustomerFieldNames.Fax, Value = model.Fax, StoreId = "" });
 
         await _customerService.InsertCustomer(customer);
 
@@ -798,19 +781,16 @@ public class CustomerViewModelService : ICustomerViewModelService
         model.Address.AddressTypeEnabled = _addressSettings.AddressTypeEnabled;
 
         //countries
-        model.Address.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.Address.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.Address.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = c.Id == model.Address.CountryId });
+            model.Address.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = c.Id == model.Address.CountryId });
         //states
         var states = !string.IsNullOrEmpty(model.Address.CountryId)
             ? (await _countryService.GetCountryById(model.Address.CountryId))?.StateProvinces
             : new List<StateProvince>();
         if (states?.Count > 0)
             foreach (var s in states)
-                model.Address.AvailableStates.Add(new SelectListItem
-                    { Text = s.Name, Value = s.Id, Selected = s.Id == model.Address.StateProvinceId });
+                model.Address.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == model.Address.StateProvinceId });
 
         //customer attribute services
         await model.Address.PrepareCustomAddressAttributes(address, _addressAttributeService, _addressAttributeParser);
@@ -946,14 +926,12 @@ public class CustomerViewModelService : ICustomerViewModelService
         var model = new CustomerModel.AddProductModel();
 
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await _vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 
@@ -984,14 +962,12 @@ public class CustomerViewModelService : ICustomerViewModelService
                 if (!personalized)
                 {
                     if (!(await _customerProductService.GetPriceByCustomerProduct(customerId, id)).HasValue)
-                        await _customerProductService.InsertCustomerProductPrice(new CustomerProductPrice
-                            { CustomerId = customerId, ProductId = id, Price = product.Price });
+                        await _customerProductService.InsertCustomerProductPrice(new CustomerProductPrice { CustomerId = customerId, ProductId = id, Price = product.Price });
                 }
                 else
                 {
                     if (await _customerProductService.GetCustomerProduct(customerId, id) == null)
-                        await _customerProductService.InsertCustomerProduct(new CustomerProduct
-                            { CustomerId = customerId, ProductId = id, DisplayOrder = 0 });
+                        await _customerProductService.InsertCustomerProduct(new CustomerProduct { CustomerId = customerId, ProductId = id, DisplayOrder = 0 });
                 }
             }
         }
@@ -1349,41 +1325,41 @@ public class CustomerViewModelService : ICustomerViewModelService
                     case AttributeControlType.DropdownList:
                     case AttributeControlType.RadioList:
                     case AttributeControlType.Checkboxes:
-                    {
-                        if (customer.Attributes.Any())
                         {
-                            //clear default selection
-                            foreach (var item in attributeModel.Values)
-                                item.IsPreSelected = false;
+                            if (customer.Attributes.Any())
+                            {
+                                //clear default selection
+                                foreach (var item in attributeModel.Values)
+                                    item.IsPreSelected = false;
 
-                            //select new values
-                            var selectedValues =
-                                await _customerAttributeParser.ParseCustomerAttributeValues(customer.Attributes);
-                            foreach (var attributeValue in selectedValues)
-                                if (attributeModel.Id == attributeValue.CustomerAttributeId)
-                                    foreach (var item in attributeModel.Values)
-                                        if (attributeValue.Id == item.Id)
-                                            item.IsPreSelected = true;
+                                //select new values
+                                var selectedValues =
+                                    await _customerAttributeParser.ParseCustomerAttributeValues(customer.Attributes);
+                                foreach (var attributeValue in selectedValues)
+                                    if (attributeModel.Id == attributeValue.CustomerAttributeId)
+                                        foreach (var item in attributeModel.Values)
+                                            if (attributeValue.Id == item.Id)
+                                                item.IsPreSelected = true;
+                            }
                         }
-                    }
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
-                    {
-                        //do nothing
-                        //values are already pre-set
-                    }
+                        {
+                            //do nothing
+                            //values are already pre-set
+                        }
                         break;
                     case AttributeControlType.TextBox:
                     case AttributeControlType.MultilineTextbox:
-                    {
-                        if (customer.Attributes.Any())
                         {
-                            var enteredText = customer.Attributes.Where(x => x.Key == attribute.Id).Select(x => x.Value)
-                                .ToList();
-                            if (enteredText.Count > 0)
-                                attributeModel.DefaultValue = enteredText[0];
+                            if (customer.Attributes.Any())
+                            {
+                                var enteredText = customer.Attributes.Where(x => x.Key == attribute.Id).Select(x => x.Value)
+                                    .ToList();
+                                if (enteredText.Count > 0)
+                                    attributeModel.DefaultValue = enteredText[0];
+                            }
                         }
-                    }
                         break;
                     case AttributeControlType.Datepicker:
                     case AttributeControlType.ColorSquares:

@@ -1,6 +1,6 @@
 ﻿using Grand.Business.Core.Interfaces.System.ScheduleTasks;
-using Grand.Module.ScheduledTasks.BackgroundServices;
 using Grand.Infrastructure;
+using Grand.Module.ScheduledTasks.BackgroundServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

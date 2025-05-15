@@ -4,8 +4,8 @@ using Grand.Business.Core.Interfaces.Common.Configuration;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Stores;
-using Grand.Domain.Permissions;
 using Grand.Domain.Directory;
+using Grand.Domain.Permissions;
 using Grand.Web.Common.Controllers;
 using Grand.Web.Common.DataSource;
 using Grand.Web.Common.Filters;
@@ -271,36 +271,37 @@ public class ShippingByWeightController : BaseShippingController
         model.AvailableStores.Add(new SelectListItem { Text = "*", Value = "" });
         foreach (var store in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem {
-                Text = store.Shortcut, Value = store.Id,
+                Text = store.Shortcut,
+                Value = store.Id,
                 Selected = selectedStore != null && store.Id == selectedStore.Id
             });
         //warehouses
         model.AvailableWarehouses.Add(new SelectListItem { Text = "*", Value = "" });
         foreach (var warehouse in await _warehouseService.GetAllWarehouses())
             model.AvailableWarehouses.Add(new SelectListItem {
-                Text = warehouse.Name, Value = warehouse.Id,
+                Text = warehouse.Name,
+                Value = warehouse.Id,
                 Selected = selectedWarehouse != null && warehouse.Id == selectedWarehouse.Id
             });
         //shipping methods
         foreach (var sm in shippingMethods)
             model.AvailableShippingMethods.Add(new SelectListItem {
-                Text = sm.Name, Value = sm.Id,
+                Text = sm.Name,
+                Value = sm.Id,
                 Selected = selectedShippingMethod != null && sm.Id == selectedShippingMethod.Id
             });
         //countries
         model.AvailableCountries.Add(new SelectListItem { Text = "*", Value = "" });
         var countries = await _countryService.GetAllCountries(showHidden: true);
         foreach (var c in countries)
-            model.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = selectedCountry != null && c.Id == selectedCountry.Id });
+            model.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = selectedCountry != null && c.Id == selectedCountry.Id });
         //states
         var states = selectedCountry != null
             ? await _countryService.GetStateProvincesByCountryId(selectedCountry.Id)
             : new List<StateProvince>();
         model.AvailableStates.Add(new SelectListItem { Text = "*", Value = "" });
         foreach (var s in states)
-            model.AvailableStates.Add(new SelectListItem
-                { Text = s.Name, Value = s.Id, Selected = selectedState != null && s.Id == selectedState.Id });
+            model.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = selectedState != null && s.Id == selectedState.Id });
 
         return View(model);
     }

@@ -101,9 +101,9 @@ public class SlugService : ISlugService
         slug = slug.ToLowerInvariant();
 
         var query = from ur in _urlEntityRepository.Table
-            where ur.Slug == slug
-            orderby ur.IsActive
-            select ur;
+                    where ur.Slug == slug
+                    orderby ur.IsActive
+                    select ur;
         return await Task.FromResult(query.FirstOrDefault());
     }
 
@@ -139,7 +139,7 @@ public class SlugService : ISlugService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from p in _urlEntityRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrWhiteSpace(slug))
             query = query.Where(ur => ur.Slug.Contains(slug.ToLowerInvariant()));
@@ -165,11 +165,11 @@ public class SlugService : ISlugService
         {
             var source = _urlEntityRepository.Table;
             var query = from ur in source
-                where ur.EntityId == entityId &&
-                      ur.EntityName == entityName &&
-                      ur.LanguageId == languageId &&
-                      ur.IsActive
-                select ur.Slug;
+                        where ur.EntityId == entityId &&
+                              ur.EntityName == entityName &&
+                              ur.LanguageId == languageId &&
+                              ur.IsActive
+                        select ur.Slug;
             var slug = await Task.FromResult(query.FirstOrDefault()) ?? "";
             return slug;
         });
@@ -191,10 +191,10 @@ public class SlugService : ISlugService
         var entityName = typeof(T).Name;
 
         var query = from ur in _urlEntityRepository.Table
-            where ur.EntityId == entityId &&
-                  ur.EntityName == entityName &&
-                  ur.LanguageId == languageId
-            select ur;
+                    where ur.EntityId == entityId &&
+                          ur.EntityName == entityName &&
+                          ur.LanguageId == languageId
+                    select ur;
 
         var allUrlEntity = query.ToList();
         var activeUrlEntity = allUrlEntity.FirstOrDefault(x => x.IsActive);

@@ -54,7 +54,7 @@ public class LanguageService : ILanguageService
         var languages = await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _languageRepository.Table
-                select p;
+                        select p;
 
             if (!showHidden)
                 query = query.Where(l => l.Published);
@@ -94,8 +94,8 @@ public class LanguageService : ILanguageService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from q in _languageRepository.Table
-                where q.UniqueSeoCode.ToLowerInvariant() == languageCode.ToLowerInvariant()
-                select q;
+                        where q.UniqueSeoCode.ToLowerInvariant() == languageCode.ToLowerInvariant()
+                        select q;
             return await Task.FromResult(query.FirstOrDefault());
         });
     }

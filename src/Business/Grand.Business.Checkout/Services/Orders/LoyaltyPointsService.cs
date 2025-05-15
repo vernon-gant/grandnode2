@@ -49,7 +49,7 @@ public class LoyaltyPointsService : ILoyaltyPointsService
     public virtual async Task<int> GetLoyaltyPointsBalance(string customerId, string storeId)
     {
         var query = from p in _rphRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(customerId))
             query = query.Where(rph => rph.CustomerId == customerId);
@@ -96,7 +96,7 @@ public class LoyaltyPointsService : ILoyaltyPointsService
         string storeId = "", bool showAll = false)
     {
         var query = from p in _rphRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(customerId))
             query = query.Where(rph => rph.CustomerId == customerId);

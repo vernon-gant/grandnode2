@@ -124,7 +124,9 @@ public class AuthorizeMenuAttributeTests
     {
         // Arrange
         var menuSiteMap = new AdminSiteMap {
-            AllPermissions = true, PermissionNames = new List<string> { "Permission1" }, ActionName = "SampleAction",
+            AllPermissions = true,
+            PermissionNames = new List<string> { "Permission1" },
+            ActionName = "SampleAction",
             ControllerName = "SampleController"
         };
         _mockAdminSiteMapService.Setup(s => s.GetSiteMap()).ReturnsAsync(new List<AdminSiteMap> { menuSiteMap });
@@ -152,7 +154,9 @@ public class AuthorizeMenuAttributeTests
     {
         // Arrange
         var menuSiteMap = new AdminSiteMap {
-            AllPermissions = true, PermissionNames = new List<string>(), ActionName = "SampleAction",
+            AllPermissions = true,
+            PermissionNames = new List<string>(),
+            ActionName = "SampleAction",
             ControllerName = "SampleController"
         };
         _mockAdminSiteMapService.Setup(s => s.GetSiteMap()).ReturnsAsync(new List<AdminSiteMap> { menuSiteMap });
@@ -181,7 +185,9 @@ public class AuthorizeMenuAttributeTests
     {
         // Arrange
         var menuSiteMap = new AdminSiteMap {
-            AllPermissions = false, PermissionNames = new List<string> { "Permission1" }, ActionName = "SampleAction",
+            AllPermissions = false,
+            PermissionNames = new List<string> { "Permission1" },
+            ActionName = "SampleAction",
             ControllerName = "SampleController"
         };
         _mockAdminSiteMapService.Setup(s => s.GetSiteMap()).ReturnsAsync(new List<AdminSiteMap> { menuSiteMap });
@@ -210,7 +216,9 @@ public class AuthorizeMenuAttributeTests
     {
         // Arrange
         var menuSiteMap = new AdminSiteMap {
-            AllPermissions = false, PermissionNames = new List<string> { "Permission1" }, ActionName = "SampleAction",
+            AllPermissions = false,
+            PermissionNames = new List<string> { "Permission1" },
+            ActionName = "SampleAction",
             ControllerName = "SampleController"
         };
         _mockAdminSiteMapService.Setup(s => s.GetSiteMap()).ReturnsAsync(new List<AdminSiteMap> { menuSiteMap });

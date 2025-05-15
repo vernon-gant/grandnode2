@@ -108,7 +108,7 @@ public class PaymentBrainTreeController : BasePaymentController
         var results = await validator.ValidateAsync(model);
         if (results.IsValid) return View("PaymentInfo", model);
         var query = from error in results.Errors
-            select error.ErrorMessage;
+                    select error.ErrorMessage;
         model.Errors = string.Join(", ", query);
         return View("PaymentInfo", model);
     }

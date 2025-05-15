@@ -3,9 +3,9 @@ using Grand.Business.Core.Interfaces.Catalog.Categories;
 using Grand.Business.Core.Interfaces.Catalog.Collections;
 using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Business.Core.Interfaces.Cms;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
 using Grand.Domain.Pages;
+using Grand.Domain.Permissions;
 using Grand.Web.Admin.Extensions.Mapping.Layouts;
 using Grand.Web.Admin.Models.Layouts;
 using Grand.Web.Common.DataSource;
@@ -93,13 +93,13 @@ public class LayoutController : BaseAdminController
             case false:
                 return Json(new DataSourceResult { Errors = ModelState.SerializeErrors() });
             case true:
-            {
-                var layout = new CategoryLayout();
-                layout = model.ToEntity(layout);
-                await _categoryLayoutService.InsertCategoryLayout(layout);
+                {
+                    var layout = new CategoryLayout();
+                    layout = model.ToEntity(layout);
+                    await _categoryLayoutService.InsertCategoryLayout(layout);
 
-                return new JsonResult("");
-            }
+                    return new JsonResult("");
+                }
         }
     }
 
@@ -167,12 +167,12 @@ public class LayoutController : BaseAdminController
             case false:
                 return Json(new DataSourceResult { Errors = ModelState.SerializeErrors() });
             case true:
-            {
-                var layout = new BrandLayout();
-                layout = model.ToEntity(layout);
-                await _brandLayoutService.InsertBrandLayout(layout);
-                return new JsonResult("");
-            }
+                {
+                    var layout = new BrandLayout();
+                    layout = model.ToEntity(layout);
+                    await _brandLayoutService.InsertBrandLayout(layout);
+                    return new JsonResult("");
+                }
         }
     }
 
@@ -239,12 +239,12 @@ public class LayoutController : BaseAdminController
             case false:
                 return Json(new DataSourceResult { Errors = ModelState.SerializeErrors() });
             case true:
-            {
-                var layout = new CollectionLayout();
-                layout = model.ToEntity(layout);
-                await _collectionLayoutService.InsertCollectionLayout(layout);
-                return new JsonResult("");
-            }
+                {
+                    var layout = new CollectionLayout();
+                    layout = model.ToEntity(layout);
+                    await _collectionLayoutService.InsertCollectionLayout(layout);
+                    return new JsonResult("");
+                }
         }
     }
 
@@ -310,12 +310,12 @@ public class LayoutController : BaseAdminController
             case false:
                 return Json(new DataSourceResult { Errors = ModelState.SerializeErrors() });
             case true:
-            {
-                var layout = new ProductLayout();
-                layout = model.ToEntity(layout);
-                await _productLayoutService.InsertProductLayout(layout);
-                return new JsonResult("");
-            }
+                {
+                    var layout = new ProductLayout();
+                    layout = model.ToEntity(layout);
+                    await _productLayoutService.InsertProductLayout(layout);
+                    return new JsonResult("");
+                }
         }
     }
 
@@ -374,12 +374,12 @@ public class LayoutController : BaseAdminController
             case false:
                 return Json(new DataSourceResult { Errors = ModelState.SerializeErrors() });
             case true:
-            {
-                var layout = new PageLayout();
-                layout = model.ToEntity(layout);
-                await _pageLayoutService.InsertPageLayout(layout);
-                return new JsonResult("");
-            }
+                {
+                    var layout = new PageLayout();
+                    layout = model.ToEntity(layout);
+                    await _pageLayoutService.InsertPageLayout(layout);
+                    return new JsonResult("");
+                }
         }
     }
 

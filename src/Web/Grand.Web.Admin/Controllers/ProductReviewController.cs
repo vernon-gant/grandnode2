@@ -188,10 +188,11 @@ public class ProductReviewController : BaseAdminController
             showHidden: true)).products;
 
         var result = (from p in products
-                select new {
-                    label = p.Name,
-                    productid = p.Id
-                })
+                      select new
+                      {
+                          label = p.Name,
+                          productid = p.Id
+                      })
             .ToList();
         return Json(result);
     }

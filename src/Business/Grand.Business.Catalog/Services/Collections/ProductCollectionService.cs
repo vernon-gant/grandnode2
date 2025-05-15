@@ -58,31 +58,31 @@ public class ProductCollectionService : IProductCollectionService
                     //ACL (access control list)
                     var allowedCustomerGroupsIds = _contextAccessor.WorkContext.CurrentCustomer.GetCustomerGroupIds();
                     query = from p in query
-                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                        select p;
+                            where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                            select p;
                 }
 
                 if (!_accessControlConfig.IgnoreStoreLimitations && !string.IsNullOrEmpty(storeId))
                     //Store acl
                     query = from p in query
-                        where !p.LimitedToStores || p.Stores.Contains(storeId)
-                        select p;
+                            where !p.LimitedToStores || p.Stores.Contains(storeId)
+                            select p;
             }
 
             var queryProductCollection = from prod in query
-                from pm in prod.ProductCollections
-                select new ProductsCollection {
-                    Id = pm.Id,
-                    ProductId = prod.Id,
-                    DisplayOrder = pm.DisplayOrder,
-                    IsFeaturedProduct = pm.IsFeaturedProduct,
-                    CollectionId = pm.CollectionId
-                };
+                                         from pm in prod.ProductCollections
+                                         select new ProductsCollection {
+                                             Id = pm.Id,
+                                             ProductId = prod.Id,
+                                             DisplayOrder = pm.DisplayOrder,
+                                             IsFeaturedProduct = pm.IsFeaturedProduct,
+                                             CollectionId = pm.CollectionId
+                                         };
 
             queryProductCollection = from pm in queryProductCollection
-                where pm.CollectionId == collectionId
-                orderby pm.DisplayOrder
-                select pm;
+                                     where pm.CollectionId == collectionId
+                                     orderby pm.DisplayOrder
+                                     select pm;
 
             return Task.FromResult(new PagedList<ProductsCollection>(queryProductCollection, pageIndex, pageSize));
         });

@@ -232,7 +232,8 @@ public class CountryController : BaseAdminController
         var states = country.StateProvinces.ToList();
 
         var gridModel = new DataSourceResult {
-            Data = states.Select(x => new {
+            Data = states.Select(x => new
+            {
                 x.Id,
                 x.Name,
                 x.Abbreviation,
@@ -354,14 +355,14 @@ public class CountryController : BaseAdminController
     {
         var countries = await _countryService.GetAllCountries();
         var query = from p in countries
-            from s in p.StateProvinces
-            select new CountryStatesDto {
-                Country = p.TwoLetterIsoCode,
-                StateProvinceName = s.Name,
-                Abbreviation = s.Abbreviation,
-                DisplayOrder = s.DisplayOrder,
-                Published = s.Published
-            };
+                    from s in p.StateProvinces
+                    select new CountryStatesDto {
+                        Country = p.TwoLetterIsoCode,
+                        StateProvinceName = s.Name,
+                        Abbreviation = s.Abbreviation,
+                        DisplayOrder = s.DisplayOrder,
+                        Published = s.Published
+                    };
 
         var bytes = await _exportManager.Export(query);
         return File(bytes, "text/xls", "country.xlsx");

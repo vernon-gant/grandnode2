@@ -43,8 +43,7 @@ public class GetEstimateShippingHandler : IRequestHandler<GetEstimateShipping, E
         if (string.IsNullOrEmpty(defaultEstimateCountryId))
             defaultEstimateCountryId = request.Store.DefaultCountryId;
 
-        model.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Address.SelectCountry"), Value = "" });
+        model.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountriesForShipping(request.Language.Id, request.Store.Id))
             model.AvailableCountries.Add(new SelectListItem {
                 Text = c.GetTranslation(x => x.Name, request.Language.Id),

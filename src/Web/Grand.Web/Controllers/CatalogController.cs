@@ -7,10 +7,11 @@ using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Customers;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
+using Grand.Domain.Permissions;
 using Grand.Domain.Vendors;
 using Grand.Infrastructure;
+using Grand.SharedKernel.Attributes;
 using Grand.Web.Commands.Models.Vendors;
 using Grand.Web.Common.Controllers;
 using Grand.Web.Common.Filters;
@@ -20,7 +21,6 @@ using Grand.Web.Models.Catalog;
 using Grand.Web.Models.Vendors;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Grand.SharedKernel.Attributes;
 
 namespace Grand.Web.Controllers;
 
@@ -248,8 +248,7 @@ public class CatalogController : BasePublicController
         });
 
         //template
-        var layoutViewPath = await _mediator.Send(new GetCollectionLayoutViewPath
-            { LayoutId = collection.CollectionLayoutId });
+        var layoutViewPath = await _mediator.Send(new GetCollectionLayoutViewPath { LayoutId = collection.CollectionLayoutId });
 
         return View(layoutViewPath, model);
     }
@@ -328,8 +327,7 @@ public class CatalogController : BasePublicController
 
         if (ModelState.IsValid)
         {
-            var vendorReview = await _mediator.Send(new InsertVendorReviewCommand
-                { Vendor = vendor, Store = _contextAccessor.StoreContext.CurrentStore, Model = model });
+            var vendorReview = await _mediator.Send(new InsertVendorReviewCommand { Vendor = vendor, Store = _contextAccessor.StoreContext.CurrentStore, Model = model });
             //raise event
             if (vendorReview.IsApproved)
                 await _mediator.Publish(new VendorReviewApprovedEvent(vendorReview));
@@ -375,7 +373,8 @@ public class CatalogController : BasePublicController
         var customer = _contextAccessor.WorkContext.CurrentCustomer;
 
         if (await _groupService.IsGuest(customer) && !_vendorSettings.AllowAnonymousUsersToReviewVendor)
-            return Json(new {
+            return Json(new
+            {
                 Result = _translationService.GetResource("VendorReviews.Helpfulness.OnlyRegistered"),
                 TotalYes = vendorReview.HelpfulYesTotal,
                 TotalNo = vendorReview.HelpfulNoTotal
@@ -383,7 +382,8 @@ public class CatalogController : BasePublicController
 
         //customers aren't allowed to vote for their own reviews
         if (vendorReview.CustomerId == customer.Id)
-            return Json(new {
+            return Json(new
+            {
                 Result = _translationService.GetResource("VendorReviews.Helpfulness.YourOwnReview"),
                 TotalYes = vendorReview.HelpfulYesTotal,
                 TotalNo = vendorReview.HelpfulNoTotal
@@ -396,7 +396,8 @@ public class CatalogController : BasePublicController
             Washelpful = washelpful
         });
 
-        return Json(new {
+        return Json(new
+        {
             Result = _translationService.GetResource("VendorReviews.Helpfulness.SuccessfullyVoted"),
             TotalYes = vendorReview.HelpfulYesTotal,
             TotalNo = vendorReview.HelpfulNoTotal

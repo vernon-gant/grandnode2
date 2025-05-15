@@ -17,7 +17,7 @@ public class CategoryImportDataObject : IImportDataObject<CategoryDto>
     private readonly IPictureService _pictureService;
     private readonly ISlugService _slugService;
     private readonly ISeNameService _seNameService;
-    
+
     public CategoryImportDataObject(
         ICategoryService categoryService,
         IPictureService pictureService,

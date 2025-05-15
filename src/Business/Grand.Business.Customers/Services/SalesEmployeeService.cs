@@ -40,8 +40,8 @@ public class SalesEmployeeService : ISalesEmployeeService
         return await _cacheBase.GetAsync(CacheKey.SALESEMPLOYEE_ALL, async () =>
         {
             var query = from se in _salesEmployeeRepository.Table
-                orderby se.DisplayOrder
-                select se;
+                        orderby se.DisplayOrder
+                        select se;
             return await Task.FromResult(query.ToList());
         });
     }

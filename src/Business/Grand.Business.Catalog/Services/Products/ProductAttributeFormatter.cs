@@ -175,46 +175,46 @@ public class ProductAttributeFormatter : IProductAttributeFormatter
                     {
                         //no values
                         case AttributeControlType.MultilineTextbox:
-                        {
-                            //multiline text
-                            var attributeName = productAttribute.GetTranslation(a => a.Name, langId);
-                            //encode (if required)
-                            if (htmlEncode)
-                                attributeName = WebUtility.HtmlEncode(attributeName);
-                            formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
-                            //we never encode multiline text box input
-                            break;
-                        }
-                        case AttributeControlType.FileUpload:
-                        {
-                            //file upload
-                            if (Guid.TryParse(valueStr, out var downloadGuid))
                             {
-                                var attributeText = string.Empty;
+                                //multiline text
                                 var attributeName = productAttribute.GetTranslation(a => a.Name, langId);
-                                if (allowHyperlinks)
+                                //encode (if required)
+                                if (htmlEncode)
+                                    attributeName = WebUtility.HtmlEncode(attributeName);
+                                formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
+                                //we never encode multiline text box input
+                                break;
+                            }
+                        case AttributeControlType.FileUpload:
+                            {
+                                //file upload
+                                if (Guid.TryParse(valueStr, out var downloadGuid))
                                 {
-                                    var downloadLink =
-                                        $"{_contextAccessor.StoreContext.CurrentHost.Url.TrimEnd('/')}/download/getfileupload/?downloadId={downloadGuid}";
-                                    attributeText =
-                                        $"<a href=\"{downloadLink}\" class=\"fileuploadattribute\">{attribute.GetTranslation(a => a.TextPrompt, langId)}</a>";
+                                    var attributeText = string.Empty;
+                                    var attributeName = productAttribute.GetTranslation(a => a.Name, langId);
+                                    if (allowHyperlinks)
+                                    {
+                                        var downloadLink =
+                                            $"{_contextAccessor.StoreContext.CurrentHost.Url.TrimEnd('/')}/download/getfileupload/?downloadId={downloadGuid}";
+                                        attributeText =
+                                            $"<a href=\"{downloadLink}\" class=\"fileuploadattribute\">{attribute.GetTranslation(a => a.TextPrompt, langId)}</a>";
+                                    }
+
+                                    formattedAttribute = $"{attributeName}: {attributeText}";
                                 }
 
-                                formattedAttribute = $"{attributeName}: {attributeText}";
+                                break;
                             }
-
-                            break;
-                        }
                         default:
-                        {
-                            //other attributes (text box, datepicker)
-                            formattedAttribute =
-                                $"{productAttribute.GetTranslation(a => a.Name, langId)}: {valueStr}";
-                            //encode (if required)
-                            if (htmlEncode)
-                                formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
-                            break;
-                        }
+                            {
+                                //other attributes (text box, datepicker)
+                                formattedAttribute =
+                                    $"{productAttribute.GetTranslation(a => a.Name, langId)}: {valueStr}";
+                                //encode (if required)
+                                if (htmlEncode)
+                                    formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
+                                break;
+                            }
                     }
                 }
                 else
@@ -239,19 +239,19 @@ public class ProductAttributeFormatter : IProductAttributeFormatter
                                 switch (priceAdjustmentBase)
                                 {
                                     case > 0:
-                                    {
-                                        var priceAdjustmentStr = _priceFormatter.FormatPrice(priceAdjustmentBase,
-                                            _contextAccessor.WorkContext.WorkingCurrency);
-                                        formattedAttribute += $" [+{priceAdjustmentStr}]";
-                                        break;
-                                    }
+                                        {
+                                            var priceAdjustmentStr = _priceFormatter.FormatPrice(priceAdjustmentBase,
+                                                _contextAccessor.WorkContext.WorkingCurrency);
+                                            formattedAttribute += $" [+{priceAdjustmentStr}]";
+                                            break;
+                                        }
                                     case < 0:
-                                    {
-                                        var priceAdjustmentStr = _priceFormatter.FormatPrice(-priceAdjustmentBase,
-                                            _contextAccessor.WorkContext.WorkingCurrency);
-                                        formattedAttribute += $" [-{priceAdjustmentStr}]";
-                                        break;
-                                    }
+                                        {
+                                            var priceAdjustmentStr = _priceFormatter.FormatPrice(-priceAdjustmentBase,
+                                                _contextAccessor.WorkContext.WorkingCurrency);
+                                            formattedAttribute += $" [-{priceAdjustmentStr}]";
+                                            break;
+                                        }
                                 }
                             }
                         }

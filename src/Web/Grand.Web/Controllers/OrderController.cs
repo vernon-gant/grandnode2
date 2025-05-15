@@ -89,8 +89,7 @@ public class OrderController : BasePublicController
         if (!await order.Access(_contextAccessor.WorkContext.CurrentCustomer, _groupService))
             return Challenge();
 
-        var model = await _mediator.Send(new GetOrderDetails
-            { Order = order, Language = _contextAccessor.WorkContext.WorkingLanguage });
+        var model = await _mediator.Send(new GetOrderDetails { Order = order, Language = _contextAccessor.WorkContext.WorkingLanguage });
 
         return View(model);
     }
@@ -147,8 +146,7 @@ public class OrderController : BasePublicController
         if (!await order.Access(_contextAccessor.WorkContext.CurrentCustomer, _groupService))
             return Challenge();
 
-        await _mediator.Send(new InsertOrderNoteCommand
-            { Order = order, OrderNote = model, Language = _contextAccessor.WorkContext.WorkingLanguage });
+        await _mediator.Send(new InsertOrderNoteCommand { Order = order, OrderNote = model, Language = _contextAccessor.WorkContext.WorkingLanguage });
 
         //notification
         await _mediator.Publish(new OrderNoteEvent(order, model));
@@ -189,7 +187,7 @@ public class OrderController : BasePublicController
         var redirectUrl = await _paymentService.PostRedirectPayment(paymentTransaction);
         if (!string.IsNullOrEmpty(redirectUrl))
             return Redirect(redirectUrl);
-        
+
         return RedirectToRoute("OrderDetails", new { orderId });
     }
 

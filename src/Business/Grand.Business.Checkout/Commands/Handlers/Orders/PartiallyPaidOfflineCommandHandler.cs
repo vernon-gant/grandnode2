@@ -34,8 +34,7 @@ public class PartiallyPaidOfflineCommandHandler : IRequestHandler<PartiallyPaidO
 
         var canPartiallyPaidOffline =
             await _mediator.Send(
-                new CanPartiallyPaidOfflineQuery
-                    { PaymentTransaction = paymentTransaction, AmountToPaid = amountToPaid }, cancellationToken);
+                new CanPartiallyPaidOfflineQuery { PaymentTransaction = paymentTransaction, AmountToPaid = amountToPaid }, cancellationToken);
         if (!canPartiallyPaidOffline)
             throw new GrandException("You can't partially paid (offline) this transaction");
 

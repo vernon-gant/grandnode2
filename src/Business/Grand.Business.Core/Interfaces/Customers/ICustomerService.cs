@@ -152,7 +152,7 @@ public interface ICustomerService
     /// <typeparam name="TPropType"></typeparam>
     /// <returns></returns>
     Task UpdateUserField<TPropType>(Customer customer, string key, TPropType value, string storeId = "");
-    
+
     /// <summary>
     ///     Delete a customer
     /// </summary>

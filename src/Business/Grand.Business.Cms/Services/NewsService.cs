@@ -65,7 +65,7 @@ public class NewsService : INewsService
         string newsTitle = "")
     {
         var query = from p in _newsItemRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrWhiteSpace(newsTitle))
             query = query.Where(n => n.Title != null && n.Title.ToLower().Contains(newsTitle.ToLower()));
@@ -85,15 +85,15 @@ public class NewsService : INewsService
             {
                 var allowedCustomerGroupsIds = _contextAccessor.WorkContext.CurrentCustomer.GetCustomerGroupIds();
                 query = from p in query
-                    where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                    select p;
+                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                        select p;
             }
 
             //Store acl
             if (!string.IsNullOrEmpty(storeId) && !_accessControlConfig.IgnoreStoreLimitations)
                 query = from p in query
-                    where !p.LimitedToStores || p.Stores.Contains(storeId)
-                    select p;
+                        where !p.LimitedToStores || p.Stores.Contains(storeId)
+                        select p;
         }
 
         query = query.OrderByDescending(n => n.CreatedOnUtc);
@@ -150,13 +150,13 @@ public class NewsService : INewsService
     public virtual async Task<IList<NewsComment>> GetAllComments(string customerId)
     {
         var query = from n in _newsItemRepository.Table
-            from c in n.NewsComments
-            select c;
+                    from c in n.NewsComments
+                    select c;
 
         var query2 = from c in query
-            orderby c.CreatedOnUtc
-            where customerId == "" || c.CustomerId == customerId
-            select c;
+                     orderby c.CreatedOnUtc
+                     where customerId == "" || c.CustomerId == customerId
+                     select c;
 
         return await Task.FromResult(query2.ToList());
     }

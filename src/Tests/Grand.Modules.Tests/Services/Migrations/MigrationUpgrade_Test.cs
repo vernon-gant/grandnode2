@@ -20,7 +20,7 @@ namespace Grand.Modules.Tests.Services.Migrations
         /// <param name="serviceProvider"></param>
         /// <returns></returns>
         public bool UpgradeProcess(IServiceProvider serviceProvider)
-        { 
+        {
             return true;
         }
     }

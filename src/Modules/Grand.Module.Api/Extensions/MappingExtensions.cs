@@ -1,11 +1,11 @@
-﻿using Grand.Module.Api.DTOs.Catalog;
-using Grand.Module.Api.DTOs.Common;
-using Grand.Module.Api.DTOs.Customers;
-using Grand.Domain.Catalog;
+﻿using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Customers;
 using Grand.Domain.Media;
 using Grand.Infrastructure.Mapper;
+using Grand.Module.Api.DTOs.Catalog;
+using Grand.Module.Api.DTOs.Common;
+using Grand.Module.Api.DTOs.Customers;
 
 namespace Grand.Module.Api.Extensions;
 

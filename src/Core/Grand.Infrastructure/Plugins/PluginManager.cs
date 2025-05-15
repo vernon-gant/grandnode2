@@ -22,7 +22,7 @@ public static class PluginManager
     public const string CopyPath = "Plugins/bin";
 
     private static readonly Lock _synLock = new();
-    
+
     #endregion
 
     #region Fields
@@ -60,7 +60,7 @@ public static class PluginManager
 
             _pluginFolder = new DirectoryInfo(Path.Combine(hostEnvironment.ContentRootPath, CommonPath.Plugins));
             _copyFolder = new DirectoryInfo(Path.Combine(hostEnvironment.ContentRootPath, CommonPath.Plugins, "bin"));
-                
+
             var referencedPlugins = new List<PluginInfo>();
             try
             {

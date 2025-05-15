@@ -1,8 +1,8 @@
 ﻿using Grand.Business.Core.Interfaces.Checkout.Orders;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Interfaces.Marketing.Documents;
-using Grand.Domain.Permissions;
 using Grand.Domain.Customers;
+using Grand.Domain.Permissions;
 using Grand.Web.Admin.Extensions.Mapping;
 using Grand.Web.Admin.Models.Customers;
 using Grand.Web.Common.DataSource;

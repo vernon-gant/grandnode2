@@ -70,8 +70,7 @@ public class AccountController : BasePublicController
         if (_customerSettings.HideAuctionsTab)
             return RedirectToRoute("CustomerInfo");
 
-        var model = await _mediator.Send(new GetAuctions
-            { Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage });
+        var model = await _mediator.Send(new GetAuctions { Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage });
 
         return View(model);
     }
@@ -123,8 +122,7 @@ public class AccountController : BasePublicController
         if (_customerSettings.HideReviewsTab)
             return RedirectToRoute("CustomerInfo");
 
-        var model = await _mediator.Send(new GetReviews
-            { Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage });
+        var model = await _mediator.Send(new GetReviews { Customer = _contextAccessor.WorkContext.CurrentCustomer, Language = _contextAccessor.WorkContext.WorkingLanguage });
 
         return View(model);
     }
@@ -140,8 +138,7 @@ public class AccountController : BasePublicController
         if (_customerSettings.HideCoursesTab)
             return RedirectToRoute("CustomerInfo");
 
-        var model = await _mediator.Send(new GetCourses
-            { Customer = _contextAccessor.WorkContext.CurrentCustomer, Store = _contextAccessor.StoreContext.CurrentStore });
+        var model = await _mediator.Send(new GetCourses { Customer = _contextAccessor.WorkContext.CurrentCustomer, Store = _contextAccessor.StoreContext.CurrentStore });
 
         return View(model);
     }
@@ -196,19 +193,19 @@ public class AccountController : BasePublicController
             switch (loginResult)
             {
                 case CustomerLoginResults.Successful:
-                {
-                    var customer = _customerSettings.UsernamesEnabled
-                        ? await _customerService.GetCustomerByUsername(model.Username)
-                        : await _customerService.GetCustomerByEmail(model.Email);
-                    //sign in
-                    return await SignInAction(customer, model.RememberMe, returnUrl);
-                }
+                    {
+                        var customer = _customerSettings.UsernamesEnabled
+                            ? await _customerService.GetCustomerByUsername(model.Username)
+                            : await _customerService.GetCustomerByEmail(model.Email);
+                        //sign in
+                        return await SignInAction(customer, model.RememberMe, returnUrl);
+                    }
                 case CustomerLoginResults.RequiresTwoFactor:
-                {
-                    var userName = _customerSettings.UsernamesEnabled ? model.Username : model.Email;
-                    HttpContext.Session.SetString("RequiresTwoFactor", userName);
-                    return RedirectToRoute("TwoFactorAuthorization");
-                }
+                    {
+                        var userName = _customerSettings.UsernamesEnabled ? model.Username : model.Email;
+                        HttpContext.Session.SetString("RequiresTwoFactor", userName);
+                        return RedirectToRoute("TwoFactorAuthorization");
+                    }
             }
         }
 
@@ -458,8 +455,7 @@ public class AccountController : BasePublicController
                 _customerSettings.DefaultPasswordFormat, _contextAccessor.StoreContext.CurrentStore.Id, isApproved);
             await _customerManagerService.RegisterCustomer(registrationRequest);
 
-            var customerAttributes = await _mediator.Send(new GetParseCustomAttributes
-                { SelectedAttributes = model.SelectedAttributes });
+            var customerAttributes = await _mediator.Send(new GetParseCustomAttributes { SelectedAttributes = model.SelectedAttributes });
 
             await _mediator.Send(new CustomerRegisteredCommand {
                 Customer = _contextAccessor.WorkContext.CurrentCustomer,
@@ -478,40 +474,40 @@ public class AccountController : BasePublicController
             switch (_customerSettings.UserRegistrationType)
             {
                 case UserRegistrationType.EmailValidation:
-                {
-                    //email validation message
-                    await _customerService.UpdateUserField(_contextAccessor.WorkContext.CurrentCustomer,
-                        SystemCustomerFieldNames.AccountActivationToken, Guid.NewGuid().ToString());
-                    await _messageProviderService.SendCustomerEmailValidationMessage(
-                        _contextAccessor.WorkContext.CurrentCustomer, _contextAccessor.StoreContext.CurrentStore,
-                        _contextAccessor.WorkContext.WorkingLanguage.Id);
+                    {
+                        //email validation message
+                        await _customerService.UpdateUserField(_contextAccessor.WorkContext.CurrentCustomer,
+                            SystemCustomerFieldNames.AccountActivationToken, Guid.NewGuid().ToString());
+                        await _messageProviderService.SendCustomerEmailValidationMessage(
+                            _contextAccessor.WorkContext.CurrentCustomer, _contextAccessor.StoreContext.CurrentStore,
+                            _contextAccessor.WorkContext.WorkingLanguage.Id);
 
-                    //result
-                    return RedirectToRoute("RegisterResult",
-                        new { resultId = (int)UserRegistrationType.EmailValidation });
-                }
+                        //result
+                        return RedirectToRoute("RegisterResult",
+                            new { resultId = (int)UserRegistrationType.EmailValidation });
+                    }
                 case UserRegistrationType.AdminApproval:
-                {
-                    return RedirectToRoute("RegisterResult",
-                        new { resultId = (int)UserRegistrationType.AdminApproval });
-                }
+                    {
+                        return RedirectToRoute("RegisterResult",
+                            new { resultId = (int)UserRegistrationType.AdminApproval });
+                    }
                 case UserRegistrationType.Standard:
-                {
-                    //send customer welcome message
-                    await _messageProviderService.SendCustomerWelcomeMessage(_contextAccessor.WorkContext.CurrentCustomer,
-                        _contextAccessor.StoreContext.CurrentStore, _contextAccessor.WorkContext.WorkingLanguage.Id);
+                    {
+                        //send customer welcome message
+                        await _messageProviderService.SendCustomerWelcomeMessage(_contextAccessor.WorkContext.CurrentCustomer,
+                            _contextAccessor.StoreContext.CurrentStore, _contextAccessor.WorkContext.WorkingLanguage.Id);
 
-                    var redirectUrl = Url.RouteUrl("RegisterResult",
-                        new { resultId = (int)UserRegistrationType.Standard }, HttpContext.Request.Scheme);
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                        redirectUrl = CommonExtensions.ModifyQueryString(redirectUrl, "returnurl", returnUrl);
+                        var redirectUrl = Url.RouteUrl("RegisterResult",
+                            new { resultId = (int)UserRegistrationType.Standard }, HttpContext.Request.Scheme);
+                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                            redirectUrl = CommonExtensions.ModifyQueryString(redirectUrl, "returnurl", returnUrl);
 
-                    return Redirect(redirectUrl);
-                }
+                        return Redirect(redirectUrl);
+                    }
                 default:
-                {
-                    return RedirectToRoute("HomePage");
-                }
+                    {
+                        return RedirectToRoute("HomePage");
+                    }
             }
         }
 
@@ -522,8 +518,7 @@ public class AccountController : BasePublicController
             Language = _contextAccessor.WorkContext.WorkingLanguage,
             Store = _contextAccessor.StoreContext.CurrentStore,
             Model = model,
-            OverrideCustomCustomerAttributes = await _mediator.Send(new GetParseCustomAttributes
-                { SelectedAttributes = model.SelectedAttributes })
+            OverrideCustomCustomerAttributes = await _mediator.Send(new GetParseCustomAttributes { SelectedAttributes = model.SelectedAttributes })
         });
 
         return View(model);
@@ -682,13 +677,15 @@ public class AccountController : BasePublicController
             .FirstOrDefault(x => x.Id == id);
 
         if (ear == null)
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.Action("Info")
             });
 
         await openAuthenticationService.DeleteExternalAuthentication(ear);
 
-        return Json(new {
+        return Json(new
+        {
             redirect = Url.Action("Info")
         });
     }
@@ -731,13 +728,15 @@ public class AccountController : BasePublicController
         //find address (ensure that it belongs to the current customer)
         var address = customer.Addresses.FirstOrDefault(a => a.Id == addressId);
         if (address == null)
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("CustomerAddresses")
             });
         customer.RemoveAddress(address);
         await _customerService.DeleteAddress(address, customer.Id);
 
-        return Json(new {
+        return Json(new
+        {
             redirect = Url.RouteUrl("CustomerAddresses")
         });
     }
@@ -775,8 +774,7 @@ public class AccountController : BasePublicController
         if (ModelState.IsValid)
         {
             var address = model.Address.ToEntity(_contextAccessor.WorkContext.CurrentCustomer, addressSettings);
-            address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                { SelectedAttributes = model.Address.SelectedAttributes });
+            address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.Address.SelectedAttributes });
             customer.Addresses.Add(address);
 
             await _customerService.InsertAddress(address, customer.Id);
@@ -795,8 +793,7 @@ public class AccountController : BasePublicController
             ExcludeProperties = true,
             Customer = _contextAccessor.WorkContext.CurrentCustomer,
             LoadCountries = () => countries,
-            OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                { SelectedAttributes = model.Address.SelectedAttributes })
+            OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.Address.SelectedAttributes })
         });
 
         return View(model);
@@ -845,8 +842,7 @@ public class AccountController : BasePublicController
         if (ModelState.IsValid)
         {
             address = model.Address.ToEntity(address, _contextAccessor.WorkContext.CurrentCustomer, addressSettings);
-            address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                { SelectedAttributes = model.Address.SelectedAttributes });
+            address.Attributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.Address.SelectedAttributes });
             await _customerService.UpdateAddress(address, customer.Id);
 
             if (customer.BillingAddress?.Id == address.Id)
@@ -868,8 +864,7 @@ public class AccountController : BasePublicController
             ExcludeProperties = true,
             Customer = _contextAccessor.WorkContext.CurrentCustomer,
             LoadCountries = () => countries,
-            OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes
-                { SelectedAttributes = model.Address.SelectedAttributes })
+            OverrideAttributes = await _mediator.Send(new GetParseCustomAddressAttributes { SelectedAttributes = model.Address.SelectedAttributes })
         });
 
         return View(model);
@@ -910,8 +905,7 @@ public class AccountController : BasePublicController
     public virtual async Task<IActionResult> ChangePassword()
     {
         var model = new ChangePasswordModel {
-            PasswordIsExpired = await _mediator.Send(new GetPasswordIsExpiredQuery
-                { Customer = _contextAccessor.WorkContext.CurrentCustomer })
+            PasswordIsExpired = await _mediator.Send(new GetPasswordIsExpiredQuery { Customer = _contextAccessor.WorkContext.CurrentCustomer })
         };
 
         return View(model);
@@ -1166,8 +1160,7 @@ public class AccountController : BasePublicController
         if (!await _groupService.IsOwner(_contextAccessor.WorkContext.CurrentCustomer))
             return Challenge();
 
-        var model = await _mediator.Send(new GetSubAccount
-            { CustomerId = id, CurrentCustomer = _contextAccessor.WorkContext.CurrentCustomer });
+        var model = await _mediator.Send(new GetSubAccount { CustomerId = id, CurrentCustomer = _contextAccessor.WorkContext.CurrentCustomer });
 
         return View(model);
     }
@@ -1205,12 +1198,14 @@ public class AccountController : BasePublicController
         });
 
         if (result.success)
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("CustomerSubAccounts"),
                 success = true
             });
         //errors
-        return Json(new {
+        return Json(new
+        {
             redirect = Url.RouteUrl("CustomerSubAccounts"),
             success = false,
             error = string.Join("; ", ModelState.Values

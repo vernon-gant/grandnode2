@@ -49,8 +49,8 @@ public class ShippingPointService : IShippingPointService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from gp in _shippingPointRepository.Table
-            where gp.StoreId == storeId || string.IsNullOrEmpty(gp.StoreId) || storeId == ""
-            select gp;
+                    where gp.StoreId == storeId || string.IsNullOrEmpty(gp.StoreId) || storeId == ""
+                    select gp;
 
         var records = query.ToList();
 
@@ -65,8 +65,8 @@ public class ShippingPointService : IShippingPointService
     public virtual Task<ShippingPoints> GetStoreShippingPointByPointName(string pointName)
     {
         return Task.FromResult((from shippingPoint in _shippingPointRepository.Table
-            where shippingPoint.ShippingPointName == pointName
-            select shippingPoint).FirstOrDefault());
+                                where shippingPoint.ShippingPointName == pointName
+                                select shippingPoint).FirstOrDefault());
     }
 
     /// <summary>

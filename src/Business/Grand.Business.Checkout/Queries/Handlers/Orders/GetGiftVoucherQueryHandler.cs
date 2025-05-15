@@ -17,7 +17,7 @@ public class GetGiftVoucherQueryHandler : IRequestHandler<GetGiftVoucherQuery, I
     public Task<IQueryable<GiftVoucher>> Handle(GetGiftVoucherQuery request, CancellationToken cancellationToken)
     {
         var query = from p in _giftVoucherRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(request.GiftVoucherId))
             query = query.Where(gc => gc.Id == request.GiftVoucherId);

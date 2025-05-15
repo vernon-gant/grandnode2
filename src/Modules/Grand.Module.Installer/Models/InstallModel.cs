@@ -26,7 +26,7 @@ public class InstallModel : BaseModel
     public string? MongoDBDatabaseName { get; set; }
     public string? MongoDBUsername { get; set; }
 
-    [DataType(DataType.Password)] 
+    [DataType(DataType.Password)]
     public string? MongoDBPassword { get; set; }
 
     public bool DisableSampleDataOption { get; set; }

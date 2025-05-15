@@ -39,8 +39,7 @@ public class LiquidObjectBuilder
     {
         _chain.Add(async liquidObject =>
         {
-            var liquidStore = await _mediator.Send(new GetStoreTokensCommand
-                { Store = store, Language = language, EmailAccount = emailAccount });
+            var liquidStore = await _mediator.Send(new GetStoreTokensCommand { Store = store, Language = language, EmailAccount = emailAccount });
             liquidObject.Store = liquidStore;
             await _mediator.EntityTokensAdded(store, liquidStore, liquidObject);
         });
@@ -72,8 +71,7 @@ public class LiquidObjectBuilder
     {
         _chain.Add(async liquidObject =>
         {
-            var liquidShipment = await _mediator.Send(new GetShipmentTokensCommand
-                { Shipment = shipment, Order = order, Store = store, Host = host, Language = language });
+            var liquidShipment = await _mediator.Send(new GetShipmentTokensCommand { Shipment = shipment, Order = order, Store = store, Host = host, Language = language });
             liquidObject.Shipment = liquidShipment;
             await _mediator.EntityTokensAdded(shipment, liquidShipment, liquidObject);
         });
@@ -86,8 +84,12 @@ public class LiquidObjectBuilder
         _chain.Add(async liquidObject =>
         {
             var liquidMerchandiseReturn = await _mediator.Send(new GetMerchandiseReturnTokensCommand {
-                Order = order, Language = language, MerchandiseReturn = merchandiseReturn,
-                MerchandiseReturnNote = merchandiseReturnNote, Store = store, Host = host
+                Order = order,
+                Language = language,
+                MerchandiseReturn = merchandiseReturn,
+                MerchandiseReturnNote = merchandiseReturnNote,
+                Store = store,
+                Host = host
             });
             liquidObject.MerchandiseReturn = liquidMerchandiseReturn;
             await _mediator.EntityTokensAdded(merchandiseReturn, liquidMerchandiseReturn, liquidObject);
@@ -99,8 +101,7 @@ public class LiquidObjectBuilder
     {
         _chain.Add(async liquidObject =>
         {
-            var liquidGiftCart = await _mediator.Send(new GetGiftVoucherTokensCommand
-                { GiftVoucher = giftVoucher, Language = language });
+            var liquidGiftCart = await _mediator.Send(new GetGiftVoucherTokensCommand { GiftVoucher = giftVoucher, Language = language });
             liquidObject.GiftVoucher = liquidGiftCart;
             await _mediator.EntityTokensAdded(giftVoucher, liquidGiftCart, liquidObject);
         });
@@ -142,8 +143,7 @@ public class LiquidObjectBuilder
     {
         _chain.Add(async liquidObject =>
         {
-            var liquidVendor = await _mediator.Send(new GetVendorTokensCommand
-                { Vendor = vendor, Language = language });
+            var liquidVendor = await _mediator.Send(new GetVendorTokensCommand { Vendor = vendor, Language = language });
             liquidObject.Vendor = liquidVendor;
             await _mediator.EntityTokensAdded(vendor, liquidVendor, liquidObject);
         });
@@ -235,8 +235,7 @@ public class LiquidObjectBuilder
     {
         _chain.Add(async liquidObject =>
         {
-            var liquidAttributeCombination = await _mediator.Send(new GetAttributeCombinationTokensCommand
-                { Product = product, Combination = combination });
+            var liquidAttributeCombination = await _mediator.Send(new GetAttributeCombinationTokensCommand { Product = product, Combination = combination });
             liquidObject.AttributeCombination = liquidAttributeCombination;
             await _mediator.EntityTokensAdded(combination, liquidAttributeCombination, liquidObject);
         });

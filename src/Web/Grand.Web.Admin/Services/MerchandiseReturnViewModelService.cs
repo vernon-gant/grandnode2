@@ -164,11 +164,9 @@ public class MerchandiseReturnViewModelService(
         model.NoteEnabled = addressSettings.NoteEnabled;
 
         //countries
-        model.AvailableCountries.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.AvailableCountries.Add(new SelectListItem { Text = translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await countryService.GetAllCountries(showHidden: true))
-            model.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = c.Id == model.CountryId });
+            model.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = c.Id == model.CountryId });
         //states
         var states = !string.IsNullOrEmpty(model.CountryId)
             ? (await countryService.GetCountryById(model.CountryId))?.StateProvinces
@@ -176,8 +174,7 @@ public class MerchandiseReturnViewModelService(
 
         if (states?.Count > 0)
             foreach (var s in states)
-                model.AvailableStates.Add(new SelectListItem
-                    { Text = s.Name, Value = s.Id, Selected = s.Id == model.StateProvinceId });
+                model.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == model.StateProvinceId });
         //customer attribute services
         await model.PrepareCustomAddressAttributes(address, addressAttributeService, addressAttributeParser);
 

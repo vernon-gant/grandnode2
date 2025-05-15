@@ -131,7 +131,7 @@ public class CustomerService : ICustomerService
         int pageSize = int.MaxValue)
     {
         var query = from p in _customerRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(c => lastActivityFromUtc <= c.LastActivityDateUtc);
         query = query.Where(c => !c.Deleted);
@@ -160,7 +160,7 @@ public class CustomerService : ICustomerService
         string salesEmployeeId = "")
     {
         var query = from p in _customerRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(c => c.Active);
         query = query.Where(c => lastActivityFromUtc <= c.LastUpdateCartDateUtc);
@@ -198,14 +198,14 @@ public class CustomerService : ICustomerService
             return new List<Customer>();
 
         var query = from c in _customerRepository.Table
-            where customerIds.Contains(c.Id)
-            select c;
+                    where customerIds.Contains(c.Id)
+                    select c;
         var customers = query.ToList();
         //sort by passed identifiers
         var sortedCustomers = customerIds.Select(id => customers.FirstOrDefault(customer => customer.Id == id))
             .Where(customer => customer != null)
             .ToList();
-        
+
         return await Task.FromResult(sortedCustomers);
     }
 
@@ -266,8 +266,7 @@ public class CustomerService : ICustomerService
         ArgumentNullException.ThrowIfNull(customer);
 
         //add to 'Guests' group
-        var guestGroup = await _mediator.Send(new GetGroupBySystemNameQuery
-            { SystemName = SystemCustomerGroupNames.Guests });
+        var guestGroup = await _mediator.Send(new GetGroupBySystemNameQuery { SystemName = SystemCustomerGroupNames.Guests });
         if (guestGroup == null)
             throw new GrandException("'Guests' group could not be loaded");
         customer.Groups.Add(guestGroup.Id);
@@ -381,14 +380,14 @@ public class CustomerService : ICustomerService
             if (string.IsNullOrWhiteSpace(valueStr))
             {
                 //delete
-                await _customerRepository.PullFilter(customer.Id, x => x.UserFields,y => y.Key == prop.Key && y.StoreId == storeId);
+                await _customerRepository.PullFilter(customer.Id, x => x.UserFields, y => y.Key == prop.Key && y.StoreId == storeId);
                 customer.UserFields.Remove(prop);
             }
             else
             {
                 //update
                 prop.Value = valueStr;
-                await _customerRepository.UpdateToSet(customer.Id, x => x.UserFields,y => y.Key == prop.Key && y.StoreId == storeId, prop);
+                await _customerRepository.UpdateToSet(customer.Id, x => x.UserFields, y => y.Key == prop.Key && y.StoreId == storeId, prop);
             }
         }
         else
@@ -577,13 +576,12 @@ public class CustomerService : ICustomerService
     public virtual async Task<int> DeleteGuestCustomers(DateTime? createdFromUtc, DateTime? createdToUtc,
         bool onlyWithoutShoppingCart)
     {
-        var guestGroup = await _mediator.Send(new GetGroupBySystemNameQuery
-            { SystemName = SystemCustomerGroupNames.Guests });
+        var guestGroup = await _mediator.Send(new GetGroupBySystemNameQuery { SystemName = SystemCustomerGroupNames.Guests });
         if (guestGroup == null)
             throw new GrandException("Guests group could not be loaded");
 
         var query = from p in _customerRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(x => x.Groups.Contains(guestGroup.Id));
 

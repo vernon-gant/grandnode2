@@ -69,7 +69,7 @@ public class PaymentService : IPaymentService
         if (selectedShippingOption == null) return await Task.FromResult(pm);
         for (var i = pm.Count - 1; i >= 0; i--)
         {
-            var restrictedGroupIds =await  GetRestrictedShippingIds(pm[i]);
+            var restrictedGroupIds = await GetRestrictedShippingIds(pm[i]);
             if (restrictedGroupIds.Contains(selectedShippingOption.Name)) pm.Remove(pm[i]);
         }
 

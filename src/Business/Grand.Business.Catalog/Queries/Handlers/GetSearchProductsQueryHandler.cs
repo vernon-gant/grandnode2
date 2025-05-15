@@ -480,6 +480,6 @@ public class GetSearchProductsQueryHandler : IRequestHandler<GetSearchProductsQu
         return _catalogSettings.SortingByAvailability
             ? query.OrderBy(x => x.LowStock).ThenByDescending(x => x.AvgRating)
             : query.OrderByDescending(x => x.AvgRating).ThenByDescending(x => x.ApprovedTotalReviews);
-    
+
     }
 }

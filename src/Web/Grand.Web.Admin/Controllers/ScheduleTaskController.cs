@@ -54,8 +54,7 @@ public class ScheduleTaskController : BaseAdminController
     [NonAction]
     protected virtual async Task<ScheduleTaskModel> PrepareStores(ScheduleTaskModel model)
     {
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.Select"), Value = "" });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.Select"), Value = "" });
         foreach (var s in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
@@ -116,7 +115,7 @@ public class ScheduleTaskController : BaseAdminController
             return RedirectToAction("List");
         }
 
-        model.ScheduleTaskName = scheduleTask.ScheduleTaskName;        
+        model.ScheduleTaskName = scheduleTask.ScheduleTaskName;
         model = await PrepareStores(model);
         Error(ModelState);
 
@@ -130,7 +129,7 @@ public class ScheduleTaskController : BaseAdminController
         {
             var scheduleTask = await _scheduleTaskService.GetTaskById(id);
             if (scheduleTask == null) throw new Exception("Schedule task cannot be loaded");
-           
+
             var task = HttpContext.RequestServices.GetRequiredKeyedService<IScheduleTask>(scheduleTask.ScheduleTaskName);
             if (task != null)
             {

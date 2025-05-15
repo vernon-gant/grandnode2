@@ -97,8 +97,8 @@ public class CurrencyService : ICurrencyService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from q in _currencyRepository.Table
-                where q.CurrencyCode.ToLowerInvariant() == currencyCode.ToLowerInvariant()
-                select q;
+                        where q.CurrencyCode.ToLowerInvariant() == currencyCode.ToLowerInvariant()
+                        select q;
             return await Task.FromResult(query.FirstOrDefault());
         });
     }
@@ -115,7 +115,7 @@ public class CurrencyService : ICurrencyService
         var currencies = await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _currencyRepository.Table
-                select p;
+                        select p;
 
             if (!showHidden)
                 query = query.Where(c => c.Published);

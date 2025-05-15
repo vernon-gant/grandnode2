@@ -52,8 +52,7 @@ public class PermissionAuthorizeActionAttribute : Attribute, IAsyncAuthorization
                 context.Result = new RedirectToActionResult("AccessDenied", "Home",
                     new { pageUrl = context.HttpContext.Request.Path });
             else
-                context.Result = new JsonResult(new DataSourceResult
-                    { Errors = $"Access denied to the resource {context.HttpContext.Request.Path}" });
+                context.Result = new JsonResult(new DataSourceResult { Errors = $"Access denied to the resource {context.HttpContext.Request.Path}" });
         }
     }
 }

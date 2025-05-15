@@ -24,11 +24,11 @@ public class InterfaceConverter<TInterface, TConcrete> : JsonConverter<TInterfac
                 JsonSerializer.Serialize(writer, null, options);
                 break;
             default:
-            {
-                var type = value.GetType();
-                JsonSerializer.Serialize(writer, value, type, options);
-                break;
-            }
+                {
+                    var type = value.GetType();
+                    JsonSerializer.Serialize(writer, value, type, options);
+                    break;
+                }
         }
     }
 }

@@ -178,23 +178,23 @@ public class CustomerManagerService : ICustomerManagerService
         switch (request.PasswordFormat)
         {
             case PasswordFormat.Clear:
-            {
-                customer.Password = request.NewPassword;
-            }
+                {
+                    customer.Password = request.NewPassword;
+                }
                 break;
             case PasswordFormat.Encrypted:
-            {
-                customer.PasswordSalt = CommonHelper.GenerateRandomDigitCode(24);
-                customer.Password = _encryptionService.EncryptText(request.NewPassword, customer.PasswordSalt);
-            }
+                {
+                    customer.PasswordSalt = CommonHelper.GenerateRandomDigitCode(24);
+                    customer.Password = _encryptionService.EncryptText(request.NewPassword, customer.PasswordSalt);
+                }
                 break;
             case PasswordFormat.Hashed:
-            {
-                var saltKey = _encryptionService.CreateSaltKey(5);
-                customer.PasswordSalt = saltKey;
-                customer.Password = _encryptionService.CreatePasswordHash(request.NewPassword, saltKey,
-                    _customerSettings.HashedPasswordFormat);
-            }
+                {
+                    var saltKey = _encryptionService.CreateSaltKey(5);
+                    customer.PasswordSalt = saltKey;
+                    customer.Password = _encryptionService.CreatePasswordHash(request.NewPassword, saltKey,
+                        _customerSettings.HashedPasswordFormat);
+                }
                 break;
         }
 

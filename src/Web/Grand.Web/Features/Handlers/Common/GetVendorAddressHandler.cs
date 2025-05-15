@@ -80,8 +80,7 @@ public class GetVendorAddressHandler : IRequestHandler<GetVendorAddress, VendorA
         //countries and states
         if (_vendorSettings.CountryEnabled && request.LoadCountries != null)
         {
-            model.AvailableCountries.Add(new SelectListItem
-                { Text = _translationService.GetResource("Address.SelectCountry"), Value = "" });
+            model.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Address.SelectCountry"), Value = "" });
             foreach (var c in request.LoadCountries())
                 model.AvailableCountries.Add(new SelectListItem {
                     Text = c.GetTranslation(x => x.Name, request.Language.Id),
@@ -95,8 +94,7 @@ public class GetVendorAddressHandler : IRequestHandler<GetVendorAddress, VendorA
                     .GetStateProvincesByCountryId(!string.IsNullOrEmpty(model.CountryId) ? model.CountryId : "",
                         request.Language.Id);
 
-                model.AvailableStates.Add(new SelectListItem
-                    { Text = _translationService.GetResource("Address.SelectState"), Value = "" });
+                model.AvailableStates.Add(new SelectListItem { Text = _translationService.GetResource("Address.SelectState"), Value = "" });
                 foreach (var s in states)
                     model.AvailableStates.Add(new SelectListItem {
                         Text = s.GetTranslation(x => x.Name, request.Language.Id),

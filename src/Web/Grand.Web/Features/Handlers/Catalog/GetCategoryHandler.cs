@@ -180,8 +180,7 @@ public class GetCategoryHandler : IRequestHandler<GetCategory, CategoryModel>
         if (_catalogSettings.ShowProductsFromSubcategories)
             //include subcategories
             categoryIds.AddRange(await _mediator.Send(
-                new GetChildCategoryIds
-                    { ParentCategoryId = request.Category.Id, Customer = request.Customer, Store = request.Store },
+                new GetChildCategoryIds { ParentCategoryId = request.Category.Id, Customer = request.Customer, Store = request.Store },
                 cancellationToken));
         //products
         IList<string> alreadyFilteredSpecOptionIds =

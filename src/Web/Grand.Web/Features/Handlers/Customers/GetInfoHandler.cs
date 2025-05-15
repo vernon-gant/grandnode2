@@ -26,7 +26,7 @@ public class GetInfoHandler : IRequestHandler<GetInfo, CustomerInfoModel>
     private readonly TaxSettings _taxSettings;
     private readonly ITranslationService _translationService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     public GetInfoHandler(
         INewsLetterSubscriptionService newsLetterSubscriptionService,
         INewsletterCategoryService newsletterCategoryService,
@@ -35,7 +35,7 @@ public class GetInfoHandler : IRequestHandler<GetInfo, CustomerInfoModel>
         IExternalAuthenticationService externalAuthenticationService,
         IMediator mediator,
         CustomerSettings customerSettings,
-        TaxSettings taxSettings, 
+        TaxSettings taxSettings,
         IEnumTranslationService enumTranslationService)
     {
         _newsLetterSubscriptionService = newsLetterSubscriptionService;
@@ -140,8 +140,7 @@ public class GetInfoHandler : IRequestHandler<GetInfo, CustomerInfoModel>
         //countries and states
         if (_customerSettings.CountryEnabled)
         {
-            model.AvailableCountries.Add(new SelectListItem
-                { Text = _translationService.GetResource("Address.SelectCountry"), Value = "" });
+            model.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Address.SelectCountry"), Value = "" });
             foreach (var c in await _countryService.GetAllCountries(request.Language.Id, request.Store.Id))
                 model.AvailableCountries.Add(new SelectListItem {
                     Text = c.GetTranslation(x => x.Name, request.Language.Id),
@@ -153,12 +152,12 @@ public class GetInfoHandler : IRequestHandler<GetInfo, CustomerInfoModel>
             {
                 //states
                 var states = await _countryService.GetStateProvincesByCountryId(model.CountryId, request.Language.Id);
-                model.AvailableStates.Add(new SelectListItem
-                    { Text = _translationService.GetResource("Address.SelectState"), Value = "" });
+                model.AvailableStates.Add(new SelectListItem { Text = _translationService.GetResource("Address.SelectState"), Value = "" });
 
                 foreach (var s in states)
                     model.AvailableStates.Add(new SelectListItem {
-                        Text = s.GetTranslation(x => x.Name, request.Language.Id), Value = s.Id,
+                        Text = s.GetTranslation(x => x.Name, request.Language.Id),
+                        Value = s.Id,
                         Selected = s.Id == model.StateProvinceId
                     });
             }

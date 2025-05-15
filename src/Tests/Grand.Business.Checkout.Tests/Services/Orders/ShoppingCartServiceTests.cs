@@ -55,8 +55,7 @@ public class ShoppingCartServiceTests
         //Arrange
         var customer = new Customer();
         customer.Groups.Add("1");
-        customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "" });
+        customer.ShoppingCartItems.Add(new ShoppingCartItem { ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "" });
         _workContextMock.Setup(c => c.WorkContext.CurrentCustomer).Returns(() => customer);
 
         _productServiceMock.Setup(a => a.GetProductById(It.IsAny<string>(), false)).Returns(() =>
@@ -74,10 +73,8 @@ public class ShoppingCartServiceTests
         //Arrange
         var customer = new Customer();
         customer.Groups.Add("1");
-        customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "", ProductId = "1" });
-        customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "", ProductId = "2" });
+        customer.ShoppingCartItems.Add(new ShoppingCartItem { ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "", ProductId = "1" });
+        customer.ShoppingCartItems.Add(new ShoppingCartItem { ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "", ProductId = "2" });
         _workContextMock.Setup(c => c.WorkContext.CurrentCustomer).Returns(() => customer);
 
         _productServiceMock.Setup(a => a.GetProductById(It.IsAny<string>(), false)).Returns(() =>

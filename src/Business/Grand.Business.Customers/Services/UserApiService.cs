@@ -79,7 +79,7 @@ public class UserApiService : IUserApiService
         int pageSize = 2147483647)
     {
         var query = from p in _userRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(email))
             query = query.Where(x => x.Email.Contains(email.ToLowerInvariant()));

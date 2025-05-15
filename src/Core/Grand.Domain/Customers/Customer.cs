@@ -147,7 +147,7 @@ public class Customer : BaseEntity
     ///     Gets or sets the last visited page
     /// </summary>
     public string LastVisitedPage { get; set; }
-    
+
     /// <summary>
     ///     Gets or sets the date and time of last login
     /// </summary>

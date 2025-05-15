@@ -69,8 +69,8 @@ public class CustomerNoteService : ICustomerNoteService
     public virtual async Task<IList<CustomerNote>> GetCustomerNotes(string customerId, bool? displayToCustomer = null)
     {
         var query = from customerNote in _customerNoteRepository.Table
-            where customerNote.CustomerId == customerId
-            select customerNote;
+                    where customerNote.CustomerId == customerId
+                    select customerNote;
 
         if (displayToCustomer.HasValue)
             query = query.Where(x => x.DisplayToCustomer == displayToCustomer.Value);

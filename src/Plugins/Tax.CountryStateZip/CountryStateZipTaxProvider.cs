@@ -100,7 +100,7 @@ public class CountryStateZipTaxProvider : ITaxProvider
                 string.IsNullOrEmpty(taxRate.StateProvinceId)));
 
         //filter by zip
-        if(!string.IsNullOrEmpty(zip))
+        if (!string.IsNullOrEmpty(zip))
         {
             var matchedByZip = matchedByStateProvince.Where(taxRate => zip.Equals(taxRate.Zip, StringComparison.OrdinalIgnoreCase)).ToList();
             if (matchedByZip.Any())

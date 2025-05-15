@@ -1,9 +1,9 @@
 ﻿using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Messages;
-using Grand.Domain.Permissions;
 using Grand.Domain;
 using Grand.Domain.Messages;
+using Grand.Domain.Permissions;
 using Grand.Web.Admin.Extensions.Mapping;
 using Grand.Web.Admin.Models.Messages;
 using Grand.Web.Common.DataSource;
@@ -23,7 +23,7 @@ public class QueuedEmailController : BaseAdminController
     private readonly IQueuedEmailService _queuedEmailService;
     private readonly ITranslationService _translationService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     public QueuedEmailController(IQueuedEmailService queuedEmailService,
         IEmailAccountService emailAccountService,
         IDateTimeService dateTimeService,

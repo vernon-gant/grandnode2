@@ -25,13 +25,13 @@ public abstract class BasePageableModel : IPageableModel
 
     #region Properties
 
-    [IgnoreApiUrl] [IgnoreApi] public int FirstItem { get; set; }
+    [IgnoreApiUrl][IgnoreApi] public int FirstItem { get; set; }
 
-    [IgnoreApiUrl] [IgnoreApi] public bool HasNextPage { get; set; }
+    [IgnoreApiUrl][IgnoreApi] public bool HasNextPage { get; set; }
 
-    [IgnoreApiUrl] [IgnoreApi] public bool HasPreviousPage { get; set; }
+    [IgnoreApiUrl][IgnoreApi] public bool HasPreviousPage { get; set; }
 
-    [IgnoreApiUrl] [IgnoreApi] public int LastItem { get; set; }
+    [IgnoreApiUrl][IgnoreApi] public int LastItem { get; set; }
 
     [IgnoreApiUrl]
     [IgnoreApi]

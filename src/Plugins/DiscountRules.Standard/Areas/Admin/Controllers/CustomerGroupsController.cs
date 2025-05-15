@@ -2,8 +2,8 @@
 using Grand.Business.Core.Interfaces.Catalog.Discounts;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Domain.Discounts;
+using Grand.Domain.Permissions;
 using Grand.Web.Common.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -53,7 +53,8 @@ public class CustomerGroupsController : BaseAdminPluginController
         model.AvailableCustomerGroups.Add(new SelectListItem { Text = "Select customer group", Value = "" });
         foreach (var cr in await _groupService.GetAllCustomerGroups(showHidden: true))
             model.AvailableCustomerGroups.Add(new SelectListItem {
-                Text = cr.Name, Value = cr.Id,
+                Text = cr.Name,
+                Value = cr.Id,
                 Selected = discountRequirement != null && cr.Id == discountRequirement.Metadata
             });
 

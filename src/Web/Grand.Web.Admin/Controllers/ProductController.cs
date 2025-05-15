@@ -6,11 +6,12 @@ using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.ExportImport;
 using Grand.Business.Core.Interfaces.Storage;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Media;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
+using Grand.SharedKernel.Extensions;
 using Grand.Web.Admin.Extensions;
 using Grand.Web.Admin.Extensions.Mapping;
 using Grand.Web.Admin.Interfaces;
@@ -19,13 +20,12 @@ using Grand.Web.Admin.Models.Orders;
 using Grand.Web.Common.DataSource;
 using Grand.Web.Common.Extensions;
 using Grand.Web.Common.Filters;
+using Grand.Web.Common.Helpers;
 using Grand.Web.Common.Localization;
 using Grand.Web.Common.Security.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.StaticFiles;
-using Grand.Web.Common.Helpers;
-using Grand.SharedKernel.Extensions;
 
 namespace Grand.Web.Admin.Controllers;
 
@@ -45,7 +45,7 @@ public class ProductController : BaseAdminController
         IProductReservationService productReservationService,
         IAuctionService auctionService,
         IDateTimeService dateTimeService,
-        IPermissionService permissionService, 
+        IPermissionService permissionService,
         IEnumTranslationService enumTranslationService)
     {
         _productViewModelService = productViewModelService;
@@ -78,7 +78,7 @@ public class ProductController : BaseAdminController
     private readonly IDateTimeService _dateTimeService;
     private readonly IPermissionService _permissionService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     #endregion
 
     #region Methods
@@ -1119,19 +1119,22 @@ public class ProductController : BaseAdminController
         [FromServices] MediaSettings mediaSettings)
     {
         if (!await _permissionService.Authorize(PermissionSystemName.Pictures))
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "Access denied - picture permissions"
             });
 
         if (reference != Reference.Product || string.IsNullOrEmpty(objectId))
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "Please save form before upload new pictures"
             });
 
         if (!files.Any())
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No files uploaded"
             });
@@ -1267,7 +1270,7 @@ public class ProductController : BaseAdminController
             (await specificationAttributeService.GetSpecificationAttributeById(attributeId))
             .SpecificationAttributeOptions.OrderBy(x => x.DisplayOrder);
         var result = (from o in options
-            select new { id = o.Id, name = o.Name }).ToList();
+                      select new { id = o.Id, name = o.Name }).ToList();
         return Json(result);
     }
 
@@ -2469,7 +2472,8 @@ public class ProductController : BaseAdminController
                 (product.IntervalUnitId == IntervalUnit.Day &&
                  ((IntervalUnit)model.IntervalUnit == IntervalUnit.Minute ||
                   (IntervalUnit)model.IntervalUnit == IntervalUnit.Hour)))
-                return Json(new {
+                return Json(new
+                {
                     errors = _translationService.GetResource("Admin.Catalog.Products.Calendar.CannotChangeInterval")
                 });
 
@@ -2478,11 +2482,11 @@ public class ProductController : BaseAdminController
             var error = (Dictionary<string, Dictionary<string, object>>)ModelState.SerializeErrors();
             var s = "";
             foreach (var error1 in error)
-            foreach (var error2 in error1.Value)
-            {
-                var v = (string[])error2.Value;
-                s += v[0] + "\n";
-            }
+                foreach (var error2 in error1.Value)
+                {
+                    var v = (string[])error2.Value;
+                    s += v[0] + "\n";
+                }
 
             return Json(new { errors = s });
         }
@@ -2689,8 +2693,7 @@ public class ProductController : BaseAdminController
                 return Json("");
             }
 
-            return Json(new DataSourceResult
-                { Errors = _translationService.GetResource("Admin.Catalog.Products.Bids.CantDeleteWithOrder") });
+            return Json(new DataSourceResult { Errors = _translationService.GetResource("Admin.Catalog.Products.Bids.CantDeleteWithOrder") });
         }
 
         return Json(new DataSourceResult { Errors = "Bid not exists" });

@@ -54,7 +54,8 @@ public class NewsletterCategoryController : BaseAdminController
     {
         var newslettercategories = await _newsletterCategoryService.GetAllNewsletterCategory();
         var gridModel = new DataSourceResult {
-            Data = newslettercategories.Select(x => new {
+            Data = newslettercategories.Select(x => new
+            {
                 x.Id,
                 x.Name,
                 x.Selected,

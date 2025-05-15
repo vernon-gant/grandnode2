@@ -61,11 +61,11 @@ public class CustomerAttributeParser : ICustomerAttributeParser
 
             var valuesStr = customAttributes.Where(x => x.Key == attribute.Id).Select(x => x.Value);
             values.AddRange(from valueStr in valuesStr
-                where !string.IsNullOrEmpty(valueStr)
-                select attribute.CustomerAttributeValues.FirstOrDefault(x => x.Id == valueStr)
+                            where !string.IsNullOrEmpty(valueStr)
+                            select attribute.CustomerAttributeValues.FirstOrDefault(x => x.Id == valueStr)
                 into value
-                where value != null
-                select value);
+                            where value != null
+                            select value);
         }
 
         return values;
@@ -153,28 +153,28 @@ public class CustomerAttributeParser : ICustomerAttributeParser
                     {
                         //no values
                         case AttributeControlType.MultilineTextbox:
-                        {
-                            //multiline text box
-                            var attributeName = attribute.GetTranslation(a => a.Name, language.Id);
-                            //encode (if required)
-                            if (htmlEncode)
-                                attributeName = WebUtility.HtmlEncode(attributeName);
-                            formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
-                            break;
-                        }
+                            {
+                                //multiline text box
+                                var attributeName = attribute.GetTranslation(a => a.Name, language.Id);
+                                //encode (if required)
+                                if (htmlEncode)
+                                    attributeName = WebUtility.HtmlEncode(attributeName);
+                                formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
+                                break;
+                            }
                         case AttributeControlType.FileUpload:
                             //file upload
                             //not supported for customer attributes
                             break;
                         default:
-                        {
-                            //other attributes (text box, datepicker)
-                            formattedAttribute = $"{attribute.GetTranslation(a => a.Name, language.Id)}: {valueStr}";
-                            //encode (if required)
-                            if (htmlEncode)
-                                formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
-                            break;
-                        }
+                            {
+                                //other attributes (text box, datepicker)
+                                formattedAttribute = $"{attribute.GetTranslation(a => a.Name, language.Id)}: {valueStr}";
+                                //encode (if required)
+                                if (htmlEncode)
+                                    formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
+                                break;
+                            }
                     }
                 }
                 else

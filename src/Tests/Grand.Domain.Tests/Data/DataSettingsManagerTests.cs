@@ -26,8 +26,7 @@ public class DataSettingsManagerTests
     [TestMethod]
     public async Task SaveSettings_LoadSettings_Test()
     {
-        await DataSettingsManager.Instance.SaveSettings(new DataSettings
-            { ConnectionString = "connectionstring", DbProvider = DbProvider.MongoDB });
+        await DataSettingsManager.Instance.SaveSettings(new DataSettings { ConnectionString = "connectionstring", DbProvider = DbProvider.MongoDB });
         var settings = DataSettingsManager.Instance.LoadSettings();
         Assert.IsNotNull(settings);
         Assert.IsTrue(DataSettingsManager.DatabaseIsInstalled());
@@ -38,8 +37,7 @@ public class DataSettingsManagerTests
     [TestMethod]
     public async Task DatabaseIsInstalledTest_True()
     {
-        await DataSettingsManager.Instance.SaveSettings(new DataSettings
-            { ConnectionString = "connectionstring", DbProvider = DbProvider.MongoDB });
+        await DataSettingsManager.Instance.SaveSettings(new DataSettings { ConnectionString = "connectionstring", DbProvider = DbProvider.MongoDB });
         Assert.IsTrue(DataSettingsManager.DatabaseIsInstalled());
     }
 }

@@ -163,16 +163,14 @@ public class CampaignViewModelService : ICampaignViewModelService
     protected virtual async Task PrepareCustomerTagsModel(CampaignModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
-        model.AvailableCustomerTags = (await _customerTagService.GetAllCustomerTags()).Select(ct => new SelectListItem
-            { Text = ct.Name, Value = ct.Id, Selected = model.CustomerTags.Contains(ct.Id) }).ToList();
+        model.AvailableCustomerTags = (await _customerTagService.GetAllCustomerTags()).Select(ct => new SelectListItem { Text = ct.Name, Value = ct.Id, Selected = model.CustomerTags.Contains(ct.Id) }).ToList();
         model.CustomerTags ??= new List<string>();
     }
 
     protected virtual async Task PrepareCustomerGroupsModel(CampaignModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
-        model.AvailableCustomerGroups = (await _groupService.GetAllCustomerGroups()).Select(ct => new SelectListItem
-            { Text = ct.Name, Value = ct.Id, Selected = model.CustomerGroups.Contains(ct.Id) }).ToList();
+        model.AvailableCustomerGroups = (await _groupService.GetAllCustomerGroups()).Select(ct => new SelectListItem { Text = ct.Name, Value = ct.Id, Selected = model.CustomerGroups.Contains(ct.Id) }).ToList();
         model.CustomerGroups ??= new List<string>();
     }
 
@@ -180,8 +178,7 @@ public class CampaignViewModelService : ICampaignViewModelService
     {
         ArgumentNullException.ThrowIfNull(model);
         model.AvailableNewsletterCategories = (await _newsletterCategoryService.GetAllNewsletterCategory()).Select(ct =>
-                new SelectListItem
-                    { Text = ct.Name, Value = ct.Id, Selected = model.NewsletterCategories.Contains(ct.Id) })
+                new SelectListItem { Text = ct.Name, Value = ct.Id, Selected = model.NewsletterCategories.Contains(ct.Id) })
             .ToList();
         model.NewsletterCategories ??= new List<string>();
     }

@@ -1,7 +1,7 @@
 ﻿using Grand.Business.Core.Interfaces.Common.Stores;
+using Grand.Domain.Common;
 using Grand.Domain.Customers;
 using Grand.Infrastructure;
-using Grand.Domain.Common;
 
 namespace Grand.Web.Common.Helpers;
 

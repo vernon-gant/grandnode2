@@ -69,7 +69,7 @@ public class CustomerReportService : ICustomerReportService
         int pageIndex = 0, int pageSize = 214748364)
     {
         var query = from p in _orderRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(o => !o.Deleted);
         if (os.HasValue)
@@ -88,13 +88,14 @@ public class CustomerReportService : ICustomerReportService
         if (string.IsNullOrEmpty(vendorId))
         {
             var query2 = from co in query
-                group co by co.CustomerId
+                         group co by co.CustomerId
                 into g
-                select new {
-                    CustomerId = g.Key,
-                    OrderTotal = g.Sum(x => x.OrderTotal / x.CurrencyRate),
-                    OrderCount = g.Count()
-                };
+                         select new
+                         {
+                             CustomerId = g.Key,
+                             OrderTotal = g.Sum(x => x.OrderTotal / x.CurrencyRate),
+                             OrderCount = g.Count()
+                         };
             query2 = orderBy switch {
                 1 => query2.OrderByDescending(x => x.OrderTotal),
                 2 => query2.OrderByDescending(x => x.OrderCount),
@@ -110,25 +111,28 @@ public class CustomerReportService : ICustomerReportService
         }
 
         var vendorQuery = from p in query
-            from item in p.OrderItems
-            select new {
-                item.VendorId,
-                p.CustomerId, OrderCode = p.Code,
-                item.Quantity,
-                item.PriceInclTax,
-                p.Rate
-            };
+                          from item in p.OrderItems
+                          select new
+                          {
+                              item.VendorId,
+                              p.CustomerId,
+                              OrderCode = p.Code,
+                              item.Quantity,
+                              item.PriceInclTax,
+                              p.Rate
+                          };
 
         vendorQuery = vendorQuery.Where(x => x.VendorId == vendorId);
 
         var vendorQueryGroup = from co in vendorQuery
-            group co by co.CustomerId
+                               group co by co.CustomerId
             into g
-            select new {
-                CustomerId = g.Key,
-                OrderTotal = g.Sum(x => x.PriceInclTax / x.Rate),
-                OrderCount = g.Count()
-            };
+                               select new
+                               {
+                                   CustomerId = g.Key,
+                                   OrderTotal = g.Sum(x => x.PriceInclTax / x.Rate),
+                                   OrderCount = g.Count()
+                               };
         vendorQueryGroup = orderBy switch {
             1 => vendorQueryGroup.OrderByDescending(x => x.OrderTotal),
             2 => vendorQueryGroup.OrderByDescending(x => x.OrderCount),
@@ -159,12 +163,12 @@ public class CustomerReportService : ICustomerReportService
             return 0;
 
         var query = from c in _customerRepository.Table
-            where !c.Deleted &&
-                  (string.IsNullOrEmpty(storeId) || c.StoreId == storeId) &&
-                  c.Groups.Any(cr => cr == registeredCustomerGroup.Id) &&
-                  c.CreatedOnUtc >= date
-            //&& c.CreatedOnUtc <= DateTime.UtcNow
-            select c;
+                    where !c.Deleted &&
+                          (string.IsNullOrEmpty(storeId) || c.StoreId == storeId) &&
+                          c.Groups.Any(cr => cr == registeredCustomerGroup.Id) &&
+                          c.CreatedOnUtc >= date
+                    //&& c.CreatedOnUtc <= DateTime.UtcNow
+                    select c;
         var count = query.Count();
         return count;
     }
@@ -188,7 +192,7 @@ public class CustomerReportService : ICustomerReportService
 
         var endTime = new DateTime(endTimeUtc.Value.Year, endTimeUtc.Value.Month, endTimeUtc.Value.Day, 23, 59, 00);
         var builderquery = from p in _customerRepository.Table
-            select p;
+                           select p;
 
         var customergroup = await _groupService.GetCustomerGroupBySystemName(SystemCustomerGroupNames.Registered);
         var customerGroupRegister = customergroup.Id;
@@ -201,10 +205,11 @@ public class CustomerReportService : ICustomerReportService
         var daydiff = (endTimeUtc.Value - startTimeUtc.Value).TotalDays;
         if (daydiff > 31)
         {
-            var query = builderquery.GroupBy(x => new {
-                    x.CreatedOnUtc.Year,
-                    x.CreatedOnUtc.Month
-                })
+            var query = builderquery.GroupBy(x => new
+            {
+                x.CreatedOnUtc.Year,
+                x.CreatedOnUtc.Month
+            })
                 .Select(g => new CustomerStats {
                     Year = g.Key.Year,
                     Month = g.Key.Month,

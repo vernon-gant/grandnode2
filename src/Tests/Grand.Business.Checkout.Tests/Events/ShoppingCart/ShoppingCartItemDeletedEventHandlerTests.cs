@@ -28,8 +28,7 @@ public class ShoppingCartItemDeletedEventHandlerTests
         //Arrange
         _productReservationServiceMock.Setup(x => x.GetCustomerReservationsHelperBySciId(It.IsAny<string>())).Returns(
             Task.FromResult((IList<CustomerReservationsHelper>)new List<CustomerReservationsHelper> { new() }));
-        var notification = new EntityDeleted<ShoppingCartItem>(new ShoppingCartItem
-            { RentalStartDateUtc = DateTime.UtcNow, RentalEndDateUtc = DateTime.UtcNow });
+        var notification = new EntityDeleted<ShoppingCartItem>(new ShoppingCartItem { RentalStartDateUtc = DateTime.UtcNow, RentalEndDateUtc = DateTime.UtcNow });
         //Act
         await _shoppingCartItemDeletedEventHandler.Handle(notification, CancellationToken.None);
         //Assert

@@ -14,10 +14,10 @@ public class GetDocumentsHandler : IRequestHandler<GetDocuments, DocumentsModel>
     private readonly DocumentSettings _documentSettings;
     private readonly IDocumentTypeService _documentTypeService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     public GetDocumentsHandler(IDocumentService documentService,
         IDocumentTypeService documentTypeService,
-        DocumentSettings documentSettings, 
+        DocumentSettings documentSettings,
         IEnumTranslationService enumTranslationService)
     {
         _documentService = documentService;

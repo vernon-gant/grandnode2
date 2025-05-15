@@ -54,8 +54,7 @@ public class CustomerServiceTests
         await _repository.InsertAsync(new Customer { LastActivityDateUtc = DateTime.UtcNow.AddDays(-1) });
         await _repository.InsertAsync(new Customer { LastActivityDateUtc = DateTime.UtcNow });
         var customer = new Customer { LastUpdateCartDateUtc = DateTime.UtcNow, Active = true };
-        customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { CreatedOnUtc = DateTime.UtcNow, ShoppingCartTypeId = ShoppingCartType.ShoppingCart });
+        customer.ShoppingCartItems.Add(new ShoppingCartItem { CreatedOnUtc = DateTime.UtcNow, ShoppingCartTypeId = ShoppingCartType.ShoppingCart });
         await _repository.InsertAsync(customer);
         //Act
         var result = await _customerService.GetCountOnlineShoppingCart(DateTime.UtcNow.AddMinutes(-1), null);

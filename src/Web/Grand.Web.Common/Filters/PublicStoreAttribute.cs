@@ -1,6 +1,6 @@
 ﻿using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Data;
+using Grand.Domain.Permissions;
 using Grand.Domain.Stores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

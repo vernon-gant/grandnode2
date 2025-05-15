@@ -50,8 +50,7 @@ public class PartiallyRefundCommandHandler : IRequestHandler<PartiallyRefundComm
 
         var canPartiallyRefund =
             await _mediator.Send(
-                new CanPartiallyRefundQuery
-                    { AmountToRefund = amountToRefund, PaymentTransaction = paymentTransaction }, cancellationToken);
+                new CanPartiallyRefundQuery { AmountToRefund = amountToRefund, PaymentTransaction = paymentTransaction }, cancellationToken);
         if (!canPartiallyRefund)
             throw new GrandException("Cannot do partial refund for order.");
 

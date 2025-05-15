@@ -24,7 +24,7 @@ public class VendorInfoController : BaseVendorController
         ILanguageService languageService,
         IContextAccessor contextAccessor,
         ICountryService countryService,
-        VendorSettings vendorSettings, 
+        VendorSettings vendorSettings,
         ISeNameService seNameService)
     {
         _translationService = translationService;
@@ -80,11 +80,9 @@ public class VendorInfoController : BaseVendorController
         model.Address.AddressTypeEnabled = false;
 
         //address
-        model.Address.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.Address.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.Address.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = vendor != null && c.Id == vendor.Address.CountryId });
+            model.Address.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = vendor != null && c.Id == vendor.Address.CountryId });
 
         var states = !string.IsNullOrEmpty(model.Address.CountryId)
             ? (await _countryService.GetCountryById(model.Address.CountryId))?.StateProvinces
@@ -92,7 +90,9 @@ public class VendorInfoController : BaseVendorController
         if (states?.Count > 0)
             foreach (var s in states)
                 model.Address.AvailableStates.Add(new SelectListItem {
-                    Text = s.Name, Value = s.Id, Selected = vendor != null && s.Id == vendor.Address.StateProvinceId
+                    Text = s.Name,
+                    Value = s.Id,
+                    Selected = vendor != null && s.Id == vendor.Address.StateProvinceId
                 });
     }
 
@@ -101,7 +101,7 @@ public class VendorInfoController : BaseVendorController
         vendor = model.ToEntity(vendor);
         vendor.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, vendor, x => x.Name);
         vendor.SeName = await _seNameService.ValidateSeName(vendor, model.SeName, vendor.Name, true);
-        
+
         vendor.Address = model.Address.ToEntity();
         vendor.SeName = model.SeName;
 

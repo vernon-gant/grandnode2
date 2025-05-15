@@ -7,11 +7,13 @@ using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Interfaces.Storage;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Media;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
+using Grand.SharedKernel.Attributes;
+using Grand.SharedKernel.Extensions;
 using Grand.Web.Commands.Models.Products;
 using Grand.Web.Common.Controllers;
 using Grand.Web.Common.Extensions;
@@ -23,8 +25,6 @@ using Grand.Web.Features.Models.Products;
 using Grand.Web.Models.Catalog;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Grand.SharedKernel.Attributes;
-using Grand.SharedKernel.Extensions;
 
 namespace Grand.Web.Controllers;
 
@@ -186,14 +186,16 @@ public class ProductController : BasePublicController
     {
         var product = await _productService.GetProductById(model.Id);
         if (product is not { Published: true } || !_catalogSettings.AskQuestionOnProduct)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "Product not found"
             });
 
         if (!ModelState.IsValid)
 
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = string.Join(",", ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage))
             });
@@ -216,7 +218,8 @@ public class ProductController : BasePublicController
         });
 
         //return Json
-        return Json(new {
+        return Json(new
+        {
             success = true,
             message = _translationService.GetResource("Products.AskQuestion.SuccessfullySent")
         });
@@ -315,8 +318,7 @@ public class ProductController : BasePublicController
         });
 
         //product layout
-        var productLayoutViewPath = await _mediator.Send(new GetProductLayoutViewPath
-            { ProductLayoutId = product.ProductLayoutId });
+        var productLayoutViewPath = await _mediator.Send(new GetProductLayoutViewPath { ProductLayoutId = product.ProductLayoutId });
 
         //save as recently viewed
         await _recentlyViewedProductsService.AddProductToRecentlyViewedList(customer.Id, product.Id);
@@ -349,7 +351,8 @@ public class ProductController : BasePublicController
             Product = product
         });
 
-        return Json(new {
+        return Json(new
+        {
             gtin = modelProduct.Gtin,
             mpn = modelProduct.Mpn,
             sku = modelProduct.Sku,
@@ -375,7 +378,8 @@ public class ProductController : BasePublicController
             return new JsonResult("");
 
         var stock = stockQuantityService.FormatStockMessage(product, model.WarehouseId, new List<CustomAttribute>());
-        return Json(new {
+        return Json(new
+        {
             stockAvailability = string.Format(_translationService.GetResource(stock.resource), stock.arg0)
         });
     }
@@ -386,19 +390,22 @@ public class ProductController : BasePublicController
     {
         var product = await _productService.GetProductById(productId);
         if (product == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 downloadGuid = Guid.Empty
             });
         var attribute = product.ProductAttributeMappings.FirstOrDefault(x => x.Id == attributeId);
         if (attribute is not { AttributeControlTypeId: AttributeControlType.FileUpload })
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 downloadGuid = Guid.Empty
             });
 
         if (file == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No file uploaded",
                 downloadGuid = Guid.Empty
@@ -411,7 +418,8 @@ public class ProductController : BasePublicController
         {
             var allowedFileExtensions = attribute.ValidationFileAllowedExtensions.Split([','], StringSplitOptions.RemoveEmptyEntries);
             if (!allowedFileExtensions.IsAllowedMediaFileType(fileExtension))
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = _translationService.GetResource("ShoppingCart.ValidationFileAllowed"),
                     downloadGuid = Guid.Empty
@@ -426,7 +434,8 @@ public class ProductController : BasePublicController
             if (fileBinary.Length > maxFileSizeBytes)
                 //when returning JSON the mime-type must be set to text/plain
                 //otherwise some browsers will pop-up a "Save As" dialog.
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = string.Format(_translationService.GetResource("ShoppingCart.MaximumUploadedFileSize"),
                         attribute.ValidationFileMaximumSize.Value),
@@ -450,7 +459,8 @@ public class ProductController : BasePublicController
 
         //when returning JSON the mime-type must be set to text/plain
         //otherwise some browsers will pop-up a "Save As" dialog.
-        return Json(new {
+        return Json(new
+        {
             success = true,
             message = _translationService.GetResource("ShoppingCart.FileUploaded"),
             downloadUrl = Url.Action("GetFileUpload", "Download", new { downloadId = download.DownloadGuid }),
@@ -465,7 +475,8 @@ public class ProductController : BasePublicController
     {
         var product = await _productService.GetProductById(productId);
         if (product == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No product found with the specified ID"
             });
@@ -477,28 +488,32 @@ public class ProductController : BasePublicController
             //Check whether the current user has a "Manage catalog" permission
             //It allows him to preview a product before publishing
             if (!product.Published && !await _permissionService.Authorize(StandardPermission.ManageProducts, customer))
-                return Json(new {
+                return Json(new
+                {
                     success = false,
                     message = "No product found with the specified ID"
                 });
 
         //ACL (access control list)
         if (!_aclService.Authorize(product, customer))
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No product found with the specified ID"
             });
 
         //Store access
         if (!_aclService.Authorize(product, _contextAccessor.StoreContext.CurrentStore.Id))
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No product found with the specified ID"
             });
 
         //availability dates
         if (!product.IsAvailable() && product.ProductTypeId != ProductType.Auction)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No product found with the specified ID"
             });
@@ -509,10 +524,12 @@ public class ProductController : BasePublicController
             //is this one an associated products?
             var parentGroupedProduct = await _productService.GetProductById(product.ParentGroupedProductId);
             if (parentGroupedProduct == null)
-                return Json(new {
+                return Json(new
+                {
                     redirect = Url.RouteUrl("HomePage")
                 });
-            return Json(new {
+            return Json(new
+            {
                 redirect = Url.RouteUrl("Product", new { SeName = product.GetSeName(_contextAccessor.WorkContext.WorkingLanguage.Id) })
             });
         }
@@ -526,15 +543,15 @@ public class ProductController : BasePublicController
         });
 
         //product layout
-        var productLayoutViewPath = await _mediator.Send(new GetProductLayoutViewPath
-            { ProductLayoutId = product.ProductLayoutId });
+        var productLayoutViewPath = await _mediator.Send(new GetProductLayoutViewPath { ProductLayoutId = product.ProductLayoutId });
 
         //save as recently viewed
         await _recentlyViewedProductsService.AddProductToRecentlyViewedList(customer.Id, product.Id);
 
         _ = _productService.IncrementProductField(product, x => x.Viewed, 1);
 
-        return Json(new {
+        return Json(new
+        {
             success = true,
             product = true,
             model,
@@ -635,7 +652,8 @@ public class ProductController : BasePublicController
 
         if (await groupService.IsGuest(_contextAccessor.WorkContext.CurrentCustomer) &&
             !_catalogSettings.AllowAnonymousUsersToReviewProduct)
-            return Json(new {
+            return Json(new
+            {
                 Result = _translationService.GetResource("Reviews.Helpfulness.OnlyRegistered"),
                 TotalYes = productReview.HelpfulYesTotal,
                 TotalNo = productReview.HelpfulNoTotal
@@ -643,7 +661,8 @@ public class ProductController : BasePublicController
 
         //customers aren't allowed to vote for their own reviews
         if (productReview.CustomerId == _contextAccessor.WorkContext.CurrentCustomer.Id)
-            return Json(new {
+            return Json(new
+            {
                 Result = _translationService.GetResource("Reviews.Helpfulness.YourOwnReview"),
                 TotalYes = productReview.HelpfulYesTotal,
                 TotalNo = productReview.HelpfulNoTotal
@@ -676,7 +695,8 @@ public class ProductController : BasePublicController
         productReview.HelpfulNoTotal = productReview.ProductReviewHelpfulnessEntries.Count(x => !x.WasHelpful);
         await productReviewService.UpdateProductReview(productReview);
 
-        return Json(new {
+        return Json(new
+        {
             Result = _translationService.GetResource("Reviews.Helpfulness.SuccessfullyVoted"),
             TotalYes = productReview.HelpfulYesTotal,
             TotalNo = productReview.HelpfulNoTotal
@@ -693,8 +713,7 @@ public class ProductController : BasePublicController
         if (!_catalogSettings.CompareProductsEnabled)
             return Content("");
 
-        var model = await _mediator.Send(new GetCompareProducts
-            { PictureProductThumbSize = mediaSettings.MiniCartThumbPictureSize });
+        var model = await _mediator.Send(new GetCompareProducts { PictureProductThumbSize = mediaSettings.MiniCartThumbPictureSize });
         return Json(model);
     }
 
@@ -704,8 +723,7 @@ public class ProductController : BasePublicController
         if (!_catalogSettings.CompareProductsEnabled)
             return RedirectToRoute("HomePage");
 
-        var model = await _mediator.Send(new GetCompareProducts
-            { PictureProductThumbSize = mediaSettings.CartThumbPictureSize });
+        var model = await _mediator.Send(new GetCompareProducts { PictureProductThumbSize = mediaSettings.CartThumbPictureSize });
 
         return View(model);
     }

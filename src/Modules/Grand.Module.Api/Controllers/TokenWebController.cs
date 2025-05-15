@@ -1,18 +1,18 @@
-﻿using Grand.Module.Api.Commands.Models.Common;
-using Grand.Module.Api.DTOs;
-using Grand.Module.Api.Models.Common;
-using Grand.Business.Core.Interfaces.Authentication;
+﻿using Grand.Business.Core.Interfaces.Authentication;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Domain.Common;
 using Grand.Domain.Customers;
 using Grand.Infrastructure;
 using Grand.Infrastructure.Configuration;
+using Grand.Module.Api.Commands.Models.Common;
+using Grand.Module.Api.DTOs;
+using Grand.Module.Api.Models.Common;
 using MediatR;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 
 namespace Grand.Module.Api.Controllers;
 
@@ -82,7 +82,7 @@ public class TokenWebController : ControllerBase
         {
             var customer = await _customerService.GetCustomerByEmail(model.Email);
             var claims = new Dictionary<string, string> {
-                { "Email", model.Email }, 
+                { "Email", model.Email },
                 { "Token", customer.GetUserFieldFromEntity<string>(SystemCustomerFieldNames.PasswordToken) }
             };
             var tokenDto = await GetToken(claims, customer);

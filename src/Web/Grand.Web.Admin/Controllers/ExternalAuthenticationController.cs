@@ -1,8 +1,8 @@
 ﻿using Grand.Business.Core.Extensions;
 using Grand.Business.Core.Interfaces.Authentication;
 using Grand.Business.Core.Interfaces.Common.Configuration;
-using Grand.Domain.Permissions;
 using Grand.Domain.Customers;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure.Plugins;
 using Grand.Web.Admin.Extensions.Mapping;
 using Grand.Web.Admin.Models.ExternalAuthentication;

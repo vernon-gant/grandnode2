@@ -10,7 +10,7 @@ public class PluginExtensionsTests
 {
     public PluginExtensionsTests()
     {
-        
+
         var pluginPaths = Path.Combine(TestContext.CurrentContext.TestDirectory, CommonPath.AppData, CommonPath.InstalledPluginsFile);
         PluginPaths.Initialize(pluginPaths);
         PluginManager.ClearPlugins();

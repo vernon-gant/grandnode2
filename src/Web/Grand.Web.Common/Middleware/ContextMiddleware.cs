@@ -1,8 +1,8 @@
-﻿using Grand.Infrastructure;
+﻿using DotLiquid.Util;
+using Grand.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using DotLiquid.Util;
 
 namespace Grand.Web.Common.Middleware;
 
@@ -40,7 +40,7 @@ public class ContextMiddleware
     public async Task InvokeAsync(HttpContext context, IContextAccessor contextAccessor)
     {
         if (context?.Request == null) return;
-        
+
         var endpoint = context.GetEndpoint();
         if (endpoint != null)
         {

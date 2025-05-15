@@ -27,8 +27,7 @@ public class MerchandiseReturnValidator : BaseGrandValidator<MerchandiseReturnMo
                 context.AddFailure(translationService.GetResource("MerchandiseReturns.PickupDateRequired"));
             var customAttributes =
                 await mediator.Send(
-                    new GetParseCustomAddressAttributes
-                        { SelectedAttributes = x.MerchandiseReturnNewAddress.SelectedAttributes }, _);
+                    new GetParseCustomAddressAttributes { SelectedAttributes = x.MerchandiseReturnNewAddress.SelectedAttributes }, _);
             var customAttributeWarnings = await addressAttributeParser.GetAttributeWarnings(customAttributes);
             foreach (var error in customAttributeWarnings) context.AddFailure(error);
 

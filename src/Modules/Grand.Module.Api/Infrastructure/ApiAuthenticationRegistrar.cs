@@ -1,6 +1,6 @@
-﻿using Grand.Module.Api.Infrastructure.Extensions;
-using Grand.Business.Core.Interfaces.Authentication;
+﻿using Grand.Business.Core.Interfaces.Authentication;
 using Grand.Infrastructure.Configuration;
+using Grand.Module.Api.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +35,7 @@ public class ApiAuthenticationRegistrar : IAuthenticationBuilder
                     context.Response.StatusCode = 401;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(context.Exception.Message);
-                },                
+                },
                 OnTokenValidated = async context =>
                 {
                     try
@@ -83,7 +83,7 @@ public class ApiAuthenticationRegistrar : IAuthenticationBuilder
                     context.Response.StatusCode = 401;
                     context.Response.ContentType = "text/plain";
                     await context.Response.WriteAsync(context.Exception.Message);
-                },                
+                },
                 OnTokenValidated = async context =>
                 {
                     try

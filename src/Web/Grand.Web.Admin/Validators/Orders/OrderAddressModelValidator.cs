@@ -32,17 +32,17 @@ public class OrderAddressModelValidator : BaseGrandValidator<OrderAddressModel>
                 switch (x.BillingAddress)
                 {
                     case true when order.BillingAddress != null:
-                    {
-                        if (order.BillingAddress.Id == x.Address.Id)
-                            address = order.BillingAddress;
-                        break;
-                    }
+                        {
+                            if (order.BillingAddress.Id == x.Address.Id)
+                                address = order.BillingAddress;
+                            break;
+                        }
                     case false when order.ShippingAddress != null:
-                    {
-                        if (order.ShippingAddress.Id == x.Address.Id)
-                            address = order.ShippingAddress;
-                        break;
-                    }
+                        {
+                            if (order.ShippingAddress.Id == x.Address.Id)
+                                address = order.ShippingAddress;
+                            break;
+                        }
                 }
 
                 if (address == null)

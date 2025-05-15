@@ -68,7 +68,7 @@ public class CollectionService : ICollectionService
         bool showHidden = false)
     {
         var query = from m in _collectionRepository.Table
-            select m;
+                    select m;
 
         if (!showHidden)
             query = query.Where(m => m.Published);
@@ -83,15 +83,15 @@ public class CollectionService : ICollectionService
                 //Limited to customer groups rules
                 var allowedCustomerGroupsIds = _contextAccessor.WorkContext.CurrentCustomer.GetCustomerGroupIds();
                 query = from p in query
-                    where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                    select p;
+                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                        select p;
             }
 
             if (!string.IsNullOrEmpty(storeId) && !_accessControlConfig.IgnoreStoreLimitations)
                 //Limited to stores rules
                 query = from p in query
-                    where !p.LimitedToStores || p.Stores.Contains(storeId)
-                    select p;
+                        where !p.LimitedToStores || p.Stores.Contains(storeId)
+                        select p;
         }
 
         query = query.OrderBy(m => m.DisplayOrder).ThenBy(m => m.Name);
@@ -190,8 +190,8 @@ public class CollectionService : ICollectionService
     public virtual async Task<IList<Collection>> GetAllCollectionsByDiscount(string discountId)
     {
         var query = from c in _collectionRepository.Table
-            where c.AppliedDiscounts.Any(x => x == discountId)
-            select c;
+                    where c.AppliedDiscounts.Any(x => x == discountId)
+                    select c;
 
         return await Task.FromResult(query.ToList());
     }

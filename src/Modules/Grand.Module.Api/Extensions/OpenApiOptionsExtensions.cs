@@ -102,7 +102,7 @@ namespace Grand.Module.Api.Infrastructure.Extensions
         public static void AddContactDocumentTransformer(this OpenApiOptions options, string name, string version)
         {
             options.AddDocumentTransformer((document, context, cancellationToken) =>
-            {                
+            {
                 document.Info = new OpenApiInfo {
                     Description = "Grandnode API",
                     Title = name,

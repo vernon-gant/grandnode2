@@ -157,8 +157,7 @@ public class CampaignServiceTests
             StoreId = "1"
         };
         await _campaignRepository.InsertAsync(campaign);
-        await _newsLetterSubscriptionRepository.InsertAsync(new NewsLetterSubscription
-            { StoreId = "1", Active = true });
+        await _newsLetterSubscriptionRepository.InsertAsync(new NewsLetterSubscription { StoreId = "1", Active = true });
         //Act
         var result = await _campaignService.CustomerSubscriptions(campaign);
 
@@ -175,8 +174,7 @@ public class CampaignServiceTests
             StoreId = "1"
         };
         await _campaignRepository.InsertAsync(campaign);
-        await _newsLetterSubscriptionRepository.InsertAsync(new NewsLetterSubscription
-            { StoreId = "1", Active = true, Email = "test@test.com" });
+        await _newsLetterSubscriptionRepository.InsertAsync(new NewsLetterSubscription { StoreId = "1", Active = true, Email = "test@test.com" });
 
         _languageServiceMock.Setup(x => x.GetLanguageById(It.IsAny<string>()))
             .Returns(Task.FromResult(new Language()));

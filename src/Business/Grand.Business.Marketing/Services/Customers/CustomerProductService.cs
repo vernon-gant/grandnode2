@@ -124,8 +124,8 @@ public class CustomerProductService : ICustomerProductService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from pp in _customerProductPriceRepository.Table
-            where pp.CustomerId == customerId
-            select pp;
+                    where pp.CustomerId == customerId
+                    select pp;
         return await PagedList<CustomerProductPrice>.Create(query, pageIndex, pageSize);
     }
 
@@ -152,8 +152,8 @@ public class CustomerProductService : ICustomerProductService
     public virtual async Task<CustomerProduct> GetCustomerProduct(string customerId, string productId)
     {
         var query = from pp in _customerProductRepository.Table
-            where pp.CustomerId == customerId && pp.ProductId == productId
-            select pp;
+                    where pp.CustomerId == customerId && pp.ProductId == productId
+                    select pp;
 
         return await Task.FromResult(query.FirstOrDefault());
     }
@@ -216,9 +216,9 @@ public class CustomerProductService : ICustomerProductService
         int pageSize = int.MaxValue)
     {
         var query = from pp in _customerProductRepository.Table
-            where pp.CustomerId == customerId
-            orderby pp.DisplayOrder
-            select pp;
+                    where pp.CustomerId == customerId
+                    orderby pp.DisplayOrder
+                    select pp;
         return await PagedList<CustomerProduct>.Create(query, pageIndex, pageSize);
     }
 

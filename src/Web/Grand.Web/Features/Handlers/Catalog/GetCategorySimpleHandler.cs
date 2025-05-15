@@ -121,8 +121,7 @@ public class GetCategorySimpleHandler : IRequestHandler<GetCategorySimple, IList
                 var categoryIds = new List<string> { category.Id };
                 //include subcategories
                 if (_catalogSettings.ShowCategoryProductNumberIncludingSubcategories)
-                    categoryIds.AddRange(await _mediator.Send(new GetChildCategoryIds
-                        { Customer = request.Customer, Store = request.Store, ParentCategoryId = category.Id }));
+                    categoryIds.AddRange(await _mediator.Send(new GetChildCategoryIds { Customer = request.Customer, Store = request.Store, ParentCategoryId = category.Id }));
                 categoryModel.NumberOfProducts = _productService.GetCategoryProductNumber(request.Customer, categoryIds,
                     request.Store.Id, _accessControlConfig.IgnoreAcl, _accessControlConfig.IgnoreStoreLimitations);
             }

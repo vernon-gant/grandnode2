@@ -49,8 +49,8 @@ public static class KnowledgebaseExtensions
             alreadyProcessedCategoryIds.Add(category.Id);
 
             category = (from c in allCategories
-                where c.Id == category.ParentCategoryId
-                select c).FirstOrDefault();
+                        where c.Id == category.ParentCategoryId
+                        select c).FirstOrDefault();
         }
 
         result.Reverse();

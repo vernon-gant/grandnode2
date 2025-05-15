@@ -43,7 +43,7 @@ public class DiscountViewModelService : IDiscountViewModelService
         IPriceFormatter priceFormatter,
         IDateTimeService dateTimeService,
         IDiscountProviderLoader discountProviderLoader,
-        IMediator mediator, 
+        IMediator mediator,
         IEnumTranslationService enumTranslationService)
     {
         _discountService = discountService;
@@ -132,17 +132,15 @@ public class DiscountViewModelService : IDiscountViewModelService
         });
         var discountPlugins = _discountProviderLoader.LoadAllDiscountProviders();
         foreach (var discountPlugin in discountPlugins)
-        foreach (var discountRule in discountPlugin.GetRequirementRules())
-            model.AvailableDiscountRequirementRules.Add(new SelectListItem
-                { Text = discountRule.FriendlyName, Value = discountRule.SystemName });
+            foreach (var discountRule in discountPlugin.GetRequirementRules())
+                model.AvailableDiscountRequirementRules.Add(new SelectListItem { Text = discountRule.FriendlyName, Value = discountRule.SystemName });
         var currencies = await _currencyService.GetAllCurrencies();
         foreach (var item in currencies)
             model.AvailableCurrencies.Add(new SelectListItem { Text = item.Name, Value = item.CurrencyCode });
 
         //discount amount providers
         foreach (var item in _discountProviderLoader.LoadDiscountAmountProviders())
-            model.AvailableDiscountAmountProviders.Add(new SelectListItem
-                { Value = item.SystemName, Text = item.FriendlyName });
+            model.AvailableDiscountAmountProviders.Add(new SelectListItem { Value = item.SystemName, Text = item.FriendlyName });
 
         if (discount != null)
             //requirements
@@ -183,48 +181,48 @@ public class DiscountViewModelService : IDiscountViewModelService
             //clean up old references (if changed) and update "HasDiscountsApplied" properties
             case DiscountType.AssignedToCategories
                 when discount.DiscountTypeId != DiscountType.AssignedToCategories:
-            {
-                //applied to categories
-                //_categoryService.
-                var categories = await _categoryService.GetAllCategoriesByDiscount(discount.Id);
-
-                //update "HasDiscountsApplied" property
-                foreach (var category in categories)
                 {
-                    var item = category.AppliedDiscounts.FirstOrDefault(x => x == discount.Id);
-                    category.AppliedDiscounts.Remove(item);
-                }
+                    //applied to categories
+                    //_categoryService.
+                    var categories = await _categoryService.GetAllCategoriesByDiscount(discount.Id);
 
-                break;
-            }
+                    //update "HasDiscountsApplied" property
+                    foreach (var category in categories)
+                    {
+                        var item = category.AppliedDiscounts.FirstOrDefault(x => x == discount.Id);
+                        category.AppliedDiscounts.Remove(item);
+                    }
+
+                    break;
+                }
             case DiscountType.AssignedToCollections
                 when discount.DiscountTypeId != DiscountType.AssignedToCollections:
-            {
-                //applied to collections
-                var collections = await _collectionService.GetAllCollectionsByDiscount(discount.Id);
-                foreach (var collection in collections)
                 {
-                    var item = collection.AppliedDiscounts.FirstOrDefault(x => x == discount.Id);
-                    collection.AppliedDiscounts.Remove(item);
-                }
+                    //applied to collections
+                    var collections = await _collectionService.GetAllCollectionsByDiscount(discount.Id);
+                    foreach (var collection in collections)
+                    {
+                        var item = collection.AppliedDiscounts.FirstOrDefault(x => x == discount.Id);
+                        collection.AppliedDiscounts.Remove(item);
+                    }
 
-                break;
-            }
+                    break;
+                }
             case DiscountType.AssignedToSkus
                 when discount.DiscountTypeId != DiscountType.AssignedToSkus:
-            {
-                //applied to products
-                var products = await _productService.GetProductsByDiscount(discount.Id);
-
-                foreach (var p in products)
                 {
-                    var item = p.AppliedDiscounts.FirstOrDefault(x => x == discount.Id);
-                    p.AppliedDiscounts.Remove(item);
-                    await _productService.DeleteDiscount(item, p.Id);
-                }
+                    //applied to products
+                    var products = await _productService.GetProductsByDiscount(discount.Id);
 
-                break;
-            }
+                    foreach (var p in products)
+                    {
+                        var item = p.AppliedDiscounts.FirstOrDefault(x => x == discount.Id);
+                        p.AppliedDiscounts.Remove(item);
+                        await _productService.DeleteDiscount(item, p.Id);
+                    }
+
+                    break;
+                }
         }
 
         return discount;
@@ -267,14 +265,12 @@ public class DiscountViewModelService : IDiscountViewModelService
     {
         var model = new DiscountModel.AddProductToDiscountModel();
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await _vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 
@@ -418,8 +414,7 @@ public class DiscountViewModelService : IDiscountViewModelService
         Task<(IEnumerable<DiscountModel.DiscountUsageHistoryModel> usageHistoryModels, int totalCount)>
         PrepareDiscountUsageHistoryModel(Discount discount, int pageIndex, int pageSize)
     {
-        var duh = await _mediator.Send(new GetDiscountUsageHistoryQuery
-            { DiscountId = discount.Id, PageIndex = pageIndex - 1, PageSize = pageSize });
+        var duh = await _mediator.Send(new GetDiscountUsageHistoryQuery { DiscountId = discount.Id, PageIndex = pageIndex - 1, PageSize = pageSize });
         var items = new List<DiscountModel.DiscountUsageHistoryModel>();
 
         foreach (var x in duh)

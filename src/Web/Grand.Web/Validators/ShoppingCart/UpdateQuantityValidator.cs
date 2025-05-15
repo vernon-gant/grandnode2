@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using Grand.Business.Core.Interfaces.Checkout.Orders;
 using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Domain.Orders;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Infrastructure.Validators;
 using Grand.Web.Models.ShoppingCart;
@@ -23,17 +23,17 @@ public class UpdateQuantityValidator : BaseGrandValidator<UpdateQuantityModel>
             switch (x.ShoppingCartType)
             {
                 case ShoppingCartType.ShoppingCart:
-                {
-                    if (!await permissionService.Authorize(StandardPermission.EnableShoppingCart))
-                        context.AddFailure("No permission");
-                    break;
-                }
+                    {
+                        if (!await permissionService.Authorize(StandardPermission.EnableShoppingCart))
+                            context.AddFailure("No permission");
+                        break;
+                    }
                 case ShoppingCartType.Wishlist:
-                {
-                    if (!await permissionService.Authorize(StandardPermission.EnableWishlist))
-                        context.AddFailure("No permission");
-                    break;
-                }
+                    {
+                        if (!await permissionService.Authorize(StandardPermission.EnableWishlist))
+                            context.AddFailure("No permission");
+                        break;
+                    }
             }
 
             var cart = (await shoppingCartService.GetShoppingCart(contextAccessor.StoreContext.CurrentStore.Id, PrepareCartTypes()))

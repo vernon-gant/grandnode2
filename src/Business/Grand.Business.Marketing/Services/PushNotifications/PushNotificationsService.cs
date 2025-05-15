@@ -163,9 +163,11 @@ public class PushNotificationsService : IPushNotificationsService
             }
         }
 
-        var data = new {
+        var data = new
+        {
             registration_ids = ids,
-            notification = new {
+            notification = new
+            {
                 body = text,
                 title,
                 icon = pictureUrl,

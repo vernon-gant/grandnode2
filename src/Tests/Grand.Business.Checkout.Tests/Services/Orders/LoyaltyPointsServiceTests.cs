@@ -33,12 +33,9 @@ public class LoyaltyPointsServiceTests
     public async Task GetLoyaltyPointsBalanceTest()
     {
         //Assert
-        await _repository.InsertAsync(new LoyaltyPointsHistory
-            { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 10 });
-        await _repository.InsertAsync(new LoyaltyPointsHistory
-            { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 20 });
-        await _repository.InsertAsync(new LoyaltyPointsHistory
-            { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 30 });
+        await _repository.InsertAsync(new LoyaltyPointsHistory { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 10 });
+        await _repository.InsertAsync(new LoyaltyPointsHistory { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 20 });
+        await _repository.InsertAsync(new LoyaltyPointsHistory { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 30 });
         //Act
         var result = await _loyaltyPointsService.GetLoyaltyPointsBalance("1", "");
         //Assert
@@ -60,12 +57,9 @@ public class LoyaltyPointsServiceTests
     public async Task GetLoyaltyPointsHistoryTest()
     {
         //Assert
-        await _repository.InsertAsync(new LoyaltyPointsHistory
-            { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 10 });
-        await _repository.InsertAsync(new LoyaltyPointsHistory
-            { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 20 });
-        await _repository.InsertAsync(new LoyaltyPointsHistory
-            { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 30 });
+        await _repository.InsertAsync(new LoyaltyPointsHistory { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 10 });
+        await _repository.InsertAsync(new LoyaltyPointsHistory { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 20 });
+        await _repository.InsertAsync(new LoyaltyPointsHistory { CustomerId = "1", StoreId = "", Points = 10, PointsBalance = 30 });
         //Act
         var result = await _loyaltyPointsService.GetLoyaltyPointsHistory("1");
         //Assert

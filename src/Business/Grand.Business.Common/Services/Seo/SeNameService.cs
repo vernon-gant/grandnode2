@@ -133,7 +133,7 @@ public class SeNameService(ISlugService slugService, ILanguageService languageSe
         {
             //save translation entities
             foreach (var locale in translationEntity.Locales
-                         .Where(x => x.LocaleKey == nameof(ISlugEntity.SeName) 
+                         .Where(x => x.LocaleKey == nameof(ISlugEntity.SeName)
                                      && !x.LocaleValue.Equals(entity.SeName, StringComparison.InvariantCulture)))
             {
                 await slugService.SaveSlug(entity, locale.LocaleValue, locale.LanguageId);

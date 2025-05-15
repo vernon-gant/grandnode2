@@ -43,8 +43,7 @@ public class PartiallyRefundOfflineCommandHandler : IRequestHandler<PartiallyRef
 
         var canPartiallyRefundOffline =
             await _mediator.Send(
-                new CanPartiallyRefundOfflineQuery
-                    { PaymentTransaction = paymentTransaction, AmountToRefund = amountToRefund }, cancellationToken);
+                new CanPartiallyRefundOfflineQuery { PaymentTransaction = paymentTransaction, AmountToRefund = amountToRefund }, cancellationToken);
         if (!canPartiallyRefundOffline)
             throw new GrandException("You can't partially refund (offline) this order");
 

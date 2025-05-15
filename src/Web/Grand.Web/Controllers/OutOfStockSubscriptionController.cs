@@ -108,7 +108,8 @@ public class OutOfStockSubscriptionController : BasePublicController
             _contextAccessor.StoreContext.CurrentStore.DefaultWarehouseId;
 
         if (!await _groupService.IsRegistered(customer))
-            return Json(new {
+            return Json(new
+            {
                 subscribe = false,
                 buttontext = _translationService.GetResource("OutOfStockSubscriptions.OnlyRegistered"),
                 resource = _translationService.GetResource("OutOfStockSubscriptions.OnlyRegisteredText")
@@ -126,7 +127,8 @@ public class OutOfStockSubscriptionController : BasePublicController
                 //subscription already exists
                 //unsubscribe
                 await _outOfStockSubscriptionService.DeleteSubscription(subscription);
-                return Json(new {
+                return Json(new
+                {
                     subscribe = false,
                     buttontext = _translationService.GetResource("OutOfStockSubscriptions.NotifyMeWhenAvailable"),
                     resource = _translationService.GetResource("OutOfStockSubscriptions.Unsubscribed")
@@ -142,7 +144,8 @@ public class OutOfStockSubscriptionController : BasePublicController
                 WarehouseId = warehouseId
             };
             await _outOfStockSubscriptionService.InsertSubscription(subscription);
-            return Json(new {
+            return Json(new
+            {
                 subscribe = true,
                 buttontext = _translationService.GetResource("OutOfStockSubscriptions.DeleteNotifyWhenAvailable"),
                 resource = _translationService.GetResource("OutOfStockSubscriptions.Subscribed")
@@ -152,14 +155,14 @@ public class OutOfStockSubscriptionController : BasePublicController
         if (product.ManageInventoryMethodId != ManageInventoryMethod.ManageStockByAttributes ||
             product.BackorderModeId != BackorderMode.NoBackorders ||
             !product.AllowOutOfStockSubscriptions)
-            return Json(new {
+            return Json(new
+            {
                 subscribe = false,
                 buttontext = _translationService.GetResource("OutOfStockSubscriptions.NotifyMeWhenAvailable"),
                 resource = _translationService.GetResource("OutOfStockSubscriptions.NotAllowed")
             });
 
-        var attributes = await _mediator.Send(new GetParseProductAttributes
-            { Product = product, Attributes = model.Attributes });
+        var attributes = await _mediator.Send(new GetParseProductAttributes { Product = product, Attributes = model.Attributes });
         var subscriptionAttributes = await _outOfStockSubscriptionService
             .FindSubscription(customer.Id, product.Id, attributes, _contextAccessor.StoreContext.CurrentStore.Id, warehouseId);
 
@@ -168,7 +171,8 @@ public class OutOfStockSubscriptionController : BasePublicController
             //subscription already exists
             //unsubscribe
             await _outOfStockSubscriptionService.DeleteSubscription(subscriptionAttributes);
-            return Json(new {
+            return Json(new
+            {
                 subscribe = false,
                 buttontext = _translationService.GetResource("OutOfStockSubscriptions.NotifyMeWhenAvailable"),
                 resource = _translationService.GetResource("OutOfStockSubscriptions.Unsubscribed")
@@ -187,7 +191,8 @@ public class OutOfStockSubscriptionController : BasePublicController
         };
 
         await _outOfStockSubscriptionService.InsertSubscription(subscriptionAttributes);
-        return Json(new {
+        return Json(new
+        {
             subscribe = true,
             buttontext = _translationService.GetResource("OutOfStockSubscriptions.DeleteNotifyWhenAvailable"),
             resource = _translationService.GetResource("OutOfStockSubscriptions.Subscribed")

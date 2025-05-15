@@ -57,7 +57,7 @@ public class MigrationProcess : IMigrationProcess
     {
         var migrationsDb = GetMigrationDb();
         var version = _repositoryVersion.Table.FirstOrDefault();
-        if(version == null)
+        if (version == null)
             return;
         var majorVersion = string.IsNullOrEmpty(version?.InstalledVersion) ? int.Parse(version?.DataBaseVersion.Split('.')[0]!) : int.Parse(version?.InstalledVersion.Split('.')[0]!);
         var minorVersion = string.IsNullOrEmpty(version?.InstalledVersion) ? int.Parse(version?.DataBaseVersion.Split('.')[1]!) : int.Parse(version?.InstalledVersion.Split('.')[1]!);

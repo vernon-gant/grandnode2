@@ -57,10 +57,10 @@ public class CourseViewModelService(
         //locales
         course.Locales = await seNameService.TranslationSeNameProperties(model.Locales, course, x => x.Name);
         course.SeName = await seNameService.ValidateSeName(course, model.SeName, course.Name, true);
-        
+
         await courseService.Insert(course);
         await seNameService.SaveSeName(course);
-        
+
         //update picture seo file name
         await pictureService.UpdatePictureSeoNames(course.PictureId, course.Name);
 
@@ -77,13 +77,13 @@ public class CourseViewModelService(
         var prevProductId = course.ProductId;
 
         course = model.ToEntity(course);
-        
+
         //locales
         course.Locales = await seNameService.TranslationSeNameProperties(model.Locales, course, x => x.Name);
         course.SeName = await seNameService.ValidateSeName(course, model.SeName, course.Name, true);
 
         await courseService.Update(course);
-        
+
         //search engine name
         await seNameService.SaveSeName(course);
 
@@ -197,14 +197,12 @@ public class CourseViewModelService(
     {
         var model = new CourseModel.AssociateProductToCourseModel();
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in await storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 

@@ -74,7 +74,7 @@ public class PageService : IPageService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _pageRepository.Table
-                select p;
+                        select p;
 
             query = query.Where(t => t.SystemName.ToLower() == systemName.ToLower());
             query = query.OrderBy(t => t.Id);
@@ -96,7 +96,7 @@ public class PageService : IPageService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from p in _pageRepository.Table
-                select p;
+                        select p;
 
             query = query.OrderBy(t => t.DisplayOrder).ThenBy(t => t.SystemName);
 
@@ -107,16 +107,16 @@ public class PageService : IPageService
                 {
                     var allowedCustomerGroupsIds = _contextAccessor.WorkContext.CurrentCustomer.GetCustomerGroupIds();
                     query = from p in query
-                        where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                        select p;
+                            where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                            select p;
                 }
 
                 //Store acl
                 if (string.IsNullOrEmpty(storeId) || _accessControlConfig.IgnoreStoreLimitations)
                     return await Task.FromResult(query.ToList());
                 query = from p in query
-                    where !p.LimitedToStores || p.Stores.Contains(storeId)
-                    select p;
+                        where !p.LimitedToStores || p.Stores.Contains(storeId)
+                        select p;
 
                 query = query.OrderBy(t => t.SystemName);
             }

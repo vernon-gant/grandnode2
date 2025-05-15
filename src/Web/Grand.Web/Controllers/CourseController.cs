@@ -3,16 +3,16 @@ using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Marketing.Courses;
 using Grand.Business.Core.Interfaces.Storage;
-using Grand.Domain.Permissions;
 using Grand.Domain.Courses;
 using Grand.Domain.Customers;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
+using Grand.SharedKernel.Attributes;
 using Grand.Web.Commands.Models.Courses;
 using Grand.Web.Common.Controllers;
 using Grand.Web.Features.Models.Courses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Grand.SharedKernel.Attributes;
 
 namespace Grand.Web.Controllers;
 
@@ -222,8 +222,7 @@ public class CourseController : BasePublicController
         if (!await CheckPermission(course, customer))
             return Json(new { result = false });
 
-        await _mediator.Send(new CourseLessonApprovedCommand
-            { Course = course, Lesson = lesson, Customer = _contextAccessor.WorkContext.CurrentCustomer });
+        await _mediator.Send(new CourseLessonApprovedCommand { Course = course, Lesson = lesson, Customer = _contextAccessor.WorkContext.CurrentCustomer });
 
         return Json(new { result = true });
     }

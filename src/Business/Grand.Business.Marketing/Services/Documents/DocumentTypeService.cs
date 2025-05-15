@@ -30,8 +30,8 @@ public class DocumentTypeService : IDocumentTypeService
     public virtual async Task<IList<DocumentType>> GetAll()
     {
         var query = from t in _documentTypeRepository.Table
-            orderby t.DisplayOrder
-            select t;
+                    orderby t.DisplayOrder
+                    select t;
         return await Task.FromResult(query.ToList());
     }
 

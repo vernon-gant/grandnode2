@@ -88,8 +88,7 @@ public class ProductReviewViewModelService : IProductReviewViewModelService
     {
         var model = new ProductReviewListModel();
 
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
         var stores = (await _storeService.GetAllStores())
             .Where(x => x.Id == storeId || string.IsNullOrWhiteSpace(storeId)).Select(st =>
                 new SelectListItem { Text = st.Shortcut, Value = st.Id.ToString() });

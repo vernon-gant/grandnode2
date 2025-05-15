@@ -67,7 +67,7 @@ public class BackgroundServiceTask : BackgroundService
                         {
                             task.LastStartUtc = DateTime.UtcNow;
                             try
-                            {                                
+                            {
                                 logger.LogInformation($"Task {Name} execute");
                                 await scheduleTask.Execute();
                                 task.LastSuccessUtc = DateTime.UtcNow;
@@ -107,7 +107,7 @@ public class BackgroundServiceTask : BackgroundService
     private static async Task WorkContext(IServiceProvider serviceProvider, ScheduleTask scheduleTask)
     {
         var contextAccessor = serviceProvider.GetRequiredService<IContextAccessor>();
-        
+
         var storeContext = serviceProvider.GetRequiredService<IStoreContextSetter>();
         contextAccessor.StoreContext = await storeContext.InitializeStoreContext(scheduleTask.StoreId);
 

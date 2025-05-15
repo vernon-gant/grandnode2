@@ -46,31 +46,31 @@ public class
         var orders = await _mediator.Send(query, cancellationToken);
 
         foreach (var order in orders)
-        foreach (var orderitem in order.OrderItems)
-        {
-            var product = await _productService.GetProductByIdIncludeArch(orderitem.ProductId);
-            if (product is not { IsDownload: true }) continue;
+            foreach (var orderitem in order.OrderItems)
+            {
+                var product = await _productService.GetProductByIdIncludeArch(orderitem.ProductId);
+                if (product is not { IsDownload: true }) continue;
 
-            var itemModel = new CustomerDownloadableProductsModel.DownloadableProductsModel {
-                OrderItemGuid = orderitem.OrderItemGuid,
-                OrderId = order.Id,
-                OrderNumber = order.OrderNumber,
-                CreatedOn = _dateTimeService.ConvertToUserTime(order.CreatedOnUtc, DateTimeKind.Utc),
-                ProductName = product.GetTranslation(x => x.Name, request.Language.Id),
-                ProductSeName = product.GetSeName(request.Language.Id),
-                ProductAttributes = orderitem.AttributeDescription,
-                ProductId = orderitem.ProductId
-            };
-            model.Items.Add(itemModel);
+                var itemModel = new CustomerDownloadableProductsModel.DownloadableProductsModel {
+                    OrderItemGuid = orderitem.OrderItemGuid,
+                    OrderId = order.Id,
+                    OrderNumber = order.OrderNumber,
+                    CreatedOn = _dateTimeService.ConvertToUserTime(order.CreatedOnUtc, DateTimeKind.Utc),
+                    ProductName = product.GetTranslation(x => x.Name, request.Language.Id),
+                    ProductSeName = product.GetSeName(request.Language.Id),
+                    ProductAttributes = orderitem.AttributeDescription,
+                    ProductId = orderitem.ProductId
+                };
+                model.Items.Add(itemModel);
 
-            if (order.IsDownloadAllowed(orderitem, product))
-                itemModel.DownloadId = product.DownloadId;
+                if (order.IsDownloadAllowed(orderitem, product))
+                    itemModel.DownloadId = product.DownloadId;
 
-            if (order.IsLicenseDownloadAllowed(orderitem, product))
-                itemModel.LicenseId = !string.IsNullOrEmpty(orderitem.LicenseDownloadId)
-                    ? orderitem.LicenseDownloadId
-                    : "";
-        }
+                if (order.IsLicenseDownloadAllowed(orderitem, product))
+                    itemModel.LicenseId = !string.IsNullOrEmpty(orderitem.LicenseDownloadId)
+                        ? orderitem.LicenseDownloadId
+                        : "";
+            }
 
         return model;
     }

@@ -2,8 +2,8 @@
 using Grand.Business.Core.Interfaces.Common.Configuration;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
-using Grand.Domain.Permissions;
 using Grand.Domain.Directory;
+using Grand.Domain.Permissions;
 using Grand.Domain.Tax;
 using Grand.Infrastructure.Caching;
 using Grand.Infrastructure.Plugins;
@@ -31,7 +31,7 @@ public class TaxController : BaseAdminController
         IServiceProvider serviceProvider,
         ICacheBase cacheBase,
         ITranslationService translationService,
-        ICountryService countryService, 
+        ICountryService countryService,
         IEnumTranslationService enumTranslationService)
     {
         _taxService = taxService;
@@ -56,7 +56,7 @@ public class TaxController : BaseAdminController
     private readonly ITranslationService _translationService;
     private readonly ICountryService _countryService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     #endregion
 
     #region Tax Providers
@@ -140,17 +140,16 @@ public class TaxController : BaseAdminController
         //tax categories
         var taxCategories = await _taxCategoryService.GetAllTaxCategories();
         model.TaxCategories.Add(new SelectListItem {
-            Text = _translationService.GetResource("Admin.Configuration.Tax.Settings.TaxCategories.None"), Value = ""
+            Text = _translationService.GetResource("Admin.Configuration.Tax.Settings.TaxCategories.None"),
+            Value = ""
         });
         foreach (var tc in taxCategories)
             model.TaxCategories.Add(new SelectListItem { Text = tc.Name, Value = tc.Id });
 
         //EU VAT countries
-        model.EuVatShopCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.EuVatShopCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.EuVatShopCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = c.Id == taxSettings.EuVatShopCountryId });
+            model.EuVatShopCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = c.Id == taxSettings.EuVatShopCountryId });
 
         //default tax address
         var defaultAddress = taxSettings.DefaultTaxAddress;
@@ -159,19 +158,16 @@ public class TaxController : BaseAdminController
         else
             model.DefaultTaxAddress = new AddressModel();
 
-        model.DefaultTaxAddress.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.DefaultTaxAddress.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.DefaultTaxAddress.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = defaultAddress != null && c.Id == defaultAddress.CountryId });
+            model.DefaultTaxAddress.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = defaultAddress != null && c.Id == defaultAddress.CountryId });
 
         var states = defaultAddress != null && !string.IsNullOrEmpty(defaultAddress.CountryId)
             ? (await _countryService.GetCountryById(defaultAddress.CountryId))?.StateProvinces
             : new List<StateProvince>();
         if (states?.Count > 0)
             foreach (var s in states)
-                model.DefaultTaxAddress.AvailableStates.Add(new SelectListItem
-                    { Text = s.Name, Value = s.Id, Selected = s.Id == defaultAddress.StateProvinceId });
+                model.DefaultTaxAddress.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == defaultAddress.StateProvinceId });
 
         model.DefaultTaxAddress.CountryEnabled = true;
         model.DefaultTaxAddress.StateProvinceEnabled = true;

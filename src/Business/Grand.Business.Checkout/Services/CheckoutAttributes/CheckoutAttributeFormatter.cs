@@ -74,48 +74,48 @@ public class CheckoutAttributeFormatter : ICheckoutAttributeFormatter
                     {
                         //no values
                         case AttributeControlType.MultilineTextbox:
-                        {
-                            //multiline text box
-                            var attributeName = attribute.GetTranslation(a => a.Name, _contextAccessor.WorkContext.WorkingLanguage.Id);
-                            //encode (if required)
-                            if (htmlEncode)
-                                attributeName = WebUtility.HtmlEncode(attributeName);
-                            formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
-                            //we never encode multiline text box input
-                            break;
-                        }
-                        case AttributeControlType.FileUpload:
-                        {
-                            //file upload
-                            if (Guid.TryParse(valueStr, out var downloadGuid))
                             {
-                                var attributeText = string.Empty;
-                                var attributeName =
-                                    attribute.GetTranslation(a => a.Name, _contextAccessor.WorkContext.WorkingLanguage.Id);
-                                if (allowHyperlinks)
+                                //multiline text box
+                                var attributeName = attribute.GetTranslation(a => a.Name, _contextAccessor.WorkContext.WorkingLanguage.Id);
+                                //encode (if required)
+                                if (htmlEncode)
+                                    attributeName = WebUtility.HtmlEncode(attributeName);
+                                formattedAttribute = $"{attributeName}: {FormatText.ConvertText(valueStr)}";
+                                //we never encode multiline text box input
+                                break;
+                            }
+                        case AttributeControlType.FileUpload:
+                            {
+                                //file upload
+                                if (Guid.TryParse(valueStr, out var downloadGuid))
                                 {
-                                    //hyperlinks are allowed
-                                    var downloadLink =
-                                        $"{_contextAccessor.StoreContext.CurrentHost.Url.TrimEnd('/')}/download/getfileupload/?downloadId={downloadGuid}";
-                                    attributeText =
-                                        $"<a href=\"{downloadLink}\" class=\"fileuploadattribute\">{attribute.GetTranslation(a => a.TextPrompt, _contextAccessor.WorkContext.WorkingLanguage.Id)}</a>";
+                                    var attributeText = string.Empty;
+                                    var attributeName =
+                                        attribute.GetTranslation(a => a.Name, _contextAccessor.WorkContext.WorkingLanguage.Id);
+                                    if (allowHyperlinks)
+                                    {
+                                        //hyperlinks are allowed
+                                        var downloadLink =
+                                            $"{_contextAccessor.StoreContext.CurrentHost.Url.TrimEnd('/')}/download/getfileupload/?downloadId={downloadGuid}";
+                                        attributeText =
+                                            $"<a href=\"{downloadLink}\" class=\"fileuploadattribute\">{attribute.GetTranslation(a => a.TextPrompt, _contextAccessor.WorkContext.WorkingLanguage.Id)}</a>";
+                                    }
+
+                                    formattedAttribute = $"{attributeName}: {attributeText}";
                                 }
 
-                                formattedAttribute = $"{attributeName}: {attributeText}";
+                                break;
                             }
-
-                            break;
-                        }
                         default:
-                        {
-                            //other attributes (text box, datepicker)
-                            formattedAttribute =
-                                $"{attribute.GetTranslation(a => a.Name, _contextAccessor.WorkContext.WorkingLanguage.Id)}: {valueStr}";
-                            //encode (if required)
-                            if (htmlEncode)
-                                formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
-                            break;
-                        }
+                            {
+                                //other attributes (text box, datepicker)
+                                formattedAttribute =
+                                    $"{attribute.GetTranslation(a => a.Name, _contextAccessor.WorkContext.WorkingLanguage.Id)}: {valueStr}";
+                                //encode (if required)
+                                if (htmlEncode)
+                                    formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
+                                break;
+                            }
                     }
                 }
                 else

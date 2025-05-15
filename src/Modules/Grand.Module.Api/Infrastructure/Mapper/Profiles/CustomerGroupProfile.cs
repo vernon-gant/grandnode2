@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Grand.Module.Api.DTOs.Customers;
 using Grand.Domain.Customers;
 using Grand.Infrastructure.Mapper;
+using Grand.Module.Api.DTOs.Customers;
 
 namespace Grand.Module.Api.Infrastructure.Mapper.Profiles;
 

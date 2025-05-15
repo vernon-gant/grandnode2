@@ -37,27 +37,27 @@ public class CheckOrderStatusCommandHandler : IRequestHandler<CheckOrderStatusCo
         switch (request.Order.OrderStatusId)
         {
             case (int)OrderStatusSystem.Pending:
-            {
-                if (request.Order.PaymentStatusId is PaymentStatus.Authorized or PaymentStatus.Paid
-                    or PaymentStatus.PartiallyPaid)
-                    await _mediator.Send(new SetOrderStatusCommand {
-                        Order = request.Order,
-                        Os = OrderStatusSystem.Processing,
-                        NotifyCustomer = false,
-                        NotifyStoreOwner = false
-                    }, cancellationToken);
+                {
+                    if (request.Order.PaymentStatusId is PaymentStatus.Authorized or PaymentStatus.Paid
+                        or PaymentStatus.PartiallyPaid)
+                        await _mediator.Send(new SetOrderStatusCommand {
+                            Order = request.Order,
+                            Os = OrderStatusSystem.Processing,
+                            NotifyCustomer = false,
+                            NotifyStoreOwner = false
+                        }, cancellationToken);
 
-                if (request.Order.ShippingStatusId is ShippingStatus.PartiallyShipped or ShippingStatus.Shipped
-                    or ShippingStatus.Delivered)
-                    await _mediator.Send(new SetOrderStatusCommand {
-                        Order = request.Order,
-                        Os = OrderStatusSystem.Processing,
-                        NotifyCustomer = false,
-                        NotifyStoreOwner = false
-                    }, cancellationToken);
+                    if (request.Order.ShippingStatusId is ShippingStatus.PartiallyShipped or ShippingStatus.Shipped
+                        or ShippingStatus.Delivered)
+                        await _mediator.Send(new SetOrderStatusCommand {
+                            Order = request.Order,
+                            Os = OrderStatusSystem.Processing,
+                            NotifyCustomer = false,
+                            NotifyStoreOwner = false
+                        }, cancellationToken);
 
-                break;
-            }
+                    break;
+                }
             case (int)OrderStatusSystem.Cancelled or (int)OrderStatusSystem.Complete:
                 return true;
         }

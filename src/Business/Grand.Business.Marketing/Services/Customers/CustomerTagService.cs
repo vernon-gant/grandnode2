@@ -43,8 +43,8 @@ public class CustomerTagService : ICustomerTagService
         int pageSize = 2147483647)
     {
         var query = from c in _customerRepository.Table
-            where c.CustomerTags.Contains(customerTagId)
-            select c;
+                    where c.CustomerTags.Contains(customerTagId)
+                    select c;
         return await PagedList<Customer>.Create(query, pageIndex, pageSize);
     }
 
@@ -93,8 +93,8 @@ public class CustomerTagService : ICustomerTagService
     public virtual async Task<CustomerTag> GetCustomerTagByName(string name)
     {
         var query = from pt in _customerTagRepository.Table
-            where pt.Name == name
-            select pt;
+                    where pt.Name == name
+                    select pt;
 
         return await Task.FromResult(query.FirstOrDefault());
     }
@@ -107,8 +107,8 @@ public class CustomerTagService : ICustomerTagService
     public virtual async Task<IList<CustomerTag>> GetCustomerTagsByName(string name)
     {
         var query = from pt in _customerTagRepository.Table
-            where pt.Name.ToLower().Contains(name.ToLower())
-            select pt;
+                    where pt.Name.ToLower().Contains(name.ToLower())
+                    select pt;
         return await Task.FromResult(query.ToList());
     }
 
@@ -192,9 +192,9 @@ public class CustomerTagService : ICustomerTagService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from cr in _customerTagProductRepository.Table
-                where cr.CustomerTagId == customerTagId
-                orderby cr.DisplayOrder
-                select cr;
+                        where cr.CustomerTagId == customerTagId
+                        orderby cr.DisplayOrder
+                        select cr;
             return await Task.FromResult(query.ToList());
         });
     }
@@ -208,9 +208,9 @@ public class CustomerTagService : ICustomerTagService
     public virtual async Task<CustomerTagProduct> GetCustomerTagProduct(string customerTagId, string productId)
     {
         var query = from cr in _customerTagProductRepository.Table
-            where cr.CustomerTagId == customerTagId && cr.ProductId == productId
-            orderby cr.DisplayOrder
-            select cr;
+                    where cr.CustomerTagId == customerTagId && cr.ProductId == productId
+                    orderby cr.DisplayOrder
+                    select cr;
         return await Task.FromResult(query.FirstOrDefault());
     }
 

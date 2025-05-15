@@ -2601,14 +2601,14 @@ public partial class InstallationService
                 }
             }
         };
-        
+
         productCod.ProductPictures.Add(new ProductPicture {
             PictureId = (await _pictureRepository.InsertPicture(await File.ReadAllBytesAsync(sampleImagesPath + "product_cod_1.png"),
                 "image/png", SeoExtensions.GenerateSlug(productCod.Name, true, false, false), reference: Reference.Product,
                 objectId: productCod.Id)).Id,
             DisplayOrder = 1
         });
-        
+
         allProducts.Add(productCod);
         await _productRepository.InsertAsync(productCod);
 

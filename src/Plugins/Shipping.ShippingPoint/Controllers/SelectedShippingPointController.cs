@@ -67,8 +67,7 @@ public class SelectedShippingPointController : Controller
         var shippingPointsModel = new List<SelectListItem> {
             new() { Value = "", Text = _translationService.GetResource("Shipping.ShippingPoint.SelectShippingOption") }
         };
-        shippingPointsModel.AddRange(shippingPoints.Select(shippingPoint => new SelectListItem
-            { Value = shippingPoint.Id, Text = shippingPoint.ShippingPointName }));
+        shippingPointsModel.AddRange(shippingPoints.Select(shippingPoint => new SelectListItem { Value = shippingPoint.Id, Text = shippingPoint.ShippingPointName }));
 
         return View(shippingPointsModel);
     }

@@ -19,7 +19,7 @@ public class PageViewModelService : IPageViewModelService
     private readonly IStoreService _storeService;
     private readonly ITranslationService _translationService;
     private readonly ISeNameService _seNameService;
-    
+
     public PageViewModelService(
         IPageLayoutService pageLayoutService,
         IPageService pageService,
@@ -40,8 +40,7 @@ public class PageViewModelService : IPageViewModelService
     {
         var model = new PageListModel();
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
         foreach (var s in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
         return model;
@@ -70,7 +69,7 @@ public class PageViewModelService : IPageViewModelService
 
         await _pageService.InsertPage(page);
         await _seNameService.SaveSeName(page);
-        
+
         return page;
     }
 
@@ -80,11 +79,11 @@ public class PageViewModelService : IPageViewModelService
         page = model.ToEntity(page, _dateTimeService);
         page.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, page, x => x.Title);
         page.SeName = await _seNameService.ValidateSeName(page, model.SeName, page.Title ?? page.SystemName, true);
-        
+
         await _pageService.UpdatePage(page);
         //search engine name
         await _seNameService.SaveSeName(page);
-        
+
         return page;
     }
 

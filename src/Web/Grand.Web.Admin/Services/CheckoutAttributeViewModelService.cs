@@ -141,11 +141,13 @@ public class CheckoutAttributeViewModelService(
         //tax categories
         var taxCategories = await taxCategoryService.GetAllTaxCategories();
         model.AvailableTaxCategories.Add(new SelectListItem {
-            Text = translationService.GetResource("Admin.Configuration.Tax.Settings.TaxCategories.None"), Value = ""
+            Text = translationService.GetResource("Admin.Configuration.Tax.Settings.TaxCategories.None"),
+            Value = ""
         });
         foreach (var tc in taxCategories)
             model.AvailableTaxCategories.Add(new SelectListItem {
-                Text = tc.Name, Value = tc.Id,
+                Text = tc.Name,
+                Value = tc.Id,
                 Selected = checkoutAttribute != null && !excludeProperties && tc.Id == checkoutAttribute.TaxCategoryId
             });
     }
@@ -204,30 +206,30 @@ public class CheckoutAttributeViewModelService(
                     case AttributeControlType.RadioList:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    {
-                        var selectedAttribute = model.ConditionModel.ConditionAttributes
-                            .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
-                        var selectedValue = selectedAttribute?.SelectedValueId;
-                        conditionAttributes = !string.IsNullOrEmpty(selectedValue)
-                            ? checkoutAttributeParser
-                                .AddCheckoutAttribute(conditionAttributes, attribute, selectedValue).ToList()
-                            : checkoutAttributeParser.AddCheckoutAttribute(conditionAttributes, attribute, string.Empty)
-                                .ToList();
-                    }
+                        {
+                            var selectedAttribute = model.ConditionModel.ConditionAttributes
+                                .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
+                            var selectedValue = selectedAttribute?.SelectedValueId;
+                            conditionAttributes = !string.IsNullOrEmpty(selectedValue)
+                                ? checkoutAttributeParser
+                                    .AddCheckoutAttribute(conditionAttributes, attribute, selectedValue).ToList()
+                                : checkoutAttributeParser.AddCheckoutAttribute(conditionAttributes, attribute, string.Empty)
+                                    .ToList();
+                        }
                         break;
                     case AttributeControlType.Checkboxes:
-                    {
-                        var selectedAttribute = model.ConditionModel.ConditionAttributes
-                            .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
-                        var selectedValues = selectedAttribute?.Values.Where(x => x.Selected).Select(x => x.Value);
-                        if (selectedValues.Any())
-                            foreach (var value in selectedValues)
+                        {
+                            var selectedAttribute = model.ConditionModel.ConditionAttributes
+                                .FirstOrDefault(x => x.Id == model.ConditionModel.SelectedAttributeId);
+                            var selectedValues = selectedAttribute?.Values.Where(x => x.Selected).Select(x => x.Value);
+                            if (selectedValues.Any())
+                                foreach (var value in selectedValues)
+                                    conditionAttributes = checkoutAttributeParser
+                                        .AddCheckoutAttribute(conditionAttributes, attribute, value).ToList();
+                            else
                                 conditionAttributes = checkoutAttributeParser
-                                    .AddCheckoutAttribute(conditionAttributes, attribute, value).ToList();
-                        else
-                            conditionAttributes = checkoutAttributeParser
-                                .AddCheckoutAttribute(conditionAttributes, attribute, string.Empty).ToList();
-                    }
+                                    .AddCheckoutAttribute(conditionAttributes, attribute, string.Empty).ToList();
+                        }
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
                     case AttributeControlType.TextBox:

@@ -150,8 +150,8 @@ public class ProductService : IProductService
         int pageSize = int.MaxValue)
     {
         var query = from c in _productRepository.Table
-            where c.AppliedDiscounts.Any(x => x == discountId)
-            select c;
+                    where c.AppliedDiscounts.Any(x => x == discountId)
+                    select c;
 
         return await PagedList<Product>.Create(query, pageIndex, pageSize);
     }
@@ -422,7 +422,7 @@ public class ProductService : IProductService
             categoryIds.Remove("");
 
         var query = from p in _productRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(p => p.Published && p.VisibleIndividually);
 
@@ -435,15 +435,15 @@ public class ProductService : IProductService
             //ACL (access control list)
             var allowedCustomerGroupsIds = customer.GetCustomerGroupIds();
             query = from p in query
-                where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
-                select p;
+                    where !p.LimitedToGroups || allowedCustomerGroupsIds.Any(x => p.CustomerGroups.Contains(x))
+                    select p;
         }
 
         if (!string.IsNullOrEmpty(storeId) && !ignoreStore)
             //Limited to stores rules
             query = from p in query
-                where !p.LimitedToStores || p.Stores.Contains(storeId)
-                select p;
+                    where !p.LimitedToStores || p.Stores.Contains(storeId)
+                    select p;
 
         return Convert.ToInt32(query.Count());
     }
@@ -568,7 +568,7 @@ public class ProductService : IProductService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from p in _productRepository.Table
-            select p;
+                    select p;
         query = query.Where(x => x.ProductAttributeMappings.Any(y => y.ProductAttributeId == productAttributeId));
         query = query.OrderBy(x => x.Name);
 
@@ -587,7 +587,7 @@ public class ProductService : IProductService
         string storeId = "", string vendorId = "", bool showHidden = false)
     {
         var query = from p in _productRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(p => p.ParentGroupedProductId == parentGroupedProductId);
 

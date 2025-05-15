@@ -52,8 +52,8 @@ public class CustomerAttributeService : ICustomerAttributeService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from ca in _customerAttributeRepository.Table
-                orderby ca.DisplayOrder
-                select ca;
+                        orderby ca.DisplayOrder
+                        select ca;
             return await Task.FromResult(query.ToList());
         });
     }

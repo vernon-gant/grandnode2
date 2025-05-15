@@ -92,9 +92,9 @@ public class StartupApplication : IStartupApplication
 
         //Default theme view
         serviceCollection.AddScoped<IThemeView, DefaultThemeView>();
-        
+
         //Admin site map service
-        serviceCollection.AddScoped<IAdminSiteMapService, AdminSiteMapService>();        
+        serviceCollection.AddScoped<IAdminSiteMapService, AdminSiteMapService>();
     }
 
 

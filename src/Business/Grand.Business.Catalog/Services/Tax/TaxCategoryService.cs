@@ -52,8 +52,8 @@ public class TaxCategoryService : ITaxCategoryService
         return await _cacheBase.GetAsync(key, async () =>
         {
             var query = from tc in _taxCategoryRepository.Table
-                orderby tc.DisplayOrder
-                select tc;
+                        orderby tc.DisplayOrder
+                        select tc;
             return await Task.FromResult(query.ToList());
         });
     }

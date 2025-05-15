@@ -1,7 +1,7 @@
 ﻿using Grand.Business.Core.Interfaces.Cms;
 using Grand.Business.Core.Interfaces.Common.Configuration;
-using Grand.Domain.Permissions;
 using Grand.Domain.Cms;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure.Caching;
 using Grand.Infrastructure.Plugins;
 using Grand.Web.Admin.Extensions;

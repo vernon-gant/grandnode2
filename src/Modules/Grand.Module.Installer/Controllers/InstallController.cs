@@ -116,7 +116,7 @@ public class InstallController : Controller
     }
 
     public virtual async Task<IActionResult> Index()
-    {        
+    {
         var installed = await _cacheBase.GetAsync("Installed", async () => await Task.FromResult(false));
         return View(installed ? new InstallModel { Installed = true, AdminEmail = "", AdminPassword = "", ConfirmPassword = "" } : PrepareModel(null));
     }
@@ -198,7 +198,7 @@ public class InstallController : Controller
         else if (string.IsNullOrEmpty(connectionString))
             ModelState.AddModelError("", locService.GetResource(model.SelectedLanguage, "ConnectionStringRequired"));
     }
-    
+
     [HttpPost]
     public virtual async Task<IActionResult> Index(InstallModel model)
     {
@@ -212,8 +212,8 @@ public class InstallController : Controller
             model.DatabaseConnectionString = model.DatabaseConnectionString.Trim();
 
         var connectionString = !string.IsNullOrEmpty(_configuration[SettingsConstants.ConnectionStrings]) ?
-            _configuration[SettingsConstants.ConnectionStrings]:
-            BuildConnectionString(locService, model);            
+            _configuration[SettingsConstants.ConnectionStrings] :
+            BuildConnectionString(locService, model);
 
         await CheckConnectionString(locService, connectionString!, model);
 

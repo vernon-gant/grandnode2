@@ -13,8 +13,7 @@ public class OrderExtensionsTests
     {
         var order1 = new Order { PaymentStatusId = PaymentStatus.Paid, PaidDateUtc = DateTime.UtcNow };
         Order order2 = null;
-        var product1 = new Product
-            { DownloadActivationTypeId = DownloadActivationType.WhenOrderIsPaid, IsDownload = true };
+        var product1 = new Product { DownloadActivationTypeId = DownloadActivationType.WhenOrderIsPaid, IsDownload = true };
         var product2 = new Product { DownloadActivationTypeId = DownloadActivationType.Manually, IsDownload = true };
         var product3 = new Product { IsDownload = false };
         var orderItem = new OrderItem { IsDownloadActivated = true };
@@ -33,8 +32,7 @@ public class OrderExtensionsTests
     {
         var order1 = new Order { PaymentStatusId = PaymentStatus.Paid, PaidDateUtc = DateTime.UtcNow };
         Order order2 = null;
-        var product1 = new Product
-            { DownloadActivationTypeId = DownloadActivationType.WhenOrderIsPaid, IsDownload = true };
+        var product1 = new Product { DownloadActivationTypeId = DownloadActivationType.WhenOrderIsPaid, IsDownload = true };
         var product2 = new Product { DownloadActivationTypeId = DownloadActivationType.Manually, IsDownload = true };
         var product3 = new Product { IsDownload = false };
         var orderItem = new OrderItem { IsDownloadActivated = true, LicenseDownloadId = "idlicense" };

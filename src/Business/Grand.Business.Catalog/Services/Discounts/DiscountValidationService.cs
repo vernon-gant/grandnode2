@@ -162,23 +162,21 @@ public class DiscountValidationService : IDiscountValidationService
         switch (discount.DiscountLimitationId)
         {
             case DiscountLimitationType.NTimes:
-            {
-                var usedTimes = await _mediator.Send(new GetDiscountUsageHistoryQuery
-                    { DiscountId = discount.Id, PageSize = 1 });
-                if (usedTimes.TotalCount >= discount.LimitationTimes)
-                    return result;
-            }
+                {
+                    var usedTimes = await _mediator.Send(new GetDiscountUsageHistoryQuery { DiscountId = discount.Id, PageSize = 1 });
+                    if (usedTimes.TotalCount >= discount.LimitationTimes)
+                        return result;
+                }
                 break;
             case DiscountLimitationType.NTimesPerUser:
-            {
-                var usedTimes = await _mediator.Send(new GetDiscountUsageHistoryQuery
-                    { DiscountId = discount.Id, CustomerId = customer.Id, PageSize = 1 });
-                if (usedTimes.TotalCount >= discount.LimitationTimes)
                 {
-                    result.UserErrorResource = "ShoppingCart.Discount.CannotBeUsedAnymore";
-                    return result;
+                    var usedTimes = await _mediator.Send(new GetDiscountUsageHistoryQuery { DiscountId = discount.Id, CustomerId = customer.Id, PageSize = 1 });
+                    if (usedTimes.TotalCount >= discount.LimitationTimes)
+                    {
+                        result.UserErrorResource = "ShoppingCart.Discount.CannotBeUsedAnymore";
+                        return result;
+                    }
                 }
-            }
                 break;
             case DiscountLimitationType.Nolimits:
             default:

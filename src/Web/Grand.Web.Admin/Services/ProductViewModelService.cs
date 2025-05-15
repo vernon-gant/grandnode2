@@ -145,16 +145,14 @@ public class ProductViewModelService(
         var storeId = contextAccessor.WorkContext.CurrentCustomer.StaffStoreId;
 
         if (string.IsNullOrEmpty(storeId))
-            model.AvailableStores.Add(new SelectListItem
-                { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+            model.AvailableStores.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
 
         foreach (var store in (await storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = store.Shortcut, Value = store.Id });
 
         //customer groups
-        model.AvailableCustomerGroups.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableCustomerGroups.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var role in await groupService.GetAllCustomerGroups(showHidden: true))
             model.AvailableCustomerGroups.Add(new SelectListItem { Text = role.Name, Value = role.Id });
 
@@ -374,11 +372,13 @@ public class ProductViewModelService(
         //tax categories
         var taxCategories = await taxCategoryService.GetAllTaxCategories();
         model.AvailableTaxCategories.Add(new SelectListItem {
-            Text = translationService.GetResource("Admin.Configuration.Tax.Settings.TaxCategories.None"), Value = ""
+            Text = translationService.GetResource("Admin.Configuration.Tax.Settings.TaxCategories.None"),
+            Value = ""
         });
         foreach (var tc in taxCategories)
             model.AvailableTaxCategories.Add(new SelectListItem {
-                Text = tc.Name, Value = tc.Id,
+                Text = tc.Name,
+                Value = tc.Id,
                 Selected = product != null && !setPredefinedValues && tc.Id == product.TaxCategoryId
             });
 
@@ -386,12 +386,14 @@ public class ProductViewModelService(
         var measureWeights = await measureService.GetAllMeasureWeights();
         foreach (var mw in measureWeights)
             model.AvailableBasepriceUnits.Add(new SelectListItem {
-                Text = mw.Name, Value = mw.Id,
+                Text = mw.Name,
+                Value = mw.Id,
                 Selected = product != null && !setPredefinedValues && mw.Id == product.BasepriceUnitId
             });
         foreach (var mw in measureWeights)
             model.AvailableBasepriceBaseUnits.Add(new SelectListItem {
-                Text = mw.Name, Value = mw.Id,
+                Text = mw.Name,
+                Value = mw.Id,
                 Selected = product != null && !setPredefinedValues && mw.Id == product.BasepriceBaseUnitId
             });
 
@@ -399,8 +401,7 @@ public class ProductViewModelService(
         var units = await measureService.GetAllMeasureUnits();
         model.AvailableUnits.Add(new SelectListItem { Text = "---", Value = "" });
         foreach (var un in units)
-            model.AvailableUnits.Add(new SelectListItem
-                { Text = un.Name, Value = un.Id, Selected = product != null && un.Id == product.UnitId });
+            model.AvailableUnits.Add(new SelectListItem { Text = un.Name, Value = un.Id, Selected = product != null && un.Id == product.UnitId });
 
         //discounts
         model.AvailableDiscounts = (await discountService
@@ -529,14 +530,12 @@ public class ProductViewModelService(
         var storeId = contextAccessor.WorkContext.CurrentCustomer.StaffStoreId;
 
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in (await storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
         //warehouses
-        model.AvailableWarehouses.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableWarehouses.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var wh in await warehouseService.GetAllWarehouses())
             model.AvailableWarehouses.Add(new SelectListItem { Text = wh.Name, Value = wh.Id });
 
@@ -551,8 +550,7 @@ public class ProductViewModelService(
         //2 - unpublished only
         //3 - Show on homepage
         //4 - mark as new
-        model.AvailablePublishedOptions.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Catalog.Products.List.SearchPublished.All"), Value = " " });
+        model.AvailablePublishedOptions.Add(new SelectListItem { Text = translationService.GetResource("Admin.Catalog.Products.List.SearchPublished.All"), Value = " " });
         model.AvailablePublishedOptions.Add(new SelectListItem {
             Text = translationService.GetResource("Admin.Catalog.Products.List.SearchPublished.PublishedOnly"),
             Value = "1"
@@ -566,7 +564,8 @@ public class ProductViewModelService(
             Value = "3"
         });
         model.AvailablePublishedOptions.Add(new SelectListItem {
-            Text = translationService.GetResource("Admin.Catalog.Products.List.SearchPublished.MarkAsNew"), Value = "4"
+            Text = translationService.GetResource("Admin.Catalog.Products.List.SearchPublished.MarkAsNew"),
+            Value = "4"
         });
 
         return model;
@@ -699,7 +698,7 @@ public class ProductViewModelService(
 
         //product
         var product = model.ToEntity(dateTimeService);
-        
+
         //discounts
         var allDiscounts =
             await discountService.GetDiscountsQuery(DiscountType.AssignedToSkus,
@@ -709,25 +708,25 @@ public class ProductViewModelService(
             {
                 product.AppliedDiscounts.Add(discount.Id);
             }
-        
+
         product.Locales = await seNameService.TranslationSeNameProperties(model.Locales, product, x => x.Name);
         product.SeName = await seNameService.ValidateSeName(product, model.SeName, product.Name, true);
-        
+
         await productService.InsertProduct(product);
 
         //search engine name
         await seNameService.SaveSeName(product);
-        
+
         //tags
         await SaveProductTags(product, ParseProductTags(model.ProductTags));
-        
+
         //warehouses
         await SaveProductWarehouseInventory(product, model.ProductWarehouseInventoryModels);
-        
-        
-        
+
+
+
         await productService.UpdateProduct(product);
-        
+
         return product;
     }
 
@@ -738,8 +737,7 @@ public class ProductViewModelService(
             model.Stores = [contextAccessor.WorkContext.CurrentCustomer.StaffStoreId];
 
         var prevStockQuantity = stockQuantityService.GetTotalStockQuantity(product, total: true);
-        var prevMultiWarehouseStock = product.ProductWarehouseInventory.Select(i => new ProductWarehouseInventory
-                { WarehouseId = i.WarehouseId, StockQuantity = i.StockQuantity, ReservedQuantity = i.ReservedQuantity })
+        var prevMultiWarehouseStock = product.ProductWarehouseInventory.Select(i => new ProductWarehouseInventory { WarehouseId = i.WarehouseId, StockQuantity = i.StockQuantity, ReservedQuantity = i.ReservedQuantity })
             .ToList();
 
         var prevDownloadId = product.DownloadId;
@@ -771,7 +769,7 @@ public class ProductViewModelService(
                     product.AppliedDiscounts.Remove(discount.Id);
                 }
             }
-               
+
         await productService.UpdateProduct(product);
 
         //search engine name
@@ -1248,8 +1246,7 @@ public class ProductViewModelService(
         }
         else
         {
-            model.AvailableStores.Add(new SelectListItem
-                { Text = translationService.GetResource("Admin.Common.All"), Value = "" });
+            model.AvailableStores.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = "" });
 
             foreach (var s in await storeService.GetAllStores())
                 model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
@@ -1555,8 +1552,7 @@ public class ProductViewModelService(
             {
                 var name = predefinedValue.GetTranslation(x => x.Name, lang.Id, false);
                 if (!string.IsNullOrEmpty(name))
-                    pav.Locales.Add(new TranslationEntity
-                        { LanguageId = lang.Id, LocaleKey = "Name", LocaleValue = name });
+                    pav.Locales.Add(new TranslationEntity { LanguageId = lang.Id, LocaleKey = "Name", LocaleValue = name });
             }
 
             productAttributeMapping.ProductAttributeValues.Add(pav);
@@ -1667,22 +1663,22 @@ public class ProductViewModelService(
                         case AttributeControlType.Checkboxes:
                         case AttributeControlType.ColorSquares:
                         case AttributeControlType.ImageSquares:
-                        {
-                            if (productAttributeMapping.ConditionAttribute.Any())
                             {
-                                //clear default selection
-                                foreach (var item in attributeModel.Values)
-                                    item.IsPreSelected = false;
+                                if (productAttributeMapping.ConditionAttribute.Any())
+                                {
+                                    //clear default selection
+                                    foreach (var item in attributeModel.Values)
+                                        item.IsPreSelected = false;
 
-                                //select new values
-                                var selectedValues =
-                                    product.ParseProductAttributeValues(productAttributeMapping.ConditionAttribute);
-                                foreach (var attributeValue in selectedValues)
-                                foreach (var item in attributeModel.Values)
-                                    if (attributeValue.Id == item.Id)
-                                        item.IsPreSelected = true;
+                                    //select new values
+                                    var selectedValues =
+                                        product.ParseProductAttributeValues(productAttributeMapping.ConditionAttribute);
+                                    foreach (var attributeValue in selectedValues)
+                                        foreach (var item in attributeModel.Values)
+                                            if (attributeValue.Id == item.Id)
+                                                item.IsPreSelected = true;
+                                }
                             }
-                        }
                             break;
                         case AttributeControlType.ReadonlyCheckboxes:
                         case AttributeControlType.TextBox:
@@ -1717,41 +1713,41 @@ public class ProductViewModelService(
                     case AttributeControlType.RadioList:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    {
-                        var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                        if (!string.IsNullOrEmpty(ctrlAttributes))
-                            customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
-                                attribute, ctrlAttributes).ToList();
-                        else
-                            customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
-                                attribute, "").ToList();
-                    }
-                        break;
-                    case AttributeControlType.Checkboxes:
-                    {
-                        var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                        if (!string.IsNullOrEmpty(cblAttributes))
                         {
-                            var anyValueSelected = false;
-                            foreach (var item in cblAttributes.Split([','],
-                                         StringSplitOptions.RemoveEmptyEntries))
-                                if (!string.IsNullOrEmpty(item))
-                                {
-                                    customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
-                                        attribute, item).ToList();
-                                    anyValueSelected = true;
-                                }
-
-                            if (!anyValueSelected)
+                            var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                            if (!string.IsNullOrEmpty(ctrlAttributes))
+                                customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
+                                    attribute, ctrlAttributes).ToList();
+                            else
                                 customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
                                     attribute, "").ToList();
                         }
-                        else
+                        break;
+                    case AttributeControlType.Checkboxes:
                         {
-                            customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
-                                attribute, "").ToList();
+                            var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                            if (!string.IsNullOrEmpty(cblAttributes))
+                            {
+                                var anyValueSelected = false;
+                                foreach (var item in cblAttributes.Split([','],
+                                             StringSplitOptions.RemoveEmptyEntries))
+                                    if (!string.IsNullOrEmpty(item))
+                                    {
+                                        customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
+                                            attribute, item).ToList();
+                                        anyValueSelected = true;
+                                    }
+
+                                if (!anyValueSelected)
+                                    customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
+                                        attribute, "").ToList();
+                            }
+                            else
+                            {
+                                customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
+                                    attribute, "").ToList();
+                            }
                         }
-                    }
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
                     case AttributeControlType.TextBox:
@@ -2075,35 +2071,35 @@ public class ProductViewModelService(
                     case AttributeControlType.RadioList:
                     case AttributeControlType.ColorSquares:
                     case AttributeControlType.ImageSquares:
-                    {
-                        var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                        if (!string.IsNullOrEmpty(ctrlAttributes))
-                            customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
-                                attribute, ctrlAttributes).ToList();
-                    }
+                        {
+                            var ctrlAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                            if (!string.IsNullOrEmpty(ctrlAttributes))
+                                customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
+                                    attribute, ctrlAttributes).ToList();
+                        }
                         break;
                     case AttributeControlType.Checkboxes:
-                    {
-                        var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
-                        if (!string.IsNullOrEmpty(cblAttributes))
-                            foreach (var item in cblAttributes.Split([','],
-                                         StringSplitOptions.RemoveEmptyEntries))
-                                if (!string.IsNullOrEmpty(item))
-                                    customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
-                                        attribute, item).ToList();
-                    }
+                        {
+                            var cblAttributes = model.SelectedAttributes.FirstOrDefault(x => x.Key == attribute.Id)?.Value;
+                            if (!string.IsNullOrEmpty(cblAttributes))
+                                foreach (var item in cblAttributes.Split([','],
+                                             StringSplitOptions.RemoveEmptyEntries))
+                                    if (!string.IsNullOrEmpty(item))
+                                        customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
+                                            attribute, item).ToList();
+                        }
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
-                    {
-                        //load read-only (already server-side selected) values
-                        var attributeValues = attribute.ProductAttributeValues;
-                        foreach (var selectedAttributeId in attributeValues
-                                     .Where(v => v.IsPreSelected)
-                                     .Select(v => v.Id)
-                                     .ToList())
-                            customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
-                                attribute, selectedAttributeId).ToList();
-                    }
+                        {
+                            //load read-only (already server-side selected) values
+                            var attributeValues = attribute.ProductAttributeValues;
+                            foreach (var selectedAttributeId in attributeValues
+                                         .Where(v => v.IsPreSelected)
+                                         .Select(v => v.Id)
+                                         .ToList())
+                                customAttributes = ProductExtensions.AddProductAttribute(customAttributes,
+                                    attribute, selectedAttributeId).ToList();
+                        }
                         break;
                 }
 
@@ -2388,7 +2384,7 @@ public class ProductViewModelService(
 
         if (product.ProductPictures.Any(x => x.PictureId == picture.Id))
             return;
-        
+
         var productPicture = new ProductPicture {
             PictureId = picture.Id,
             DisplayOrder = displayOrder
@@ -2613,15 +2609,13 @@ public class ProductViewModelService(
         var storeId = contextAccessor.WorkContext.CurrentCustomer.StaffStoreId;
 
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in (await storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 

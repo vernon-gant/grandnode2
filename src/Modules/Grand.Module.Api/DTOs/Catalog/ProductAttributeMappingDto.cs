@@ -1,5 +1,5 @@
-﻿using Grand.Module.Api.Models;
-using Grand.Domain.Catalog;
+﻿using Grand.Domain.Catalog;
+using Grand.Module.Api.Models;
 
 namespace Grand.Module.Api.DTOs.Catalog;
 

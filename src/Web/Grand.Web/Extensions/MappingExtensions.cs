@@ -99,7 +99,7 @@ public static class MappingExtensions
         };
         return model;
     }
-    
+
     public static Address ToEntity(this AddressModel model, Customer customer, AddressSettings addressSettings,
         bool trimFields = true)
     {

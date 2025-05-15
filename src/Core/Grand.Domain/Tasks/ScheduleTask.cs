@@ -2,7 +2,7 @@
 
 public class ScheduleTask : BaseEntity
 {
-    public string ScheduleTaskName { get; set; }    
+    public string ScheduleTaskName { get; set; }
     public bool Enabled { get; set; }
     public bool StopOnError { get; set; }
     public DateTime? LastStartUtc { get; set; }

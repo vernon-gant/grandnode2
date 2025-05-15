@@ -69,7 +69,7 @@ public class HomeController : BaseVendorController
         var country = await countryService.GetCountryById(countryId);
         var states = country != null ? country.StateProvinces.ToList() : new List<StateProvince>();
         var result = (from s in states
-            select new { id = s.Id, name = s.Name }).ToList();
+                      select new { id = s.Id, name = s.Name }).ToList();
         if (addAsterisk.HasValue && addAsterisk.Value)
         {
             //asterisk

@@ -71,12 +71,12 @@ public class ShippingPointController : BaseShippingController
 
     private async Task PrepareShippingPointModel(ShippingPointModel model)
     {
-        model.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = string.Empty });
+        model.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = string.Empty });
         foreach (var country in await _countryService.GetAllCountries(showHidden: true))
             model.AvailableCountries.Add(new SelectListItem { Text = country.Name, Value = country.Id });
         model.AvailableStores.Add(new SelectListItem {
-            Text = _translationService.GetResource("Admin.Settings.StoreScope.AllStores"), Value = string.Empty
+            Text = _translationService.GetResource("Admin.Settings.StoreScope.AllStores"),
+            Value = string.Empty
         });
         foreach (var store in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = store.Shortcut, Value = store.Id });

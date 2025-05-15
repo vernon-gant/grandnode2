@@ -37,10 +37,10 @@ public class ProductsReportService : IProductsReportService
         //Track inventory for product
         //simple products
         var querySimpleProducts = from p in _productRepository.Table
-            where p.LowStock &&
-                  (p.ProductTypeId == ProductType.SimpleProduct || p.ProductTypeId == ProductType.BundledProduct)
-                  && p.ManageInventoryMethodId == ManageInventoryMethod.ManageStock
-            select p;
+                                  where p.LowStock &&
+                                        (p.ProductTypeId == ProductType.SimpleProduct || p.ProductTypeId == ProductType.BundledProduct)
+                                        && p.ManageInventoryMethodId == ManageInventoryMethod.ManageStock
+                                  select p;
 
         if (!string.IsNullOrEmpty(vendorId))
             querySimpleProducts = querySimpleProducts.Where(x => x.VendorId == vendorId);
@@ -52,27 +52,27 @@ public class ProductsReportService : IProductsReportService
 
         //Track inventory for product by product attributes
         var query2_1 = from p in _productRepository.Table
-            where
-                p.ManageInventoryMethodId == ManageInventoryMethod.ManageStockByAttributes &&
-                (vendorId == "" || p.VendorId == vendorId) &&
-                (storeId == "" || p.Stores.Contains(storeId))
-            from c in p.ProductAttributeCombinations
-            select new ProductsAttributeCombination {
-                ProductId = p.Id,
-                StockQuantity = c.StockQuantity,
-                Attributes = c.Attributes,
-                AllowOutOfStockOrders = c.AllowOutOfStockOrders,
-                Id = c.Id,
-                Gtin = c.Gtin,
-                Mpn = c.Mpn,
-                NotifyAdminForQuantityBelow = c.NotifyAdminForQuantityBelow,
-                OverriddenPrice = c.OverriddenPrice,
-                Sku = c.Sku
-            };
+                       where
+                           p.ManageInventoryMethodId == ManageInventoryMethod.ManageStockByAttributes &&
+                           (vendorId == "" || p.VendorId == vendorId) &&
+                           (storeId == "" || p.Stores.Contains(storeId))
+                       from c in p.ProductAttributeCombinations
+                       select new ProductsAttributeCombination {
+                           ProductId = p.Id,
+                           StockQuantity = c.StockQuantity,
+                           Attributes = c.Attributes,
+                           AllowOutOfStockOrders = c.AllowOutOfStockOrders,
+                           Id = c.Id,
+                           Gtin = c.Gtin,
+                           Mpn = c.Mpn,
+                           NotifyAdminForQuantityBelow = c.NotifyAdminForQuantityBelow,
+                           OverriddenPrice = c.OverriddenPrice,
+                           Sku = c.Sku
+                       };
 
         var query2_2 = from c in query2_1
-            where c.StockQuantity <= 0
-            select c;
+                       where c.StockQuantity <= 0
+                       select c;
 
         var combinations = query2_2.ToList();
 

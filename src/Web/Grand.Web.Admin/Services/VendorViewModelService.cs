@@ -104,11 +104,9 @@ public class VendorViewModelService(
         model.Address.AddressTypeEnabled = false;
 
         //address
-        model.Address.AvailableCountries.Add(new SelectListItem
-            { Text = translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.Address.AvailableCountries.Add(new SelectListItem { Text = translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await countryService.GetAllCountries(showHidden: true))
-            model.Address.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = vendor != null && c.Id == vendor.Address.CountryId });
+            model.Address.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = vendor != null && c.Id == vendor.Address.CountryId });
 
         var states = !string.IsNullOrEmpty(model.Address.CountryId)
             ? (await countryService.GetCountryById(model.Address.CountryId))?.StateProvinces
@@ -116,7 +114,9 @@ public class VendorViewModelService(
         if (states?.Count > 0)
             foreach (var s in states)
                 model.Address.AvailableStates.Add(new SelectListItem {
-                    Text = s.Name, Value = s.Id, Selected = vendor != null && s.Id == vendor.Address.StateProvinceId
+                    Text = s.Name,
+                    Value = s.Id,
+                    Selected = vendor != null && s.Id == vendor.Address.StateProvinceId
                 });
     }
 
@@ -176,10 +176,10 @@ public class VendorViewModelService(
         foreach (var discount in allDiscounts)
             if (model.SelectedDiscountIds != null && model.SelectedDiscountIds.Contains(discount.Id))
                 vendor.AppliedDiscounts.Add(discount.Id);
-        
+
         vendor.Locales = await seNameService.TranslationSeNameProperties(model.Locales, vendor, x => x.Name);
         vendor.SeName = await seNameService.ValidateSeName(vendor, model.SeName, vendor.Name, true);
-        
+
         await vendorService.InsertVendor(vendor);
         await seNameService.SaveSeName(vendor);
 
@@ -216,7 +216,7 @@ public class VendorViewModelService(
         await vendorService.UpdateVendor(vendor);
         //search engine name                
         await seNameService.SaveSeName(vendor);
-        
+
         //delete an old picture (if deleted or updated)
         if (!string.IsNullOrEmpty(prevPictureId) && prevPictureId != vendor.PictureId)
         {

@@ -138,20 +138,20 @@ public class TaxService : ITaxService
         switch (basedOn)
         {
             case TaxBasedOn.BillingAddress:
-            {
-                address = customer.BillingAddress;
-            }
+                {
+                    address = customer.BillingAddress;
+                }
                 break;
             case TaxBasedOn.ShippingAddress:
-            {
-                address = customer.ShippingAddress;
-            }
+                {
+                    address = customer.ShippingAddress;
+                }
                 break;
             case TaxBasedOn.DefaultAddress:
             default:
-            {
-                address = _taxSettings.DefaultTaxAddress;
-            }
+                {
+                    address = _taxSettings.DefaultTaxAddress;
+                }
                 break;
         }
 

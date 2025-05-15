@@ -66,7 +66,7 @@ public class GroupService : IGroupService
         int pageSize = int.MaxValue, bool showHidden = false)
     {
         var query = from m in _customerGroupRepository.Table
-            select m;
+                    select m;
 
         if (!showHidden)
             query = query.Where(m => m.Active);
@@ -200,8 +200,8 @@ public class GroupService : IGroupService
         var customerGroups = await _cacheBase.GetAsync(CacheKey.CUSTOMERGROUPS_ALL, async () =>
         {
             var query = from cr in _customerGroupRepository.Table
-                orderby cr.Name
-                select cr;
+                        orderby cr.Name
+                        select cr;
             return await Task.FromResult(query.ToList());
         });
         return customerGroups.Where(x => ids.Contains(x.Id)).ToList();

@@ -1,8 +1,8 @@
 ﻿using DiscountRules.Standard.Models;
 using Grand.Business.Core.Interfaces.Catalog.Discounts;
 using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Domain.Discounts;
+using Grand.Domain.Permissions;
 using Grand.Web.Common.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;

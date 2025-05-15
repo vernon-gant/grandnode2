@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using Grand.Module.Api.DTOs.Catalog;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Stores;
 using Grand.Infrastructure.Validators;
+using Grand.Module.Api.DTOs.Catalog;
 
 namespace Grand.Module.Api.Validators.Catalog;
 

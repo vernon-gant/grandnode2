@@ -57,8 +57,8 @@ public class WarehouseService : IWarehouseService
         return await _cacheBase.GetAsync(CacheKey.WAREHOUSES_ALL, async () =>
         {
             var query = from wh in _warehouseRepository.Table
-                orderby wh.DisplayOrder
-                select wh;
+                        orderby wh.DisplayOrder
+                        select wh;
             return await Task.FromResult(query.ToList());
         });
     }

@@ -1,6 +1,6 @@
 ﻿using Grand.Business.Core.Interfaces.Storage;
-using Grand.Domain.Permissions;
 using Grand.Domain.Media;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
 using Grand.Web.Admin.Extensions;
 using Grand.Web.Common.Extensions;
@@ -71,7 +71,8 @@ public class DownloadController : BaseAdminController
         string referenceId = "")
     {
         if (file == null)
-            return Json(new {
+            return Json(new
+            {
                 success = false,
                 message = "No file uploaded",
                 downloadGuid = Guid.Empty
@@ -95,7 +96,8 @@ public class DownloadController : BaseAdminController
 
         //when returning JSON the mime-type must be set to text/plain
         //otherwise some browsers will pop-up a "Save As" dialog.
-        return Json(new {
+        return Json(new
+        {
             success = true,
             downloadId = download.Id,
             downloadUrl = Url.Action("DownloadFile",

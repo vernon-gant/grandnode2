@@ -115,7 +115,8 @@ public class PaymentServiceTests
     {
         _paymentProviderMock.Setup(c => c.SystemName).Returns("systemName");
         var request = new PaymentTransaction {
-            PaymentMethodSystemName = "systemName", TransactionAmount = 500,
+            PaymentMethodSystemName = "systemName",
+            TransactionAmount = 500,
             TransactionStatus = TransactionStatus.Authorized
         };
         await _paymentService.PostProcessPayment(request);
@@ -127,7 +128,8 @@ public class PaymentServiceTests
     {
         _paymentProviderMock.Setup(c => c.SystemName).Returns("systemName");
         var request = new PaymentTransaction {
-            PaymentMethodSystemName = "systemName2", TransactionAmount = 500,
+            PaymentMethodSystemName = "systemName2",
+            TransactionAmount = 500,
             TransactionStatus = TransactionStatus.Authorized
         };
         Assert.ThrowsExceptionAsync<GrandException>(async () => await _paymentService.PostProcessPayment(request),

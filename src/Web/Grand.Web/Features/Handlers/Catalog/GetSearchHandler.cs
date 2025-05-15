@@ -195,8 +195,7 @@ public class GetSearchHandler : IRequestHandler<GetSearch, SearchModel>
                     categoryIds.Add(categoryId);
                     //include subcategories
                     categoryIds.AddRange(await _mediator.Send(
-                        new GetChildCategoryIds
-                            { ParentCategoryId = categoryId, Customer = request.Customer, Store = request.Store },
+                        new GetChildCategoryIds { ParentCategoryId = categoryId, Customer = request.Customer, Store = request.Store },
                         cancellationToken));
                 }
 

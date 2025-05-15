@@ -8,10 +8,10 @@ using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Common.Stores;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Interfaces.System.Reports;
-using Grand.Domain.Permissions;
 using Grand.Business.Core.Utilities.System;
 using Grand.Domain.Orders;
 using Grand.Domain.Payments;
+using Grand.Domain.Permissions;
 using Grand.Domain.Shipping;
 using Grand.Infrastructure;
 using Grand.Web.Admin.Extensions;
@@ -72,7 +72,7 @@ public class ReportsController : BaseAdminController
         ISearchTermService searchTermService,
         IGroupService groupService,
         IOrderStatusService orderStatusService,
-        ICurrencyService currencyService, 
+        ICurrencyService currencyService,
         IEnumTranslationService enumTranslationService)
     {
         _orderService = orderService;
@@ -207,8 +207,7 @@ public class ReportsController : BaseAdminController
             storeId = _contextAccessor.WorkContext.CurrentCustomer.StaffStoreId;
 
         //stores
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
         foreach (var s in (await _storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
@@ -232,8 +231,7 @@ public class ReportsController : BaseAdminController
             new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
+        model.AvailableVendors.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
         var vendors = await _vendorService.GetAllVendors(showHidden: true);
         foreach (var v in vendors)
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });

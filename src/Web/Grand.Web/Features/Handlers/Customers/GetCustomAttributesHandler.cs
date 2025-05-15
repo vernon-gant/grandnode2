@@ -59,41 +59,41 @@ public class GetCustomAttributesHandler : IRequestHandler<GetCustomAttributes, I
                 case AttributeControlType.DropdownList:
                 case AttributeControlType.RadioList:
                 case AttributeControlType.Checkboxes:
-                {
-                    if (selectedAttributes.Any())
                     {
-                        //clear default selection
-                        foreach (var item in attributeModel.Values)
-                            item.IsPreSelected = false;
+                        if (selectedAttributes.Any())
+                        {
+                            //clear default selection
+                            foreach (var item in attributeModel.Values)
+                                item.IsPreSelected = false;
 
-                        //select new values
-                        var selectedValues =
-                            await _customerAttributeParser.ParseCustomerAttributeValues(selectedAttributes);
-                        foreach (var attributeValue in selectedValues)
-                            if (attributeModel.Id == attributeValue.CustomerAttributeId)
-                                foreach (var item in attributeModel.Values)
-                                    if (attributeValue.Id == item.Id)
-                                        item.IsPreSelected = true;
+                            //select new values
+                            var selectedValues =
+                                await _customerAttributeParser.ParseCustomerAttributeValues(selectedAttributes);
+                            foreach (var attributeValue in selectedValues)
+                                if (attributeModel.Id == attributeValue.CustomerAttributeId)
+                                    foreach (var item in attributeModel.Values)
+                                        if (attributeValue.Id == item.Id)
+                                            item.IsPreSelected = true;
+                        }
                     }
-                }
                     break;
                 case AttributeControlType.ReadonlyCheckboxes:
-                {
-                    //do nothing
-                    //values are already pre-set
-                }
+                    {
+                        //do nothing
+                        //values are already pre-set
+                    }
                     break;
                 case AttributeControlType.TextBox:
                 case AttributeControlType.MultilineTextbox:
-                {
-                    if (selectedAttributes.Any())
                     {
-                        var enteredText = selectedAttributes.Where(x => x.Key == attribute.Id).Select(x => x.Value)
-                            .ToList();
-                        if (enteredText.Any())
-                            attributeModel.DefaultValue = enteredText[0];
+                        if (selectedAttributes.Any())
+                        {
+                            var enteredText = selectedAttributes.Where(x => x.Key == attribute.Id).Select(x => x.Value)
+                                .ToList();
+                            if (enteredText.Any())
+                                attributeModel.DefaultValue = enteredText[0];
+                        }
                     }
-                }
                     break;
                 case AttributeControlType.ColorSquares:
                 case AttributeControlType.ImageSquares:

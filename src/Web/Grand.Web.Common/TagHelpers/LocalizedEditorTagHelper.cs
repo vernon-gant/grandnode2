@@ -18,7 +18,7 @@ public class LocalizedEditorTagHelper : TagHelper
     [HtmlAttributeName("ignore-if-severa-stores")]
     public bool IgnoreIfSeveralStores { get; set; } = false;
 
-    [ViewContext] [HtmlAttributeNotBound] public ViewContext ViewContext { get; set; }
+    [ViewContext][HtmlAttributeNotBound] public ViewContext ViewContext { get; set; }
 
     [HtmlAttributeName("localized-template")]
     public Func<int, HelperResult> LocalizedTemplate { get; set; }

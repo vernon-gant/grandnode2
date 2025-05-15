@@ -79,8 +79,8 @@ public class ShippingMethodService : IShippingMethodService
         var shippingMethods = await _cacheBase.GetAsync(CacheKey.SHIPPINGMETHOD_ALL, async () =>
         {
             var query = from sm in _shippingMethodRepository.Table
-                orderby sm.DisplayOrder
-                select sm;
+                        orderby sm.DisplayOrder
+                        select sm;
             return await Task.FromResult(query.ToList());
         });
 

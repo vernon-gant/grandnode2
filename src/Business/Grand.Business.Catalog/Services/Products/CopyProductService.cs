@@ -9,13 +9,13 @@ namespace Grand.Business.Catalog.Services.Products;
 /// </summary>
 public class CopyProductService : ICopyProductService
 {
-    
+
     #region Fields
 
     private readonly IProductService _productService;
     private readonly ISlugService _slugService;
     private readonly ISeNameService _seNameService;
-    
+
     #endregion
     #region Ctor
 

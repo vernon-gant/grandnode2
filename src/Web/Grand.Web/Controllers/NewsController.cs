@@ -2,10 +2,11 @@
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Domain.Customers;
 using Grand.Domain.News;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
+using Grand.SharedKernel.Attributes;
 using Grand.Web.Commands.Models.News;
 using Grand.Web.Common.Controllers;
 using Grand.Web.Common.Filters;
@@ -14,7 +15,6 @@ using Grand.Web.Features.Models.News;
 using Grand.Web.Models.News;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Grand.SharedKernel.Attributes;
 
 namespace Grand.Web.Controllers;
 
@@ -96,13 +96,15 @@ public class NewsController : BasePublicController
     public virtual async Task<IActionResult> NewsCommentAdd(AddNewsCommentModel model)
     {
         if (!_newsSettings.Enabled)
-            return Json(new {
+            return Json(new
+            {
                 success = false
             });
 
         var newsItem = await _newsService.GetNewsById(model.Id);
         if (newsItem is not { Published: true } || !newsItem.AllowComments)
-            return Json(new {
+            return Json(new
+            {
                 success = false
             });
 
@@ -113,10 +115,12 @@ public class NewsController : BasePublicController
             //notification
             await _mediator.Publish(new NewsCommentEvent(newsItem, model));
 
-            return Json(new {
+            return Json(new
+            {
                 success = true,
                 message = _translationService.GetResource("News.Comments.SuccessfullyAdded"),
-                model = new {
+                model = new
+                {
                     newsComment.CommentText,
                     newsComment.CommentTitle,
                     CreatedOn = HttpContext.RequestServices.GetService<IDateTimeService>()
@@ -127,7 +131,8 @@ public class NewsController : BasePublicController
             });
         }
 
-        return Json(new {
+        return Json(new
+        {
             success = false,
             message = string.Join(',', ModelState.Values.SelectMany(x => x.Errors.Select(x => x.ErrorMessage)))
         });

@@ -57,7 +57,8 @@ public class ShoppingCartItemAttributeValidator : AbstractValidator<ShoppingCart
                         var totalQty = value.ShoppingCartItem.Quantity * attributeValue.Quantity;
                         var associatedProductWarnings = await GetShoppingCartItemWarnings(
                             value with {
-                                Product = associatedProduct, ShoppingCartItem = new ShoppingCartItem {
+                                Product = associatedProduct,
+                                ShoppingCartItem = new ShoppingCartItem {
                                     ShoppingCartTypeId = value.ShoppingCartItem.ShoppingCartTypeId,
                                     StoreId = value.ShoppingCartItem.Id,
                                     Quantity = totalQty,
@@ -142,11 +143,11 @@ public class ShoppingCartItemAttributeValidator : AbstractValidator<ShoppingCart
                 var found = false;
                 //selected product attributes
                 foreach (var attributeValuesStr in from a1 in attributes1
-                         where a1.Id == a2.Id
-                         select ProductExtensions.ParseValues(value.ShoppingCartItem.Attributes, a1.Id)
+                                                   where a1.Id == a2.Id
+                                                   select ProductExtensions.ParseValues(value.ShoppingCartItem.Attributes, a1.Id)
                          into attributeValuesStr
-                         where attributeValuesStr.Any(str1 => !string.IsNullOrEmpty(str1.Trim()))
-                         select attributeValuesStr)
+                                                   where attributeValuesStr.Any(str1 => !string.IsNullOrEmpty(str1.Trim()))
+                                                   select attributeValuesStr)
                     found = true;
 
                 //if not found

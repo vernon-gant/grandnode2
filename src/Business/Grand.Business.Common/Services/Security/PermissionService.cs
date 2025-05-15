@@ -111,8 +111,8 @@ public class PermissionService : IPermissionService
             return await Task.FromResult<Permission>(null);
 
         var query = from pr in _permissionRepository.Table
-            where pr.SystemName == systemName
-            select pr;
+                    where pr.SystemName == systemName
+                    select pr;
 
         return await Task.FromResult(query.FirstOrDefault());
     }
@@ -124,8 +124,8 @@ public class PermissionService : IPermissionService
     public virtual async Task<IList<Permission>> GetAllPermissions()
     {
         var query = from pr in _permissionRepository.Table
-            orderby pr.Name
-            select pr;
+                    orderby pr.Name
+                    select pr;
         return await Task.FromResult(query.ToList());
     }
 

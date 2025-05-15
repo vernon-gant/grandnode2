@@ -74,8 +74,8 @@ public class DownloadService : IDownloadService
             return null;
 
         var query = from o in _downloadRepository.Table
-            where o.DownloadGuid == downloadGuid
-            select o;
+                    where o.DownloadGuid == downloadGuid
+                    select o;
 
         var order = query.FirstOrDefault();
         if (order is { UseDownloadUrl: false })

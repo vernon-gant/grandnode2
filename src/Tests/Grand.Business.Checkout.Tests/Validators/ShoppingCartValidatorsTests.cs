@@ -198,7 +198,10 @@ public class ShoppingCartValidatorsTests
         var result = await shoppingCartInventoryValidator.ValidateAsync(new ShoppingCartInventoryProductValidatorRecord(
             new Customer(),
             new Product {
-                Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+                Id = "1",
+                StockQuantity = 1,
+                OrderMinimumQuantity = 1,
+                OrderMaximumQuantity = 10,
                 ManageInventoryMethodId = ManageInventoryMethod.ManageStock
             },
             new ShoppingCartItem { ProductId = "1", Quantity = 1 }
@@ -219,7 +222,10 @@ public class ShoppingCartValidatorsTests
         var result = await shoppingCartInventoryValidator.ValidateAsync(new ShoppingCartInventoryProductValidatorRecord(
             new Customer(),
             new Product {
-                Id = "1", StockQuantity = 0, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+                Id = "1",
+                StockQuantity = 0,
+                OrderMinimumQuantity = 1,
+                OrderMaximumQuantity = 10,
                 ManageInventoryMethodId = ManageInventoryMethod.ManageStock
             },
             new ShoppingCartItem { ProductId = "1", Quantity = 1 }
@@ -243,11 +249,16 @@ public class ShoppingCartValidatorsTests
             .Returns(() => Task.FromResult(new ProductAttribute { Name = "test" }));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock
         };
         var mapping = new ProductAttributeMapping {
-            Id = "1", ProductAttributeId = "1", AttributeControlTypeId = AttributeControlType.DropdownList,
+            Id = "1",
+            ProductAttributeId = "1",
+            AttributeControlTypeId = AttributeControlType.DropdownList,
             IsRequired = true
         };
         mapping.ProductAttributeValues.Add(new ProductAttributeValue { Id = "1", Name = "a" });
@@ -282,11 +293,16 @@ public class ShoppingCartValidatorsTests
             .Returns(() => Task.FromResult(new ProductAttribute { Name = "test" }));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock
         };
         var mapping = new ProductAttributeMapping {
-            Id = "1", ProductAttributeId = "1", AttributeControlTypeId = AttributeControlType.DropdownList,
+            Id = "1",
+            ProductAttributeId = "1",
+            AttributeControlTypeId = AttributeControlType.DropdownList,
             IsRequired = true
         };
         mapping.ProductAttributeValues.Add(new ProductAttributeValue { Id = "1", Name = "a" });
@@ -325,22 +341,23 @@ public class ShoppingCartValidatorsTests
             .Returns(() => Task.FromResult(new Product { Id = "2", Name = "test" }));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock,
             RequireOtherProducts = true,
             RequiredProductIds = "2"
         };
         var customer = new Customer();
-        customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
+        customer.ShoppingCartItems.Add(new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
         //Act
         var result = await shoppingCartRequiredProductValidator.ValidateAsync(
             new ShoppingCartRequiredProductValidatorRecord(
                 customer,
                 new Store { Id = "1" },
                 product,
-                new ShoppingCartItem
-                    { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
+                new ShoppingCartItem { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
             ));
 
         //Assert
@@ -365,7 +382,10 @@ public class ShoppingCartValidatorsTests
             .Returns(() => Task.FromResult(new Product { Id = "2", Name = "test" }));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock,
             RequireOtherProducts = true,
             RequiredProductIds = "2"
@@ -377,8 +397,7 @@ public class ShoppingCartValidatorsTests
                 customer,
                 new Store { Id = "1" },
                 product,
-                new ShoppingCartItem
-                    { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
+                new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
             ));
 
         //Assert
@@ -417,12 +436,15 @@ public class ShoppingCartValidatorsTests
             ));
 
 
-        var product = new Product
-            { Id = "1", ProductTypeId = ProductType.Reservation, IntervalUnitId = IntervalUnit.Day };
+        var product = new Product { Id = "1", ProductTypeId = ProductType.Reservation, IntervalUnitId = IntervalUnit.Day };
 
         var customer = new Customer();
         customer.ShoppingCartItems.Add(new ShoppingCartItem {
-            Id = "1", ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1"
+            Id = "1",
+            ProductId = "2",
+            Quantity = 1,
+            ShoppingCartTypeId = ShoppingCartType.ShoppingCart,
+            StoreId = "1"
         });
         //Act
         var result = await shoppingCartReservationProductValidator.ValidateAsync(
@@ -474,12 +496,15 @@ public class ShoppingCartValidatorsTests
             ));
 
 
-        var product = new Product
-            { Id = "1", ProductTypeId = ProductType.Reservation, IntervalUnitId = IntervalUnit.Day };
+        var product = new Product { Id = "1", ProductTypeId = ProductType.Reservation, IntervalUnitId = IntervalUnit.Day };
 
         var customer = new Customer();
         customer.ShoppingCartItems.Add(new ShoppingCartItem {
-            Id = "1", ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1"
+            Id = "1",
+            ProductId = "2",
+            Quantity = 1,
+            ShoppingCartTypeId = ShoppingCartType.ShoppingCart,
+            StoreId = "1"
         });
         //Act
         var result = await shoppingCartReservationProductValidator.ValidateAsync(
@@ -513,12 +538,14 @@ public class ShoppingCartValidatorsTests
             .Returns(async () => await Task.FromResult(true));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock
         };
         var customer = new Customer();
-        customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
+        customer.ShoppingCartItems.Add(new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
         //Act
         var result = await shoppingCartCommonWarningsValidator.ValidateAsync(
             new ShoppingCartCommonWarningsValidatorRecord(
@@ -549,12 +576,14 @@ public class ShoppingCartValidatorsTests
             .Returns(async () => await Task.FromResult(false));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock
         };
         var customer = new Customer();
-        customer.ShoppingCartItems.Add(new ShoppingCartItem
-            { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
+        customer.ShoppingCartItems.Add(new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
         //Act
         var result = await shoppingCartCommonWarningsValidator.ValidateAsync(
             new ShoppingCartCommonWarningsValidatorRecord(
@@ -590,8 +619,7 @@ public class ShoppingCartValidatorsTests
         var result = await shoppingCartStandardValidator.ValidateAsync(new ShoppingCartStandardValidatorRecord(
             customer,
             product,
-            new ShoppingCartItem
-                { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
+            new ShoppingCartItem { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
         ));
 
         //Assert
@@ -616,8 +644,7 @@ public class ShoppingCartValidatorsTests
         var result = await shoppingCartStandardValidator.ValidateAsync(new ShoppingCartStandardValidatorRecord(
             customer,
             product,
-            new ShoppingCartItem
-                { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
+            new ShoppingCartItem { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
         ));
 
         //Assert
@@ -635,11 +662,16 @@ public class ShoppingCartValidatorsTests
             .Returns(() => Task.FromResult(new Product()));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock
         };
         var mapping = new ProductAttributeMapping {
-            Id = "1", ProductAttributeId = "1", AttributeControlTypeId = AttributeControlType.DropdownList,
+            Id = "1",
+            ProductAttributeId = "1",
+            AttributeControlTypeId = AttributeControlType.DropdownList,
             IsRequired = true
         };
         mapping.ProductAttributeValues.Add(new ProductAttributeValue { Id = "1", Name = "a" });
@@ -668,17 +700,21 @@ public class ShoppingCartValidatorsTests
             new ShoppingCartWarningsValidator(_translationServiceMock.Object, _productServiceMock.Object);
 
         _productServiceMock.Setup(x => x.GetProductById("1", false))
-            .Returns(() => Task.FromResult(new Product
-                { IsRecurring = true, RecurringCyclePeriodId = RecurringCyclePeriod.Weeks }));
+            .Returns(() => Task.FromResult(new Product { IsRecurring = true, RecurringCyclePeriodId = RecurringCyclePeriod.Weeks }));
         _productServiceMock.Setup(x => x.GetProductById("2", false))
             .Returns(() => Task.FromResult(new Product { IsRecurring = false }));
 
         var product = new Product {
-            Id = "1", StockQuantity = 1, OrderMinimumQuantity = 1, OrderMaximumQuantity = 10,
+            Id = "1",
+            StockQuantity = 1,
+            OrderMinimumQuantity = 1,
+            OrderMaximumQuantity = 10,
             ManageInventoryMethodId = ManageInventoryMethod.ManageStock
         };
         var mapping = new ProductAttributeMapping {
-            Id = "1", ProductAttributeId = "1", AttributeControlTypeId = AttributeControlType.DropdownList,
+            Id = "1",
+            ProductAttributeId = "1",
+            AttributeControlTypeId = AttributeControlType.DropdownList,
             IsRequired = true
         };
         mapping.ProductAttributeValues.Add(new ProductAttributeValue { Id = "1", Name = "a" });

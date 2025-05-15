@@ -24,7 +24,7 @@ public class MigrationUpdateMediaSettings : IMigration
     public bool UpgradeProcess(IServiceProvider serviceProvider)
     {
         var repository = serviceProvider.GetRequiredService<IRepository<Setting>>();
-        var mediaSettings = repository.Table.FirstOrDefault(x => x.Name == "mediasettings");        
+        var mediaSettings = repository.Table.FirstOrDefault(x => x.Name == "mediasettings");
         var logService = serviceProvider.GetRequiredService<ILogger<MigrationUpdateMediaSettings>>();
 
         try
@@ -35,7 +35,7 @@ public class MigrationUpdateMediaSettings : IMigration
                 var settingsLogo = JsonSerializer.Deserialize<SettingsMedia>(metadata);
                 if (settingsLogo != null)
                 {
-                    var setting = SettingExtensions.CreateSetting(new StorageSettings { PictureStoreInDb = settingsLogo.StoreInDb },  "");
+                    var setting = SettingExtensions.CreateSetting(new StorageSettings { PictureStoreInDb = settingsLogo.StoreInDb }, "");
                     repository.Insert(setting);
                 }
             }

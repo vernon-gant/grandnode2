@@ -49,22 +49,16 @@ public class ProductServiceTests
 
     private async Task insertSampleProducts()
     {
-        await _productRepository.InsertAsync(new Product
-            { Id = "1", Published = true, VisibleIndividually = true, ShowOnHomePage = true });
-        await _productRepository.InsertAsync(new Product
-            { Published = true, VisibleIndividually = true, ShowOnHomePage = true });
-        await _productRepository.InsertAsync(new Product
-            { Published = true, VisibleIndividually = true, BestSeller = true });
-        await _productRepository.InsertAsync(new Product
-            { Published = true, VisibleIndividually = true, BestSeller = true });
+        await _productRepository.InsertAsync(new Product { Id = "1", Published = true, VisibleIndividually = true, ShowOnHomePage = true });
+        await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true, ShowOnHomePage = true });
+        await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true, BestSeller = true });
+        await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true, BestSeller = true });
         await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true });
         await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true });
         await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true });
         await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true });
-        await _productRepository.InsertAsync(new Product
-            { Published = true, VisibleIndividually = true, Sku = "test123" });
-        await _productRepository.InsertAsync(new Product
-            { Published = true, VisibleIndividually = true, ParentGroupedProductId = "1" });
+        await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true, Sku = "test123" });
+        await _productRepository.InsertAsync(new Product { Published = true, VisibleIndividually = true, ParentGroupedProductId = "1" });
 
         var product = new Product { Published = true, VisibleIndividually = true };
         product.AppliedDiscounts.Add("1");

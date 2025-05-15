@@ -442,7 +442,7 @@ public partial class InstallationService : IInstallationService
 
         var encryptedBinary = EncryptTextToMemory(defaultUserPassword, tDes.Key, tDes.IV);
         var password = Convert.ToBase64String(encryptedBinary);
-        var customer = _customerRepository.Table.FirstOrDefault(x=>x.Email == defaultUserEmail);
+        var customer = _customerRepository.Table.FirstOrDefault(x => x.Email == defaultUserEmail);
         customer!.Password = password;
         customer!.PasswordSalt = passwordSalt;
         customer!.PasswordFormatId = PasswordFormat.Encrypted;

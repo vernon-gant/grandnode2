@@ -49,7 +49,7 @@ public class ShippingByWeightService : IShippingByWeightService
         return await _cacheBase.GetAsync(key, () =>
         {
             var query = from sbw in _sbwRepository.Table
-                select sbw;
+                        select sbw;
 
             return Task.FromResult(new PagedList<ShippingByWeightRecord>(query, pageIndex, pageSize));
         });

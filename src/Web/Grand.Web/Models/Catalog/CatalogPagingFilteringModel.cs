@@ -96,14 +96,14 @@ public class CatalogPagingFilteringModel : BasePageableModel
                 var spec = await specificationAttributeService.GetSpecificationAttributeBySeName(item.Key);
                 if (spec == null) continue;
                 foreach (var value in item.Value)
-                foreach (var option in value.Split(","))
-                {
-                    var opt = spec.SpecificationAttributeOptions.FirstOrDefault(x =>
-                        x.SeName == option.ToLowerInvariant());
-                    if (opt == null) continue;
-                    if (!result.Contains(opt.Id))
-                        result.Add(opt.Id);
-                }
+                    foreach (var option in value.Split(","))
+                    {
+                        var opt = spec.SpecificationAttributeOptions.FirstOrDefault(x =>
+                            x.SeName == option.ToLowerInvariant());
+                        if (opt == null) continue;
+                        if (!result.Contains(opt.Id))
+                            result.Add(opt.Id);
+                    }
             }
 
             return result;

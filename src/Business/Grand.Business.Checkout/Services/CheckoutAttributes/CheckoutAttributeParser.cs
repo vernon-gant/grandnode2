@@ -56,11 +56,11 @@ public class CheckoutAttributeParser : ICheckoutAttributeParser
 
             var valuesStr = customAttributes.Where(x => x.Key == attribute.Id).Select(x => x.Value);
             values.AddRange(from valueStr in valuesStr
-                where !string.IsNullOrEmpty(valueStr)
-                select attribute.CheckoutAttributeValues.FirstOrDefault(x => x.Id == valueStr)
+                            where !string.IsNullOrEmpty(valueStr)
+                            select attribute.CheckoutAttributeValues.FirstOrDefault(x => x.Id == valueStr)
                 into value
-                where value != null
-                select value);
+                            where value != null
+                            select value);
         }
 
         return values;
@@ -86,11 +86,11 @@ public class CheckoutAttributeParser : ICheckoutAttributeParser
 
             var valuesStr = customAttributes.Where(x => x.Key == attribute.Id).Select(x => x.Value);
             values.AddRange(from valueStr in valuesStr
-                where !string.IsNullOrEmpty(valueStr)
-                select attribute.CheckoutAttributeValues.FirstOrDefault(x => x.Id == valueStr)
+                            where !string.IsNullOrEmpty(valueStr)
+                            select attribute.CheckoutAttributeValues.FirstOrDefault(x => x.Id == valueStr)
                 into value
-                where value != null
-                select (attribute, value));
+                            where value != null
+                            select (attribute, value));
         }
 
         return values;

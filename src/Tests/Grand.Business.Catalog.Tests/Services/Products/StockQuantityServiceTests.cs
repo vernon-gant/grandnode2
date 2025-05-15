@@ -37,8 +37,7 @@ public class StockQuantityServiceTests
 
         product.ProductWarehouseInventory.Add(new ProductWarehouseInventory { WarehouseId = "101", StockQuantity = 7 });
         product.ProductWarehouseInventory.Add(new ProductWarehouseInventory { WarehouseId = "111", StockQuantity = 8 });
-        product.ProductWarehouseInventory.Add(new ProductWarehouseInventory
-            { WarehouseId = "121", StockQuantity = -2 });
+        product.ProductWarehouseInventory.Add(new ProductWarehouseInventory { WarehouseId = "121", StockQuantity = -2 });
 
         Assert.AreEqual(8765, _stockQuantityService.GetTotalStockQuantity(product));
     }

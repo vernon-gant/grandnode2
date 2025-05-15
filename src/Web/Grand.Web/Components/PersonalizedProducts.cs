@@ -32,7 +32,8 @@ public class PersonalizedProductsViewComponent : BaseViewComponent
             return Content("");
 
         var products = await _mediator.Send(new GetPersonalizedProductsQuery {
-            CustomerId = _contextAccessor.WorkContext.CurrentCustomer.Id, ProductsNumber = _catalogSettings.PersonalizedProductsNumber
+            CustomerId = _contextAccessor.WorkContext.CurrentCustomer.Id,
+            ProductsNumber = _catalogSettings.PersonalizedProductsNumber
         });
 
         if (!products.Any())

@@ -123,19 +123,19 @@ public class ByWeightShippingCalcPlugin : IShippingRateCalculationProvider
                 switch (attributeValue.AttributeValueTypeId)
                 {
                     case AttributeValueType.Simple:
-                    {
-                        //simple attribute
-                        attributesTotalWeight += attributeValue.WeightAdjustment;
-                    }
+                        {
+                            //simple attribute
+                            attributesTotalWeight += attributeValue.WeightAdjustment;
+                        }
                         break;
                     case AttributeValueType.AssociatedToProduct:
-                    {
-                        //bundled product
-                        var associatedProduct =
-                            await _productService.GetProductById(attributeValue.AssociatedProductId);
-                        if (associatedProduct is { IsShipEnabled: true })
-                            attributesTotalWeight += associatedProduct.Weight * attributeValue.Quantity;
-                    }
+                        {
+                            //bundled product
+                            var associatedProduct =
+                                await _productService.GetProductById(attributeValue.AssociatedProductId);
+                            if (associatedProduct is { IsShipEnabled: true })
+                                attributesTotalWeight += associatedProduct.Weight * attributeValue.Quantity;
+                        }
                         break;
                 }
         }

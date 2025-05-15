@@ -142,7 +142,7 @@ public class EmailAccountService : IEmailAccountService
         return await _cacheBase.GetAsync(CacheKey.EMAILACCOUNT_ALL_KEY, async () =>
         {
             var query = from ea in _emailAccountRepository.Table
-                select ea;
+                        select ea;
             return await Task.FromResult(query.ToList());
         });
     }

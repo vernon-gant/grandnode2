@@ -100,7 +100,7 @@ public static class TranslateExtensions
 
         return result;
     }
-    
+
     /// <summary>
     ///     Get translation value of permission
     ///     We don't have UI to manage permission localizable name. That's why we're using this extension method

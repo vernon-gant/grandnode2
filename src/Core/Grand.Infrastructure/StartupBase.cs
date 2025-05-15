@@ -161,7 +161,7 @@ public static class StartupBase
             });
         }
     }
-   
+
     /// <summary>
     ///     Register application
     /// </summary>
@@ -174,11 +174,11 @@ public static class StartupBase
         services.AddHttpContextAccessor();
 
         RegisterConfigurations(services, configuration);
-       
+
         var settingsPath = Path.Combine(hostingEnvironment.ContentRootPath, CommonPath.AppData, configuration["Directory"] ?? "", CommonPath.SettingsFile);
         DataSettingsManager.Initialize(settingsPath);
-        
-        var pluginPaths= Path.Combine(hostingEnvironment.ContentRootPath, CommonPath.AppData, configuration["Directory"] ?? "", CommonPath.InstalledPluginsFile);
+
+        var pluginPaths = Path.Combine(hostingEnvironment.ContentRootPath, CommonPath.AppData, configuration["Directory"] ?? "", CommonPath.InstalledPluginsFile);
         PluginPaths.Initialize(pluginPaths);
 
         InitDatabase(services, configuration);

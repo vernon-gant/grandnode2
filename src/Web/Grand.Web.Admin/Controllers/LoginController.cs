@@ -71,19 +71,19 @@ public class LoginController : BaseController
             switch (loginResult)
             {
                 case CustomerLoginResults.Successful:
-                {
-                    var customer = _customerSettings.UsernamesEnabled
-                        ? await _customerService.GetCustomerByUsername(model.Username)
-                        : await _customerService.GetCustomerByEmail(model.Email);
-                    //sign in
-                    return await SignInAction(customer, model.RememberMe);
-                }
+                    {
+                        var customer = _customerSettings.UsernamesEnabled
+                            ? await _customerService.GetCustomerByUsername(model.Username)
+                            : await _customerService.GetCustomerByEmail(model.Email);
+                        //sign in
+                        return await SignInAction(customer, model.RememberMe);
+                    }
                 case CustomerLoginResults.RequiresTwoFactor:
-                {
-                    var userName = _customerSettings.UsernamesEnabled ? model.Username : model.Email;
-                    HttpContext.Session.SetString("RequiresTwoFactor", userName);
-                    return RedirectToRoute("TwoFactorAuthorization");
-                }
+                    {
+                        var userName = _customerSettings.UsernamesEnabled ? model.Username : model.Email;
+                        HttpContext.Session.SetString("RequiresTwoFactor", userName);
+                        return RedirectToRoute("TwoFactorAuthorization");
+                    }
             }
         }
 

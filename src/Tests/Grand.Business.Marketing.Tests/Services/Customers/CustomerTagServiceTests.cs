@@ -258,8 +258,7 @@ public class CustomerTagServiceTests
     public async Task GetCustomerTagProductTest()
     {
         //Assert
-        await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct
-            { CustomerTagId = "1", ProductId = "1" });
+        await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct { CustomerTagId = "1", ProductId = "1" });
         await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct { CustomerTagId = "1" });
         await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct { CustomerTagId = "2" });
 
@@ -274,8 +273,7 @@ public class CustomerTagServiceTests
     public async Task GetCustomerTagProductByIdTest()
     {
         //Assert
-        await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct
-            { CustomerTagId = "1", ProductId = "1" });
+        await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct { CustomerTagId = "1", ProductId = "1" });
         await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct { Id = "1", CustomerTagId = "1" });
         await _repositoryCustomerTagProduct.InsertAsync(new CustomerTagProduct { CustomerTagId = "2" });
 

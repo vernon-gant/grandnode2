@@ -10,10 +10,10 @@ public class StringConverter : JsonConverter<string>
         switch (reader.TokenType)
         {
             case JsonTokenType.Number:
-            {
-                var stringValue = reader.GetInt32();
-                return stringValue.ToString();
-            }
+                {
+                    var stringValue = reader.GetInt32();
+                    return stringValue.ToString();
+                }
             case JsonTokenType.True:
                 return "true";
             case JsonTokenType.False:

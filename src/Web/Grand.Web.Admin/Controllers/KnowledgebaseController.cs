@@ -268,8 +268,7 @@ public class KnowledgebaseController : BaseAdminController
         var model = new KnowledgebaseArticleModel.AddRelatedArticleModel {
             ArticleId = articleId
         };
-        model.AvailableArticles.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableArticles.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         var articles = await _knowledgebaseService.GetKnowledgebaseArticles();
         foreach (var a in articles)
             model.AvailableArticles.Add(new SelectListItem { Text = a.Name, Value = a.Id });

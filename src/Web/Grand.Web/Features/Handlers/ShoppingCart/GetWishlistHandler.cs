@@ -7,12 +7,12 @@ using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Storage;
 using Grand.Business.Core.Utilities.Checkout;
-using Grand.Domain.Permissions;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
 using Grand.Domain.Customers;
 using Grand.Domain.Media;
 using Grand.Domain.Orders;
+using Grand.Domain.Permissions;
 using Grand.Web.Common.Localization;
 using Grand.Web.Extensions;
 using Grand.Web.Features.Models.ShoppingCart;
@@ -52,7 +52,7 @@ public class GetWishlistHandler : IRequestHandler<GetWishlist, WishlistModel>
         LinkGenerator linkGenerator,
         ShoppingCartSettings shoppingCartSettings,
         CatalogSettings catalogSettings,
-        MediaSettings mediaSettings, 
+        MediaSettings mediaSettings,
         IEnumTranslationService enumTranslationService)
     {
         _permissionService = permissionService;

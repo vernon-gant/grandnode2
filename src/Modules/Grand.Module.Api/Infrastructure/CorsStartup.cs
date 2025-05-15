@@ -12,7 +12,7 @@ public class CorsStartup : IStartupApplication
 {
     public void Configure(WebApplication application, IWebHostEnvironment webHostEnvironment)
     {
-        if(webHostEnvironment.IsDevelopment())
+        if (webHostEnvironment.IsDevelopment())
             application.UseCors(Configurations.DevelopmentCorsPolicyName);
         else
             application.UseCors(Configurations.ProductionCorsPolicyName);

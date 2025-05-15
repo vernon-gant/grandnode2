@@ -5,9 +5,9 @@ using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Seo;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Interfaces.Storage;
-using Grand.Domain.Permissions;
 using Grand.Domain.Common;
 using Grand.Domain.Media;
+using Grand.Domain.Permissions;
 using Grand.Domain.Seo;
 using Grand.Web.Admin.Extensions;
 using Grand.Web.Admin.Models.Common;
@@ -151,12 +151,9 @@ public class MaintenanceController : BaseAdminController
         //0 - all (according to "IsActive" parameter)
         //1 - active only
         //2 - inactive only
-        model.AvailableActiveOptions.Add(new SelectListItem
-            { Text = _translationService.GetResource("admin.configuration.senames.Search.All"), Value = "0" });
-        model.AvailableActiveOptions.Add(new SelectListItem
-            { Text = _translationService.GetResource("admin.configuration.senames.Search.ActiveOnly"), Value = "1" });
-        model.AvailableActiveOptions.Add(new SelectListItem
-            { Text = _translationService.GetResource("admin.configuration.senames.Search.InActiveOnly"), Value = "2" });
+        model.AvailableActiveOptions.Add(new SelectListItem { Text = _translationService.GetResource("admin.configuration.senames.Search.All"), Value = "0" });
+        model.AvailableActiveOptions.Add(new SelectListItem { Text = _translationService.GetResource("admin.configuration.senames.Search.ActiveOnly"), Value = "1" });
+        model.AvailableActiveOptions.Add(new SelectListItem { Text = _translationService.GetResource("admin.configuration.senames.Search.InActiveOnly"), Value = "2" });
 
         return View(model);
     }

@@ -12,7 +12,7 @@ public interface IRepository<T> where T : BaseEntity
     ///     Gets a table
     /// </summary>
     IQueryable<T> Table { get; }
-   
+
 
     /// <summary>
     ///     Get entity by identifier
@@ -206,5 +206,5 @@ public interface IRepository<T> where T : BaseEntity
     /// <summary>
     ///     Gets a table collection
     /// </summary>
-    IQueryable<C> TableCollection<C>() where C : class;    
+    IQueryable<C> TableCollection<C>() where C : class;
 }

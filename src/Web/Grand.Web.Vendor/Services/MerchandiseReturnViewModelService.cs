@@ -61,7 +61,7 @@ public class MerchandiseReturnViewModelService : IMerchandiseReturnViewModelServ
         ICountryService countryService,
         IAddressAttributeService addressAttributeService,
         IAddressAttributeParser addressAttributeParser,
-        OrderSettings orderSettings, 
+        OrderSettings orderSettings,
         IEnumTranslationService enumTranslationService)
     {
         _orderService = orderService;
@@ -324,19 +324,16 @@ public class MerchandiseReturnViewModelService : IMerchandiseReturnViewModelServ
         model.NoteEnabled = _addressSettings.NoteEnabled;
 
         //countries
-        model.AvailableCountries.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
+        model.AvailableCountries.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Address.SelectCountry"), Value = "" });
         foreach (var c in await _countryService.GetAllCountries(showHidden: true))
-            model.AvailableCountries.Add(new SelectListItem
-                { Text = c.Name, Value = c.Id, Selected = c.Id == model.CountryId });
+            model.AvailableCountries.Add(new SelectListItem { Text = c.Name, Value = c.Id, Selected = c.Id == model.CountryId });
         //states
         var states = !string.IsNullOrEmpty(model.CountryId)
             ? (await _countryService.GetCountryById(model.CountryId))?.StateProvinces
             : new List<StateProvince>();
         if (states is { Count: > 0 })
             foreach (var s in states)
-                model.AvailableStates.Add(new SelectListItem
-                    { Text = s.Name, Value = s.Id, Selected = s.Id == model.StateProvinceId });
+                model.AvailableStates.Add(new SelectListItem { Text = s.Name, Value = s.Id, Selected = s.Id == model.StateProvinceId });
         //customer attribute services
         await model.PrepareCustomAddressAttributes(address, _addressAttributeService, _addressAttributeParser);
 

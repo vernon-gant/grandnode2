@@ -2,10 +2,11 @@
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Business.Core.Interfaces.Common.Security;
-using Grand.Domain.Permissions;
 using Grand.Domain.Blogs;
 using Grand.Domain.Customers;
+using Grand.Domain.Permissions;
 using Grand.Infrastructure;
+using Grand.SharedKernel.Attributes;
 using Grand.Web.Commands.Models.Blogs;
 using Grand.Web.Common.Controllers;
 using Grand.Web.Common.Filters;
@@ -14,7 +15,6 @@ using Grand.Web.Features.Models.Blogs;
 using Grand.Web.Models.Blogs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Grand.SharedKernel.Attributes;
 
 namespace Grand.Web.Controllers;
 
@@ -139,12 +139,14 @@ public class BlogController : BasePublicController
         if (blogPost == null ||
             (blogPost.StartDateUtc.HasValue && blogPost.StartDateUtc.Value >= DateTime.UtcNow) ||
             (blogPost.EndDateUtc.HasValue && blogPost.EndDateUtc.Value <= DateTime.UtcNow))
-            return Json(new {
+            return Json(new
+            {
                 success = false
             });
 
         if (!aclService.Authorize(blogPost, _contextAccessor.StoreContext.CurrentStore.Id))
-            return Json(new {
+            return Json(new
+            {
                 success = false
             });
 
@@ -155,10 +157,12 @@ public class BlogController : BasePublicController
             //notification
             await _mediator.Publish(new BlogCommentEvent(blogPost, model));
 
-            return Json(new {
+            return Json(new
+            {
                 success = true,
                 message = _translationService.GetResource("Blog.Comments.SuccessfullyAdded"),
-                model = new {
+                model = new
+                {
                     blogComment.CommentText,
                     CreatedOn = HttpContext.RequestServices.GetService<IDateTimeService>()
                         .ConvertToUserTime(blogComment.CreatedOnUtc, DateTimeKind.Utc),
@@ -168,7 +172,8 @@ public class BlogController : BasePublicController
             });
         }
 
-        return Json(new {
+        return Json(new
+        {
             success = false,
             message = string.Join(',', ModelState.Values.SelectMany(x => x.Errors.Select(x => x.ErrorMessage)))
         });

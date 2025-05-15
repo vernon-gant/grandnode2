@@ -528,7 +528,7 @@ public class PictureService : IPictureService
     public virtual IPagedList<Picture> GetPictures(int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from p in _pictureRepository.Table
-            select p;
+                    select p;
         var pictures = new PagedList<Picture>(query, pageIndex, pageSize);
         return pictures;
     }

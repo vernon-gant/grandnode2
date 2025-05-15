@@ -83,8 +83,8 @@ public class GiftVoucherService : IGiftVoucherService
     public virtual async Task<IList<GiftVoucherUsageHistory>> GetAllGiftVoucherUsageHistory(string orderId = "")
     {
         var query = from g in _giftVoucherRepository.Table
-            from h in g.GiftVoucherUsageHistory
-            select h;
+                    from h in g.GiftVoucherUsageHistory
+                    select h;
 
         query = query.Where(x => x.UsedWithOrderId == orderId);
         return await Task.FromResult(query.ToList());
@@ -148,7 +148,7 @@ public class GiftVoucherService : IGiftVoucherService
             return new List<GiftVoucher>();
 
         var query = from p in _giftVoucherRepository.Table
-            select p;
+                    select p;
 
         query = query.Where(gc =>
             gc.PurchasedWithOrderItem != null && gc.PurchasedWithOrderItem.Id == purchasedWithOrderItemId);

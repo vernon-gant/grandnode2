@@ -106,7 +106,8 @@ public class ContactController : BasePublicController
             Customer = _contextAccessor.WorkContext.CurrentCustomer,
             Store = _contextAccessor.StoreContext.CurrentStore
         });
-        return Json(new {
+        return Json(new
+        {
             enabledattributeids = result.enabledAttributeIds.ToArray(),
             disabledattributeids = result.disabledAttributeIds.ToArray()
         });
@@ -167,8 +168,7 @@ public class ContactController : BasePublicController
                 });
         }
 
-        var download = new Download
-        {
+        var download = new Download {
             DownloadGuid = Guid.NewGuid(),
             CustomerId = _contextAccessor.WorkContext.CurrentCustomer.Id,
             UseDownloadUrl = false,

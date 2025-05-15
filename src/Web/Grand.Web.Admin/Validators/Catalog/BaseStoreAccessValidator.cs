@@ -1,9 +1,9 @@
-﻿using Grand.Business.Core.Interfaces.Common.Localization;
-using Grand.Infrastructure.Validators;
-using Grand.Infrastructure;
-using FluentValidation;
+﻿using FluentValidation;
+using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Domain;
 using Grand.Domain.Stores;
+using Grand.Infrastructure;
+using Grand.Infrastructure.Validators;
 using Grand.Web.Admin.Extensions;
 
 namespace Grand.Web.Admin.Validators.Catalog

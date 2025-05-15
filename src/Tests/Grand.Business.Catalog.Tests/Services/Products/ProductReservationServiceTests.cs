@@ -156,10 +156,8 @@ public class ProductReservationServiceTests
     public async Task GetCustomerReservationsHelperBySciIdTest()
     {
         //Arrange
-        await _repositoryCustomerReservationsHelper.InsertAsync(new CustomerReservationsHelper
-            { ShoppingCartItemId = "1" });
-        await _repositoryCustomerReservationsHelper.InsertAsync(new CustomerReservationsHelper
-            { ShoppingCartItemId = "1" });
+        await _repositoryCustomerReservationsHelper.InsertAsync(new CustomerReservationsHelper { ShoppingCartItemId = "1" });
+        await _repositoryCustomerReservationsHelper.InsertAsync(new CustomerReservationsHelper { ShoppingCartItemId = "1" });
         await _repositoryCustomerReservationsHelper.InsertAsync(new CustomerReservationsHelper { CustomerId = "2" });
         //Act
         var result = await _service.GetCustomerReservationsHelperBySciId("1");

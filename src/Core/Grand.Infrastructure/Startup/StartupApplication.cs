@@ -56,11 +56,9 @@ public class StartupApplication : IStartupApplication
             else
             {
                 if (dbConfig.Singleton)
-                    serviceCollection.AddSingleton(_ => new LiteDatabase(dataProviderSettings.ConnectionString)
-                        { UtcDate = true });
+                    serviceCollection.AddSingleton(_ => new LiteDatabase(dataProviderSettings.ConnectionString) { UtcDate = true });
                 else
-                    serviceCollection.AddScoped(_ => new LiteDatabase(dataProviderSettings.ConnectionString)
-                        { UtcDate = true });
+                    serviceCollection.AddScoped(_ => new LiteDatabase(dataProviderSettings.ConnectionString) { UtcDate = true });
             }
         }
 

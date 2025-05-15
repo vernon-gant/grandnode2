@@ -162,7 +162,7 @@ public static class IFileStoreExtensions
     {
         if (paths.Length == 0)
             return null;
-        
+
         List<string> normalizedParts = [];
         foreach (var path in paths)
         {

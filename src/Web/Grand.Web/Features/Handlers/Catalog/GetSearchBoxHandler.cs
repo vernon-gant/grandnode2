@@ -47,8 +47,7 @@ public class GetSearchBoxHandler : IRequestHandler<GetSearchBox, SearchBoxModel>
             var availableCategories = new List<SelectListItem>();
             if (searchbocategories.Any())
             {
-                availableCategories.Add(new SelectListItem
-                    { Text = _translationService.GetResource("Common.All"), Value = "" });
+                availableCategories.Add(new SelectListItem { Text = _translationService.GetResource("Common.All"), Value = "" });
                 foreach (var s in searchbocategories)
                     availableCategories.Add(new SelectListItem { Text = s.Name, Value = s.Id });
             }

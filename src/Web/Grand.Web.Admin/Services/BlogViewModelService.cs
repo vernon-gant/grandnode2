@@ -34,18 +34,18 @@ public class BlogViewModelService : IBlogViewModelService
     private readonly IContextAccessor _contextAccessor;
     private readonly ISeNameService _seNameService;
     private readonly IEnumTranslationService _enumTranslationService;
-    
+
     public BlogViewModelService(
-        IBlogService blogService, 
-        IDateTimeService dateTimeService, 
+        IBlogService blogService,
+        IDateTimeService dateTimeService,
         IStoreService storeService,
-        IPictureService pictureService, 
-        ICustomerService customerService, 
+        IPictureService pictureService,
+        ICustomerService customerService,
         ITranslationService translationService,
         IProductService productService,
-        IVendorService vendorService, 
+        IVendorService vendorService,
         IContextAccessor contextAccessor,
-        ISeNameService seNameService, 
+        ISeNameService seNameService,
         IEnumTranslationService enumTranslationService)
     {
         _blogService = blogService;
@@ -87,7 +87,7 @@ public class BlogViewModelService : IBlogViewModelService
         //search engine name
         blogPost.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, blogPost, x => x.Title);
         blogPost.SeName = await _seNameService.ValidateSeName(blogPost, model.SeName, blogPost.Title, true);
-        
+
         await _blogService.InsertBlogPost(blogPost);
         await _seNameService.SaveSeName(blogPost);
 
@@ -105,7 +105,7 @@ public class BlogViewModelService : IBlogViewModelService
         //search engine name
         blogPost.Locales = await _seNameService.TranslationSeNameProperties(model.Locales, blogPost, x => x.Title);
         blogPost.SeName = await _seNameService.ValidateSeName(blogPost, model.SeName, blogPost.Title, true);
-        
+
         await _blogService.UpdateBlogPost(blogPost);
         await _seNameService.SaveSeName(blogPost);
 
@@ -186,15 +186,13 @@ public class BlogViewModelService : IBlogViewModelService
 
         //stores
         var storeId = _contextAccessor.WorkContext.CurrentCustomer.StaffStoreId;
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var s in (await _storeService.GetAllStores()).Where(x =>
                      x.Id == storeId || string.IsNullOrWhiteSpace(storeId)))
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
         //vendors
-        model.AvailableVendors.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
+        model.AvailableVendors.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = " " });
         foreach (var v in await _vendorService.GetAllVendors(showHidden: true))
             model.AvailableVendors.Add(new SelectListItem { Text = v.Name, Value = v.Id });
 

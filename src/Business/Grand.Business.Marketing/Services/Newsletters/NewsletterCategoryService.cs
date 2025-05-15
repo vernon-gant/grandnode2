@@ -95,9 +95,9 @@ public class NewsletterCategoryService : INewsletterCategoryService
     public virtual async Task<IList<NewsletterCategory>> GetNewsletterCategoriesByStore(string storeId)
     {
         var query = from p in _newsletterCategoryRepository.Table
-            where !p.LimitedToStores || p.Stores.Contains(storeId)
-            orderby p.DisplayOrder
-            select p;
+                    where !p.LimitedToStores || p.Stores.Contains(storeId)
+                    orderby p.DisplayOrder
+                    select p;
         return await Task.FromResult(query.ToList());
     }
 

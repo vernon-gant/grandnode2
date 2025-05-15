@@ -62,7 +62,7 @@ public class ContactUsService : IContactUsService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from c in _contactusRepository.Table
-            select c;
+                    select c;
 
         if (fromUtc.HasValue)
             query = query.Where(l => fromUtc.Value <= l.CreatedOnUtc);

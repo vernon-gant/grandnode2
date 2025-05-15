@@ -70,7 +70,7 @@ public class ShipmentService : IShipmentService
         int pageIndex = 0, int pageSize = int.MaxValue)
     {
         var query = from p in _shipmentRepository.Table
-            select p;
+                    select p;
 
         if (!string.IsNullOrEmpty(storeId)) query = query.Where(x => x.StoreId == storeId);
         if (!string.IsNullOrEmpty(vendorId)) query = query.Where(x => x.VendorId == vendorId);
@@ -100,8 +100,8 @@ public class ShipmentService : IShipmentService
             return new List<Shipment>();
 
         var query = from o in _shipmentRepository.Table
-            where shipmentIds.Contains(o.Id)
-            select o;
+                    where shipmentIds.Contains(o.Id)
+                    select o;
         return await Task.FromResult(query.ToList());
     }
 
@@ -197,9 +197,9 @@ public class ShipmentService : IShipmentService
     public virtual async Task<IList<ShipmentNote>> GetShipmentNotes(string shipmentId)
     {
         var query = from shipmentNote in _shipmentNoteRepository.Table
-            where shipmentNote.ShipmentId == shipmentId
-            orderby shipmentNote.CreatedOnUtc descending
-            select shipmentNote;
+                    where shipmentNote.ShipmentId == shipmentId
+                    orderby shipmentNote.CreatedOnUtc descending
+                    select shipmentNote;
 
         return await Task.FromResult(query.ToList());
     }

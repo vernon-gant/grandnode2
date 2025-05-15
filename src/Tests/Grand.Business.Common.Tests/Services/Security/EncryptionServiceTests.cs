@@ -40,7 +40,7 @@ public class EncryptionServiceTests
         Assert.AreEqual(hash3, hash4);
         Assert.AreNotEqual(hash4, hash5);
     }
-    
+
     [TestMethod]
     public void CreatePasswordHash_InvokeWithFixedSalt_ReturnExpectedHash()
     {
@@ -48,10 +48,10 @@ public class EncryptionServiceTests
         const string password = "password";
         const string salt = "tkpYgVYjK3P4hpLpqgY8popeQ26Ax8ZwyJaQ0F340yA=";
         const string expectedHash = "5FDEFB16C983C42DAF16FA9595EA61BADCA69558";
-        
+
         // Act
         var actualHash = _encryptionService.CreatePasswordHash(password, salt);
-        
+
         // Assert
         Assert.AreEqual(expectedHash, actualHash);
     }

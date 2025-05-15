@@ -32,9 +32,9 @@ public class GetPersonalizedProductsQueryHandler : IRequestHandler<GetPersonaliz
             async () =>
             {
                 var query = from cr in _customerProductRepository.Table
-                    where cr.CustomerId == request.CustomerId
-                    orderby cr.DisplayOrder
-                    select cr.ProductId;
+                            where cr.CustomerId == request.CustomerId
+                            orderby cr.DisplayOrder
+                            select cr.ProductId;
 
                 var productIds = query.Take(request.ProductsNumber).ToList();
 

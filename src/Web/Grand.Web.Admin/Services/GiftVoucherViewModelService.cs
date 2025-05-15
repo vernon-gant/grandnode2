@@ -51,8 +51,7 @@ public class GiftVoucherViewModelService : IGiftVoucherViewModelService
             model.AvailableCurrencies.Add(
                 new SelectListItem { Text = currency.Name, Value = currency.CurrencyCode });
 
-        model.AvailableStores.Add(new SelectListItem
-            { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
+        model.AvailableStores.Add(new SelectListItem { Text = _translationService.GetResource("Admin.Common.All"), Value = "" });
         foreach (var s in await _storeService.GetAllStores())
             model.AvailableStores.Add(new SelectListItem { Text = s.Shortcut, Value = s.Id });
 
