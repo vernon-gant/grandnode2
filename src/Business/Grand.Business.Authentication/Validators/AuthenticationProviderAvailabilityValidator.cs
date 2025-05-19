@@ -19,12 +19,8 @@ public class AuthenticationProviderAvailabilityValidator : AbstractValidator<Aut
 {
     public AuthenticationProviderAvailabilityValidator()
     {
-        RuleFor(Provider)
-            .NotNull()
-            .DependentRules(() =>
-            {
-                RuleFor(Provider).Must(BeActive).Must(AllowAuthenticationForCustomerGroup).Must(AllowAuthenticationForCurrentStore);
-            });
+        RuleFor(Provider).Cascade(CascadeMode.Stop)
+            .NotNull().Must(BeActive).Must(AllowAuthenticationForCustomerGroup).Must(AllowAuthenticationForCurrentStore);
     }
 
     private static readonly Expression<Func<AuthenticationProviderAvailabilityContext, IExternalAuthenticationProvider>> Provider = context => context.Provider;
