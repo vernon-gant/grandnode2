@@ -1,3 +1,4 @@
+using Grand.Business.Catalog.Services.Validators;
 using Grand.Business.Core.Events.Catalog;
 using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Business.Core.Interfaces.Common.Security;
@@ -123,20 +124,10 @@ public class ProductService : IProductService
     /// <returns>Products</returns>
     public virtual async Task<IList<Product>> GetProductsByIds(string[] productIds, bool showHidden = false)
     {
-        if (productIds == null || productIds.Length == 0)
-            return new List<Product>();
-
-        var products = new List<Product>();
-        foreach (var id in productIds)
-        {
-            var product = await GetProductById(id);
-            if (product != null && (showHidden || (_aclService.Authorize(product, _contextAccessor.WorkContext.CurrentCustomer) &&
-                                                   _aclService.Authorize(product, _contextAccessor.StoreContext.CurrentStore.Id) &&
-                                                   product.IsAvailable())))
-                products.Add(product);
-        }
-
-        return products;
+        var productTasks = productIds.Select(async id => await GetProductById(id)).ToList();
+        var products = await Task.WhenAll(productTasks);
+        var validator = new ProductRetrievalByIdValidator();
+        return products.Where(product => validator.Validate(new ProductRetrievalByIdContext(product, showHidden, _contextAccessor.WorkContext.CurrentCustomer, _contextAccessor.StoreContext.CurrentStore.Id, _aclService)).IsValid).ToList();
     }
 
     /// <summary>
@@ -305,18 +296,12 @@ public class ProductService : IProductService
 
         await _productRepository.UpdateOneAsync(x => x.Id == product.Id, update);
 
-        if (!oldProduct.AdditionalShippingCharge.Equals(product.AdditionalShippingCharge) ||
-            oldProduct.IsFreeShipping != product.IsFreeShipping ||
-            oldProduct.IsGiftVoucher != product.IsGiftVoucher ||
-            oldProduct.IsShipEnabled != product.IsShipEnabled ||
-            oldProduct.IsTaxExempt != product.IsTaxExempt ||
-            oldProduct.IsRecurring != product.IsRecurring
-           )
+        if (new ProductCartUpdatePublishingValidator().Validate(new ProductCartUpdatePublishingContext(oldProduct, product)).IsValid)
             await _mediator.Publish(new UpdateProductOnCartEvent(product));
 
         switch (oldProduct.Published)
         {
-            //raise event 
+            //raise event
             case false when product.Published:
                 await _mediator.Publish(new ProductPublishEvent(product));
                 break;
@@ -864,21 +849,15 @@ public class ProductService : IProductService
     /// <param name="cart">Shopping cart</param>
     /// <param name="numberOfProducts">Number of products to return</param>
     /// <returns>Cross-sells</returns>
-    public virtual async Task<IList<Product>> GetCrossSellProductsByShoppingCart(IList<ShoppingCartItem> cart,
-        int numberOfProducts)
+    public virtual async Task<IList<Product>> GetCrossSellProductsByShoppingCart(IList<ShoppingCartItem> cart, int numberOfProducts)
     {
         var result = new List<Product>();
 
         if (numberOfProducts == 0)
             return result;
 
-        if (cart == null || !cart.Any())
-            return result;
-
-        var cartProductIds = new List<string>();
-        foreach (var sci in cart)
-            if (!cartProductIds.Contains(sci.ProductId))
-                cartProductIds.Add(sci.ProductId);
+        var cartProductIds = cart.Distinct().Select(x => x.ProductId).ToList();
+        var crossSellCandidateValidator = new CrossSellCandidateValidator();
 
         foreach (var sci in cart)
         {
@@ -887,23 +866,16 @@ public class ProductService : IProductService
                 continue;
 
             var crossSells = product.CrossSellProduct;
-            foreach (var crossSell in crossSells)
+            for (var i = 0; i < crossSells.Count && result.Count < numberOfProducts; i++)
             {
-                //validate that this product is not added to result yet
-                if (result.FirstOrDefault(p => p.Id == crossSell) != null ||
-                    cartProductIds.Contains(crossSell)) continue;
-                var productToAdd = await GetProductById(crossSell);
-                //validate product
-                if (productToAdd is not { Published: true }
-                    || !_aclService.Authorize(productToAdd, _contextAccessor.WorkContext.CurrentCustomer) ||
-                    !_aclService.Authorize(productToAdd, _contextAccessor.StoreContext.CurrentStore.Id)
-                    || !productToAdd.IsAvailable())
+                var validationContext = new CrossSellCandidateContext(crossSells.ElementAt(i), result.AsReadOnly().Select(x => x.Id).ToList().AsReadOnly(), cartProductIds, _contextAccessor.WorkContext.CurrentCustomer,
+                    _contextAccessor.StoreContext.CurrentStore.Id, GetProductById, _aclService);
+                var validationResult = await crossSellCandidateValidator.ValidateAsync(validationContext);
+
+                if (!validationResult.IsValid)
                     continue;
 
-                //add a product to result
-                result.Add(productToAdd);
-                if (result.Count >= numberOfProducts)
-                    return result;
+                result.Add(await crossSellCandidateValidator.GetCandidateProductById(validationContext));
             }
         }
 

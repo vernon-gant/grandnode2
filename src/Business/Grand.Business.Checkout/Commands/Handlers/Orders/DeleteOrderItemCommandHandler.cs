@@ -1,4 +1,5 @@
-﻿using Grand.Business.Core.Commands.Checkout.Orders;
+﻿using Grand.Business.Checkout.Validators;
+using Grand.Business.Core.Commands.Checkout.Orders;
 using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Business.Core.Interfaces.Checkout.GiftVouchers;
 using Grand.Business.Core.Interfaces.Checkout.Orders;
@@ -34,38 +35,18 @@ public class DeleteOrderItemCommandHandler : IRequestHandler<DeleteOrderItemComm
         _inventoryManageService = inventoryManageService;
     }
 
-    public async Task<(bool error, string message)> Handle(DeleteOrderItemCommand request,
-        CancellationToken cancellationToken)
+    public async Task<(bool error, string message)> Handle(DeleteOrderItemCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request.Order);
         ArgumentNullException.ThrowIfNull(request.OrderItem);
 
         var product = await _productService.GetProductById(request.OrderItem.ProductId);
-        if (product == null)
-            return (true, "Product not exists.");
-
-        if (request.OrderItem.OpenQty == 0
-            || request.OrderItem.Status == OrderItemStatus.Close
-            || request.OrderItem.OpenQty != request.OrderItem.Quantity
-           )
-            return (true, "You can't delete this order item.");
-        if (product.IsGiftVoucher)
-        {
-            var giftVouchers =
-                await _giftVoucherService.GetGiftVouchersByPurchasedWithOrderItemId(request.OrderItem.Id);
-            if (giftVouchers.Any())
-                return (true, "You can't delete item with gift voucher, first go to gift vouchers and delete it");
-        }
-
         var shipments = await _shipmentService.GetShipmentsByOrder(request.Order.Id);
-        foreach (var shipment in shipments)
-            if (shipment.ShipmentItems.Any(x => x.OrderItemId == request.OrderItem.Id))
-                return (true,
-                    $"This order item is in associated with shipment {shipment.ShipmentNumber}. Please delete it first.");
-        if ((await _giftVoucherService.GetGiftVouchersByPurchasedWithOrderItemId(request.OrderItem.Id)).Count > 0)
-            //we cannot delete an order item with associated gift vouchers
-            //a store owner should delete them first
-            return (true, "This order item has an associated gift voucher record. Please delete it first.");
+        var giftVouchers = await _giftVoucherService.GetGiftVouchersByPurchasedWithOrderItemId(request.OrderItem.Id);
+        var validationResult = new DeleteOrderItemValidator().Validate(new DeleteOrderItemValidationContext(request.OrderItem, product, giftVouchers.AsReadOnly(), shipments.AsReadOnly()));
+
+        if (!validationResult.IsValid)
+            return (true, validationResult.Errors.First().ErrorMessage);
 
         //add a note
         await _orderService.InsertOrderNote(new OrderNote {
@@ -93,7 +74,7 @@ public class DeleteOrderItemCommandHandler : IRequestHandler<DeleteOrderItemComm
                 request.Order.ShippingStatusId = ShippingStatus.Shipped;
         }
 
-        //TODO 
+        //TODO
         //request.Order.OrderTaxes
 
         await _orderService.UpdateOrder(request.Order);

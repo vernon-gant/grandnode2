@@ -1,4 +1,5 @@
-﻿using Grand.Business.Core.Interfaces.Common.Directory;
+﻿using Grand.Business.Common.Validators;
+using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Data;
 using Grand.Domain;
 using Grand.Domain.Customers;
@@ -139,25 +140,10 @@ public class GroupService : IGroupService
     /// <param name="onlyActiveCustomerGroups">A value indicating whether we should look only in active customer groups</param>
     /// <param name="isSystem">A value indicating whether we should look only in system groups</param>
     /// <returns>Result</returns>
-    public virtual async Task<bool> IsInCustomerGroup(Customer customer,
-        string customerGroupSystemName,
-        bool onlyActiveCustomerGroups = true,
-        bool? isSystem = null)
+    public virtual async Task<bool> IsInCustomerGroup(Customer customer, string customerGroupSystemName, bool onlyActiveCustomerGroups = true, bool? isSystem = null)
     {
-        ArgumentNullException.ThrowIfNull(customer);
-        ArgumentNullException.ThrowIfNullOrEmpty(customerGroupSystemName);
-
-        var customerGroup = await GetCustomerGroupBySystemName(customerGroupSystemName);
-        if (customerGroup == null)
-            return false;
-
-        var result =
-            customer.Groups.Contains(customerGroup.Id)
-            && (!onlyActiveCustomerGroups || customerGroup.Active)
-            && customerGroup.SystemName == customerGroupSystemName
-            && (!isSystem.HasValue || customerGroup.IsSystem == isSystem);
-
-        return result;
+        var validationResult = await new IsInCustomerGroupValidator().ValidateAsync(new IsInCustomerGroupContext(customer, customerGroupSystemName, onlyActiveCustomerGroups, isSystem, GetCustomerGroupBySystemName));
+        return validationResult.IsValid;
     }
 
     public Task<bool> IsStaff(Customer customer)

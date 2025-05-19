@@ -3,90 +3,76 @@ using Grand.Business.Core.Interfaces.Checkout.CheckoutAttributes;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
-using Grand.Domain.Customers;
 using Grand.Domain.Orders;
-using Grand.Domain.Stores;
+using System.Linq.Expressions;
 
-namespace Grand.Business.Checkout.Validators;
+/// In the context of validating checkout attributes during shopping cart checkout, the system must ensure that:
+/// 1. Every checkout attribute in the list of all checkout attributes must have at least one non-empty parsed checkout attribute when checkout attribute is required and its condition is met which using attribute parser.
+/// 2. Every checkout attribute instance in the list of all checkout attribute instances must have entered text length greater than or equal to the minimum length when the attribute is a text-based attribute (TextBox or MultilineTextbox) and validation min length is set.
+/// 3. Every checkout attribute instance in the list of all checkout attribute instances must have entered text length less than or equal to the maximum length when the attribute is a text-based attribute (TextBox or MultilineTextbox) and validation max length is set.
+public record ShoppingCartCheckoutAttributesContext(
+    IReadOnlyList<CustomAttribute> RawCartCheckoutAttributes,
+    IReadOnlyList<CheckoutAttribute> AllCheckoutAttributes,
+    IReadOnlyList<CheckoutAttribute> ParsedCheckoutAttributes,
+    ICheckoutAttributeParser AttributeParser
+);
 
-public record ShoppingCartCheckoutAttributesValidatorRecord(
-    Customer Customer,
-    Store Store,
-    IList<ShoppingCartItem> ShoppingCarts,
-    IList<CustomAttribute> CheckoutAttributes);
+public record CheckoutAttributeWithContext(CheckoutAttribute CheckoutAttribute, ShoppingCartCheckoutAttributesContext Context);
 
-public class ShoppingCartCheckoutAttributesValidator : AbstractValidator<ShoppingCartCheckoutAttributesValidatorRecord>
+public class ShoppingCartCheckoutAttributesValidator : AbstractValidator<ShoppingCartCheckoutAttributesContext>
 {
-    public ShoppingCartCheckoutAttributesValidator(ITranslationService translationService,
-        ICheckoutAttributeParser checkoutAttributeParser, ICheckoutAttributeService checkoutAttributeService)
+    private readonly ITranslationService _translationService;
+
+    public ShoppingCartCheckoutAttributesValidator(ITranslationService translationService)
     {
-        RuleFor(x => x).CustomAsync(async (value, context, _) =>
-        {
-            //selected attributes
-            var attributes1 = await checkoutAttributeParser.ParseCheckoutAttributes(value.CheckoutAttributes);
+        _translationService = translationService;
 
-            //existing checkout attributes
-            var attributes2 =
-                await checkoutAttributeService.GetAllCheckoutAttributes(value.Store.Id,
-                    !value.ShoppingCarts.RequiresShipping());
-            foreach (var a2 in attributes2)
-            {
-                var conditionMet = await checkoutAttributeParser.IsConditionMet(a2, value.CheckoutAttributes);
-                if (!a2.IsRequired || ((!conditionMet.HasValue || !conditionMet.Value) && conditionMet.HasValue))
-                    continue;
-                var found = false;
-                //selected checkout attributes
-                foreach (var a1 in attributes1)
-                {
-                    if (a1.Id != a2.Id) continue;
-                    var attributeValuesStr = value.CheckoutAttributes.Where(x => x.Key == a1.Id).Select(x => x.Value);
-                    if (attributeValuesStr.Any(str1 => !string.IsNullOrEmpty(str1.Trim())))
-                    {
-                        found = true;
-                    }
-                }
+        RuleForEach(AllCheckoutAttributesWithContext).WhereAsync(CheckoutAttributeIsRequiredAndConditionIsMet).Must(HaveAtLeastOneNonEmptyParsedAttribute).WithMessage(MissingAttributeMessage).OverridePropertyName("CheckoutAttribute");
 
-                //if not found
-                if (!found)
-                    context.AddFailure(a2.TextPrompt ??
-                                       string.Format(translationService.GetResource("ShoppingCart.SelectAttribute"),
-                                           a2.Name));
-            }
+        RuleForEach(AllCheckoutAttributes).Where(IsTextAttributeAndMinimumLengthIsSet).Must(HaveEnteredTextLengthGreaterThanOrEqualToMinimumLength).WithMessage(TextBoxMinimumLengthMessage).OverridePropertyName("CheckoutAttribute");
 
-            //now validation rules
-
-            //minimum length
-            foreach (var ca in attributes2)
-            {
-                if (ca.ValidationMinLength.HasValue)
-                    if (ca.AttributeControlTypeId is AttributeControlType.TextBox
-                        or AttributeControlType.MultilineTextbox)
-                    {
-                        var valuesStr = value.CheckoutAttributes.Where(x => x.Key == ca.Id).Select(x => x.Value);
-                        var enteredText = valuesStr.FirstOrDefault();
-                        var enteredTextLength = string.IsNullOrEmpty(enteredText) ? 0 : enteredText.Length;
-
-                        if (ca.ValidationMinLength.Value > enteredTextLength)
-                            context.AddFailure(string.Format(
-                                translationService.GetResource("ShoppingCart.TextBoxMinimumLength"), ca.Name,
-                                ca.ValidationMinLength.Value));
-                    }
-
-                //maximum length
-                if (!ca.ValidationMaxLength.HasValue) continue;
-                {
-                    if (ca.AttributeControlTypeId != AttributeControlType.TextBox &&
-                        ca.AttributeControlTypeId != AttributeControlType.MultilineTextbox) continue;
-                    var valuesStr = value.CheckoutAttributes.Where(x => x.Key == ca.Id).Select(x => x.Value);
-                    var enteredText = valuesStr.FirstOrDefault();
-                    var enteredTextLength = string.IsNullOrEmpty(enteredText) ? 0 : enteredText.Length;
-
-                    if (ca.ValidationMaxLength.Value < enteredTextLength)
-                        context.AddFailure(string.Format(
-                            translationService.GetResource("ShoppingCart.TextBoxMaximumLength"), ca.Name,
-                            ca.ValidationMaxLength.Value));
-                }
-            }
-        });
+        RuleForEach(AllCheckoutAttributes).Where(IsTextAttributeAndMaximumLengthIsSet).Must(HaveEnteredTextLengthLessThanOrEqualToMaximumLength).WithMessage(TextBoxMaximumLengthMessage).OverridePropertyName("CheckoutAttribute");
     }
+
+    private static readonly Expression<Func<ShoppingCartCheckoutAttributesContext, IEnumerable<CheckoutAttributeWithContext>>> AllCheckoutAttributesWithContext = ctx => ctx.AllCheckoutAttributes.Select(x => new CheckoutAttributeWithContext(x, ctx));
+
+    private static readonly Expression<Func<ShoppingCartCheckoutAttributesContext, IEnumerable<CheckoutAttribute>>> AllCheckoutAttributes = ctx => ctx.AllCheckoutAttributes;
+
+    private static async Task<bool> CheckoutAttributeIsRequiredAndConditionIsMet(CheckoutAttributeWithContext attributeWithContext)
+    {
+        var conditionMet = await attributeWithContext.Context.AttributeParser.IsConditionMet(attributeWithContext.CheckoutAttribute, attributeWithContext.Context.RawCartCheckoutAttributes.ToList());
+        return attributeWithContext.CheckoutAttribute.IsRequired && conditionMet.HasValue && conditionMet.Value;
+    }
+
+    private static bool HaveAtLeastOneNonEmptyParsedAttribute(CheckoutAttributeWithContext attributeWithContext)
+    {
+        var matchingSelectedAttribute = attributeWithContext.Context.ParsedCheckoutAttributes.FirstOrDefault(x => x.Id == attributeWithContext.CheckoutAttribute.Id);
+        var attributeValuesAsStr = attributeWithContext.Context.RawCartCheckoutAttributes.Where(raw => raw.Key == matchingSelectedAttribute?.Id).Select(raw => raw.Value).ToList();
+        return attributeValuesAsStr.Any(attributeValuesStr => !string.IsNullOrEmpty(attributeValuesStr.Trim()));
+    }
+
+    private string MissingAttributeMessage(ShoppingCartCheckoutAttributesContext context, CheckoutAttributeWithContext attribute) =>
+        string.Format(attribute.CheckoutAttribute.TextPrompt ?? _translationService.GetResource("ShoppingCart.SelectAttribute"), attribute.CheckoutAttribute.Name);
+
+    private static bool IsTextAttribute(CheckoutAttribute attribute) => attribute.AttributeControlTypeId is AttributeControlType.TextBox or AttributeControlType.MultilineTextbox;
+
+    private static bool IsTextAttributeAndMinimumLengthIsSet(CheckoutAttribute attribute) => IsTextAttribute(attribute) && attribute.ValidationMinLength.HasValue;
+
+    private static bool IsTextAttributeAndMaximumLengthIsSet(CheckoutAttribute attribute) => IsTextAttribute(attribute) && attribute.ValidationMaxLength.HasValue;
+
+    private static bool HaveEnteredTextLengthGreaterThanOrEqualToMinimumLength(ShoppingCartCheckoutAttributesContext context, CheckoutAttribute attribute)
+    {
+        var enteredTextLength = context.RawCartCheckoutAttributes.Where(raw => raw.Key == attribute.Id).Select(raw => raw.Value).FirstOrDefault()?.Length ?? 0;
+        return enteredTextLength >= attribute.ValidationMinLength!.Value;
+    }
+
+    private static bool HaveEnteredTextLengthLessThanOrEqualToMaximumLength(ShoppingCartCheckoutAttributesContext context, CheckoutAttribute attribute)
+    {
+        var enteredTextLength = context.RawCartCheckoutAttributes.Where(raw => raw.Key == attribute.Id).Select(raw => raw.Value).FirstOrDefault()?.Length ?? 0;
+        return enteredTextLength <= attribute.ValidationMaxLength!.Value;
+    }
+
+    private string TextBoxMinimumLengthMessage(ShoppingCartCheckoutAttributesContext context, CheckoutAttribute attribute) => string.Format(_translationService.GetResource("ShoppingCart.TextBoxMinimumLength"), attribute.Name, attribute.ValidationMinLength);
+
+    private string TextBoxMaximumLengthMessage(ShoppingCartCheckoutAttributesContext context, CheckoutAttribute attribute) => string.Format(_translationService.GetResource("ShoppingCart.TextBoxMaximumLength"), attribute.Name, attribute.ValidationMaxLength);
 }

@@ -1,4 +1,5 @@
-﻿using Grand.Business.Core.Interfaces.Catalog.Discounts;
+﻿using Grand.Business.Catalog.Services.Validators;
+using Grand.Business.Core.Interfaces.Catalog.Discounts;
 using Grand.Business.Core.Queries.Catalog;
 using Grand.Business.Core.Utilities.Catalog;
 using Grand.Data;
@@ -78,138 +79,19 @@ public class DiscountValidationService : IDiscountValidationService
     /// <param name="currency">Currency</param>
     /// <param name="couponCodesToValidate">Coupon codes</param>
     /// <returns>Discount validation result</returns>
-    public virtual async Task<DiscountValidationResult> ValidateDiscount(Discount discount, Customer customer,
-        Store store,
-        Currency currency, string[] couponCodesToValidate)
+    public virtual async Task<DiscountValidationResult> ValidateDiscount(Discount discount, Customer customer, Store store, Currency currency, string[] couponCodesToValidate)
     {
         ArgumentNullException.ThrowIfNull(discount);
         ArgumentNullException.ThrowIfNull(customer);
 
         var result = new DiscountValidationResult();
+        var cart = customer.ShoppingCartItems.Where(sci => sci.ShoppingCartTypeId == ShoppingCartType.ShoppingCart).ToList();
+        var basicEligibilityContext = new BasicEligibilityContext(discount, currency.CurrencyCode, store, cart, _mediator, customer, _discountProviderLoader, couponCodesToValidate, _discountCouponRepository);
+        var basicEligibilityValidationResult = await new BasicEligibilityValidator().ValidateAsync(basicEligibilityContext);
 
-        //is enabled and use the same currency
-        if (!discount.IsEnabled || discount.CurrencyCode != currency.CurrencyCode)
-            return result;
-
-        //time range check
-        var now = DateTime.UtcNow;
-        if (discount.StartDateUtc.HasValue)
+        if (!basicEligibilityValidationResult.IsValid)
         {
-            var startDate = DateTime.SpecifyKind(discount.StartDateUtc.Value, DateTimeKind.Utc);
-            if (startDate.CompareTo(now) > 0)
-            {
-                result.UserErrorResource = "ShoppingCart.Discount.NotStartedYet";
-                return result;
-            }
-        }
-
-        if (discount.EndDateUtc.HasValue)
-        {
-            var endDate = DateTime.SpecifyKind(discount.EndDateUtc.Value, DateTimeKind.Utc);
-            if (endDate.CompareTo(now) < 0)
-            {
-                result.UserErrorResource = "ShoppingCart.Discount.Expired";
-                return result;
-            }
-        }
-
-        //do not allow use discount in the current store
-        if (discount.LimitedToStores && discount.Stores.All(x => store.Id != x))
-        {
-            result.UserErrorResource = "ShoppingCart.Discount.CannotBeUsedInStore";
-            return result;
-        }
-
-        //check coupon code
-        if (discount.RequiresCouponCode)
-        {
-            if (couponCodesToValidate == null || couponCodesToValidate.Length == 0)
-                return result;
-            var exists = false;
-            foreach (var item in couponCodesToValidate)
-                if (discount.Reused)
-                {
-                    if (!await ExistsCodeInDiscount(item, discount.Id, null)) continue;
-                    result.CouponCode = item;
-                    exists = true;
-                }
-                else
-                {
-                    if (!await ExistsCodeInDiscount(item, discount.Id, false)) continue;
-                    result.CouponCode = item;
-                    exists = true;
-                }
-
-            if (!exists)
-                return result;
-        }
-
-        if (discount.DiscountTypeId is DiscountType.AssignedToOrderSubTotal or DiscountType.AssignedToOrderTotal)
-        {
-            var cart = customer.ShoppingCartItems
-                .Where(sci => sci.ShoppingCartTypeId == ShoppingCartType.ShoppingCart)
-                .ToList();
-
-            var hasGiftVouchers = cart.Any(x => x.IsGiftVoucher);
-            if (hasGiftVouchers)
-            {
-                result.UserErrorResource = "ShoppingCart.Discount.CannotBeUsedWithGiftVouchers";
-                return result;
-            }
-        }
-
-        //discount limitation - n times and n times per user
-        switch (discount.DiscountLimitationId)
-        {
-            case DiscountLimitationType.NTimes:
-                {
-                    var usedTimes = await _mediator.Send(new GetDiscountUsageHistoryQuery { DiscountId = discount.Id, PageSize = 1 });
-                    if (usedTimes.TotalCount >= discount.LimitationTimes)
-                        return result;
-                }
-                break;
-            case DiscountLimitationType.NTimesPerUser:
-                {
-                    var usedTimes = await _mediator.Send(new GetDiscountUsageHistoryQuery { DiscountId = discount.Id, CustomerId = customer.Id, PageSize = 1 });
-                    if (usedTimes.TotalCount >= discount.LimitationTimes)
-                    {
-                        result.UserErrorResource = "ShoppingCart.Discount.CannotBeUsedAnymore";
-                        return result;
-                    }
-                }
-                break;
-            case DiscountLimitationType.Nolimits:
-            default:
-                break;
-        }
-
-        //discount requirements
-        var discountRules = discount.DiscountRules.ToList();
-        foreach (var rule in discountRules)
-        {
-            //load a plugin
-            var discountRequirementPlugin =
-                _discountProviderLoader.LoadDiscountProviderByRuleSystemName(rule.DiscountRequirementRuleSystemName);
-
-            if (discountRequirementPlugin == null)
-                continue;
-
-            if (!discountRequirementPlugin.IsAuthenticateStore(store))
-                continue;
-
-            var ruleRequest = new DiscountRuleValidationRequest {
-                DiscountRule = rule,
-                Discount = discount,
-                Customer = customer,
-                Store = store
-            };
-            var singleRequirementRule = discountRequirementPlugin.GetRequirementRules().FirstOrDefault(x =>
-                x.SystemName.Equals(rule.DiscountRequirementRuleSystemName, StringComparison.OrdinalIgnoreCase));
-            if (singleRequirementRule == null) return result;
-            var ruleResult = await singleRequirementRule.CheckRequirement(ruleRequest);
-            if (ruleResult.IsValid) continue;
-            result.UserErrorResource = ruleResult.UserError;
-
+            result.UserErrorResource = basicEligibilityValidationResult.Errors.FirstOrDefault()?.ErrorMessage ?? string.Empty;
             return result;
         }
 

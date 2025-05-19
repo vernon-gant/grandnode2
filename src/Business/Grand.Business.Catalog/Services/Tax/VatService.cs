@@ -1,4 +1,5 @@
-﻿using Grand.Business.Core.Interfaces.Catalog.Tax;
+﻿using Grand.Business.Catalog.Services.Validators;
+using Grand.Business.Core.Interfaces.Catalog.Tax;
 using Grand.Business.Core.Utilities.Catalog;
 using Grand.Domain.Tax;
 using System.Text.RegularExpressions;
@@ -19,27 +20,16 @@ public class VatService : IVatService
     /// </summary>
     /// <param name="fullVatNumber">Two letter ISO code of a country and VAT number (e.g. GB 111 1111 111)</param>
     /// <returns>VAT Number status</returns>
-    public virtual async Task<(VatNumberStatus status, string name, string address, Exception exception)>
-        GetVatNumberStatus(string fullVatNumber)
+    public virtual async Task<(VatNumberStatus status, string name, string address, Exception exception)> GetVatNumberStatus(string fullVatNumber)
     {
-        var name = string.Empty;
-        var address = string.Empty;
+        var validationContext = new FullVatNumberValidationContext(fullVatNumber);
+        var validationResult = new FullVatNumberValidator().Validate(validationContext);
+        var error = validationResult.Errors.First();
 
-        if (string.IsNullOrWhiteSpace(fullVatNumber))
-            return (VatNumberStatus.Empty, name, address, null);
+        if (validationResult.IsValid)
+            return ((VatNumberStatus)error.CustomState, string.Empty, string.Empty, null);
 
-        fullVatNumber = fullVatNumber.Trim();
-
-        //PL 111 1111 111 or PL 1111111111
-        //more advanced regex - http://codeigniter.com/wiki/European_Vat_Checker
-        var r = new Regex(@"^(\w{2})(.*)", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
-        var match = r.Match(fullVatNumber);
-        if (!match.Success)
-            return (VatNumberStatus.Invalid, name, address, null);
-        var twoLetterIsoCode = match.Groups[1].Value;
-        var vatNumber = match.Groups[2].Value;
-
-        return await GetVatNumberStatus(twoLetterIsoCode, vatNumber);
+        return await GetVatNumberStatus(((ValueTuple<string, string>)error.CustomState).Item1, ((ValueTuple<string, string>)error.CustomState).Item2);
     }
 
     /// <summary>
@@ -48,23 +38,13 @@ public class VatService : IVatService
     /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
     /// <param name="vatNumber">VAT number</param>
     /// <returns>VAT Number status</returns>
-    public virtual async Task<(VatNumberStatus status, string name, string address, Exception exception)>
-        GetVatNumberStatus(string twoLetterIsoCode, string vatNumber)
+    public virtual async Task<(VatNumberStatus status, string name, string address, Exception exception)> GetVatNumberStatus(string twoLetterIsoCode, string vatNumber)
     {
-        var name = string.Empty;
-        var address = string.Empty;
+        var validationContext = new VatNumberStatusValidationContext(vatNumber, twoLetterIsoCode, _taxSettings);
+        var validationResult = new VatNumberStatusValidator().Validate(validationContext);
 
-        if (string.IsNullOrEmpty(twoLetterIsoCode))
-            return (VatNumberStatus.Empty, name, address, null);
-
-        if (string.IsNullOrEmpty(vatNumber))
-            return (VatNumberStatus.Empty, name, address, null);
-
-        if (_taxSettings.EuVatAssumeValid)
-            return (VatNumberStatus.Valid, name, address, null);
-
-        if (!_taxSettings.EuVatUseWebService)
-            return (VatNumberStatus.Unknown, name, address, null);
+        if (!validationResult.IsValid)
+            return ((VatNumberStatus)validationResult.Errors.First().CustomState, string.Empty, string.Empty, null);
 
         return await DoVatCheck(twoLetterIsoCode, vatNumber);
     }

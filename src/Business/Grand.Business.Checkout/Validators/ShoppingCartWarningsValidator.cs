@@ -1,66 +1,52 @@
 ﻿using FluentValidation;
-using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Domain.Catalog;
-using Grand.Domain.Customers;
-using Grand.Domain.Orders;
-using Grand.Domain.Stores;
+using System.Linq.Expressions;
 
 namespace Grand.Business.Checkout.Validators;
 
-public record ShoppingCartWarningsValidatorRecord(
-    Customer Customer,
-    Store Store,
-    IList<ShoppingCartItem> ShoppingCarts);
+/// In the context of validating consistency in a set of products in the shopping cart, the system must ensure that:
+/// 1. The product must not be null.
+/// 2. The standard products and recurring products must not be mixed.
+/// 3. The recurring products must share the same cycle period, cycle length, and total cycles.
+public record ShoppingCartWarningsValidationContext(IReadOnlyList<Product> Products);
 
-public class ShoppingCartWarningsValidator : AbstractValidator<ShoppingCartWarningsValidatorRecord>
+public class ShoppingCartWarningsValidator : AbstractValidator<ShoppingCartWarningsValidationContext>
 {
-    public ShoppingCartWarningsValidator(ITranslationService translationService, IProductService productService)
+    private readonly ITranslationService _translationService;
+
+    public ShoppingCartWarningsValidator(ITranslationService translationService)
     {
-        RuleFor(x => x).CustomAsync(async (value, context, _) =>
-        {
-            var hasStandardProducts = false;
-            var hasRecurringProducts = false;
-            var hasRecurringProductsMix = false;
+        _translationService = translationService;
 
-            (RecurringCyclePeriod recurringCyclePeriod, int recurringCycleLength, int recurringTotalCycles)?
-                recurringProducts = null;
-
-            foreach (var sci in value.ShoppingCarts)
+        RuleForEach(ProductsEnumerable)
+            .NotNull().WithMessage(CouldNotLoadProductMessage)
+            .DependentRules(() =>
             {
-                var product = await productService.GetProductById(sci.ProductId);
-                if (product == null)
-                {
-                    context.AddFailure(string.Format(translationService.GetResource("ShoppingCart.CannotLoadProduct"),
-                        sci.ProductId));
-                    return;
-                }
-
-                if (product.IsRecurring)
-                {
-                    hasRecurringProducts = true;
-                    if (!recurringProducts.HasValue)
-                        recurringProducts = (product.RecurringCyclePeriodId, product.RecurringCycleLength,
-                            product.RecurringTotalCycles);
-                    else if (recurringProducts.Value.recurringCyclePeriod != product.RecurringCyclePeriodId ||
-                             recurringProducts.Value.recurringCycleLength != product.RecurringCycleLength ||
-                             recurringProducts.Value.recurringTotalCycles != product.RecurringTotalCycles
-                            )
-                        hasRecurringProductsMix = true;
-                }
-                else
-                {
-                    hasStandardProducts = true;
-                }
-            }
-
-            //don't mix standard and recurring products
-            if (hasStandardProducts && hasRecurringProducts)
-                context.AddFailure(translationService.GetResource("ShoppingCart.CannotMixStandardAndAutoshipProducts"));
-
-            //don't mix recurring products
-            if (hasRecurringProducts && hasRecurringProductsMix)
-                context.AddFailure(translationService.GetResource("ShoppingCart.CannotMixRecurringProducts"));
-        });
+                RuleFor(ProductsList)
+                    .Must(NotMixStandardAndRecurring).WithMessage(CannotMixStandardAndAutoshipProductsMessage)
+                    .Must(ShareSameCycleSettings).WithMessage(CannotMixRecurringProductsMessage);
+            });
     }
+
+    private static readonly Expression<Func<ShoppingCartWarningsValidationContext, IEnumerable<Product>>> ProductsEnumerable = context => context.Products;
+
+    private static readonly Expression<Func<ShoppingCartWarningsValidationContext, IReadOnlyList<Product>>> ProductsList = context => context.Products;
+
+    private static bool NotMixStandardAndRecurring(IReadOnlyList<Product> products) => products.All(product => product.IsRecurring) || products.All(product => !product.IsRecurring);
+
+    private static bool ShareSameCycleSettings(IReadOnlyList<Product> products)
+    {
+        var firstProduct = products.FirstOrDefault();
+        return products.All(product => product.RecurringCyclePeriodId == firstProduct!.RecurringCyclePeriodId &&
+                                       product.RecurringCycleLength == firstProduct.RecurringCycleLength &&
+                                       product.RecurringTotalCycles == firstProduct.RecurringTotalCycles);
+    }
+
+    private string CouldNotLoadProductMessage(ShoppingCartWarningsValidationContext context, Product product) => _translationService.GetResource("ShoppingCart.CannotLoadProduct", product.Id);
+
+    private string CannotMixStandardAndAutoshipProductsMessage => _translationService.GetResource("ShoppingCart.CannotMixStandardAndAutoshipProducts");
+
+    private string CannotMixRecurringProductsMessage => _translationService.GetResource("ShoppingCart.CannotMixRecurringProducts");
+
 }

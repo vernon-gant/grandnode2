@@ -1,43 +1,51 @@
 ﻿using FluentValidation;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Domain.Catalog;
-using Grand.Domain.Customers;
-using Grand.Domain.Orders;
 using Grand.SharedKernel.Extensions;
+using System.Linq.Expressions;
 
 namespace Grand.Business.Checkout.Validators;
 
-public record ShoppingCartGiftVoucherValidatorRecord(
-    Customer Customer,
-    Product Product,
-    ShoppingCartItem ShoppingCartItem);
+/// In the context of validating a gift voucher in the shopping cart, the system must ensure that:
+/// 1. The recipient name must not be empty.
+/// 2. The recipient email must not be empty and must be valid when the voucher is virtual.
+/// 3. The sender name must not be empty.
+/// 4. The sender email must not be empty and must be valid when the gift voucher type is virtual.
+public record ShoppingCartGiftVoucherContext(string RecipientName, string RecipientEmail, string SenderName, string SenderEmail, GiftVoucherType VoucherType);
 
-public class ShoppingCartGiftVoucherValidator : AbstractValidator<ShoppingCartGiftVoucherValidatorRecord>
+public class ShoppingCartGiftVoucherValidator : AbstractValidator<ShoppingCartGiftVoucherContext>
 {
+    private readonly ITranslationService _translationService;
+
     public ShoppingCartGiftVoucherValidator(ITranslationService translationService)
     {
-        RuleFor(x => x).Custom((value, context) =>
-        {
-            GiftVoucherExtensions.GetGiftVoucherAttribute(value.ShoppingCartItem.Attributes,
-                out var giftVoucherRecipientName, out var giftVoucherRecipientEmail,
-                out var giftVoucherSenderName, out var giftVoucherSenderEmail, out _);
+        _translationService = translationService;
 
-            if (string.IsNullOrEmpty(giftVoucherRecipientName))
-                context.AddFailure(translationService.GetResource("ShoppingCart.RecipientNameError"));
+        RuleFor(RecipientName).NotEmpty().WithMessage(RecipientNameErrorMessage);
 
-            if (value.Product.GiftVoucherTypeId == GiftVoucherType.Virtual)
-                //validate for virtual gift vouchers only
-                if (string.IsNullOrEmpty(giftVoucherRecipientEmail) ||
-                    !CommonHelper.IsValidEmail(giftVoucherRecipientEmail))
-                    context.AddFailure(translationService.GetResource("ShoppingCart.RecipientEmailError"));
+        RuleFor(RecipientEmail).Cascade(CascadeMode.Stop).NotEmpty().WithMessage(RecipientEmailErrorMessage).Must(CommonHelper.IsValidEmail).WithMessage(RecipientEmailErrorMessage).When(IsVirtualVoucher);
 
-            if (string.IsNullOrEmpty(giftVoucherSenderName))
-                context.AddFailure(translationService.GetResource("ShoppingCart.SenderNameError"));
+        RuleFor(SenderName).NotEmpty().WithMessage(SenderNameErrorMessage);
 
-            if (value.Product.GiftVoucherTypeId != GiftVoucherType.Virtual) return;
-            //validate for virtual gift vouchers only
-            if (string.IsNullOrEmpty(giftVoucherSenderEmail) || !CommonHelper.IsValidEmail(giftVoucherSenderEmail))
-                context.AddFailure(translationService.GetResource("ShoppingCart.SenderEmailError"));
-        });
+        RuleFor(SenderEmail).Cascade(CascadeMode.Stop).NotEmpty().WithMessage(SenderEmailErrorMessage).Must(CommonHelper.IsValidEmail).WithMessage(SenderEmailErrorMessage).When(IsVirtualVoucher).When(IsVirtualVoucher);
     }
+
+    private static readonly Expression<Func<ShoppingCartGiftVoucherContext, string>> RecipientName = context => context.RecipientName;
+
+    private static readonly Expression<Func<ShoppingCartGiftVoucherContext, string>> RecipientEmail = context => context.RecipientEmail;
+
+    private static readonly Expression<Func<ShoppingCartGiftVoucherContext, string>> SenderName = context => context.SenderName;
+
+    private static readonly Expression<Func<ShoppingCartGiftVoucherContext, string>> SenderEmail = context => context.SenderEmail;
+
+
+    private static bool IsVirtualVoucher(ShoppingCartGiftVoucherContext context) => context.VoucherType == GiftVoucherType.Virtual;
+
+    private string RecipientNameErrorMessage(ShoppingCartGiftVoucherContext context) => _translationService.GetResource("ShoppingCart.RecipientNameError");
+
+    private string RecipientEmailErrorMessage(ShoppingCartGiftVoucherContext context) => _translationService.GetResource("ShoppingCart.RecipientEmailError");
+
+    private string SenderNameErrorMessage(ShoppingCartGiftVoucherContext context) => _translationService.GetResource("ShoppingCart.SenderNameError");
+
+    private string SenderEmailErrorMessage(ShoppingCartGiftVoucherContext context) => _translationService.GetResource("ShoppingCart.SenderEmailError");
 }

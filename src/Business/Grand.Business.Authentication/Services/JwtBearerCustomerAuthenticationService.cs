@@ -1,10 +1,9 @@
-﻿using Grand.Business.Core.Interfaces.Authentication;
+﻿using Grand.Business.Authentication.Validators;
+using Grand.Business.Core.Interfaces.Authentication;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Common.Security;
 using Grand.Business.Core.Interfaces.Customers;
-using Grand.Domain.Common;
 using Grand.Domain.Customers;
-using Grand.Domain.Permissions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Grand.Business.Authentication.Services;
@@ -32,50 +31,14 @@ public class JwtBearerCustomerAuthenticationService : IJwtBearerCustomerAuthenti
         var email = context.Principal.Claims.ToList().FirstOrDefault(x => x.Type == "Email")?.Value;
         var passwordToken = context.Principal.Claims.ToList().FirstOrDefault(x => x.Type == "Token")?.Value;
         var refreshId = context.Principal.Claims.ToList().FirstOrDefault(x => x.Type == "RefreshId")?.Value;
-        Customer customer = null;
-        if (email is null)
-        {
-            //guest
-            var id = context.Principal.Claims.ToList().FirstOrDefault(x => x.Type == "Guid")?.Value;
-            if (id != null) customer = await _customerService.GetCustomerByGuid(Guid.Parse(id));
-        }
-        else
-        {
-            customer = await _customerService.GetCustomerByEmail(email);
-        }
+        var id = context.Principal.Claims.ToList().FirstOrDefault(x => x.Type == "Id")?.Value;
+        Customer customer = email is null ? await _customerService.GetCustomerByGuid(Guid.Parse(id)) : await _customerService.GetCustomerByEmail(email);
+        var validationContext = new JwtBearerCustomerAuthenticationContext(customer, passwordToken, refreshId, _groupService, _refreshTokenService, _permissionService);
+        var result = await new JwtBearerCustomerAuthenticationValidator().ValidateAsync(validationContext);
 
-        if (customer is null)
-        {
-            _errorMessage = "Not found customer";
-            return false;
-        }
+        if (!result.IsValid) _errorMessage = result.Errors.First().ErrorMessage;
 
-        if (!customer.Active || customer.Deleted)
-        {
-            _errorMessage = "Customer not exists/or not active in the customer table";
-            return false;
-        }
-
-        var refreshToken = await _refreshTokenService.GetCustomerRefreshToken(customer);
-        if (refreshToken is null || string.IsNullOrEmpty(refreshId) || !refreshId.Equals(refreshToken.RefreshId))
-        {
-            _errorMessage = "Invalid token or cancel by refresh token";
-            return false;
-        }
-
-        if (!await _permissionService.Authorize(StandardPermission.AllowUseApi, customer))
-        {
-            _errorMessage = "You do not have permission to use API operation (Customer group)";
-            return false;
-        }
-
-        var customerPasswordToken = customer.GetUserFieldFromEntity<string>(SystemCustomerFieldNames.PasswordToken);
-        var isGuest = await _groupService.IsGuest(customer);
-        if (isGuest || (!string.IsNullOrEmpty(passwordToken) && passwordToken.Equals(customerPasswordToken)))
-            return true;
-
-        _errorMessage = "Invalid password token, create new token";
-        return false;
+        return result.IsValid;
     }
 
 

@@ -1,3 +1,4 @@
+using Grand.Business.Authentication.Validators;
 using Grand.Business.Core.Commands.Customers;
 using Grand.Business.Core.Events.Customers;
 using Grand.Business.Core.Extensions;
@@ -168,7 +169,7 @@ public class ExternalAuthenticationService : IExternalAuthenticationService
     /// <returns>Result of an authentication</returns>
     protected virtual async Task<IActionResult> LoginUser(Customer user, string returnUrl)
     {
-        //raise event       
+        //raise event
         await _mediator.Publish(new CustomerLoggedInEvent(user));
 
         //authenticate
@@ -239,11 +240,8 @@ public class ExternalAuthenticationService : IExternalAuthenticationService
     public virtual bool AuthenticationProviderIsAvailable(string systemName)
     {
         var authenticationMethod = LoadAuthenticationProviderBySystemName(systemName);
-
-        return authenticationMethod != null &&
-               authenticationMethod.IsMethodActive(_externalAuthenticationSettings) &&
-               authenticationMethod.IsAuthenticateGroup(_contextAccessor.WorkContext.CurrentCustomer) &&
-               authenticationMethod.IsAuthenticateStore(_contextAccessor.StoreContext.CurrentStore);
+        var context = new AuthenticationProviderAvailabilityContext(authenticationMethod, _contextAccessor.WorkContext.CurrentCustomer, _contextAccessor.StoreContext.CurrentStore, _externalAuthenticationSettings);
+        return new AuthenticationProviderAvailabilityValidator().Validate(context).IsValid;
     }
 
     #endregion

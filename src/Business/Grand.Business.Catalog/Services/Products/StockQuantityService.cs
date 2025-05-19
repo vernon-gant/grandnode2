@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using Grand.Business.Catalog.Services.Validators;
 using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Domain.Catalog;
 using Grand.Domain.Common;
@@ -66,95 +67,23 @@ public class StockQuantityService : IStockQuantityService
         return 0;
     }
 
-    public virtual (string resource, object? arg0) FormatStockMessage(Product product, string warehouseId,
-        IList<CustomAttribute> attributes)
+    public virtual (string resource, object? arg0) FormatStockMessage(Product product, string warehouseId, IList<CustomAttribute> attributes)
     {
         ArgumentNullException.ThrowIfNull(product);
 
-        var stockMessage = string.Empty;
+        var basicProductStockMessageFormatter = new BasicProductStockMessageFormatter();
+        var conditionalProductStockMessageFormatter = new ConditionalProductStockMessageFormatter(basicProductStockMessageFormatter);
+        var productAttributeCombination = product.FindProductAttributeCombination(attributes);
+        var validationContext = new ConditionalProductStockMessageFormattingContext(
+            product,
+            product.ManageInventoryMethodId,
+            GetTotalStockQuantityForCombination,
+            GetTotalStockQuantity,
+            warehouseId,
+            productAttributeCombination);
+        var validationResult = conditionalProductStockMessageFormatter.Validate(validationContext);
+        var toReturn = validationResult.Errors.FirstOrDefault();
 
-        return product.ManageInventoryMethodId switch {
-            ManageInventoryMethod.ManageStock => StockInventoryFormatStockMessage(product, warehouseId,
-                stockMessage),
-            ManageInventoryMethod.ManageStockByAttributes => StockByAttributesFormatStockMessage(product,
-                warehouseId, attributes, stockMessage),
-            _ => (stockMessage, null)
-        };
-    }
-
-    private (string resource, object? arg0) StockByAttributesFormatStockMessage(Product product, string warehouseId,
-        IList<CustomAttribute> attributes, string stockMessage)
-    {
-        if (!product.StockAvailability) return (stockMessage, null);
-
-        var combination = product.FindProductAttributeCombination(attributes);
-        if (combination != null)
-        {
-            //combination exists
-            var stockQuantity =
-                GetTotalStockQuantityForCombination(product, combination, warehouseId: warehouseId);
-            if (stockQuantity > 0)
-            {
-                if (product.DisplayStockQuantity)
-                    //display "in stock" with stock quantity
-                    return ("Products.Availability.InStockWithQuantity", stockQuantity);
-
-                //display "in stock" without stock quantity
-                {
-                    return ("Products.Availability.InStock", null);
-                }
-            }
-
-            //out of stock
-            switch (product.BackorderModeId)
-            {
-                case BackorderMode.NoBackorders:
-                    {
-                        return ("Products.Availability.Attributes.OutOfStock", null);
-                    }
-                case BackorderMode.AllowQtyBelowZero:
-                    {
-                        return ("Products.Availability.Attributes.Backordering", null);
-                    }
-            }
-
-            if (!combination.AllowOutOfStockOrders) return ("Products.Availability.Attributes.OutOfStock", null);
-        }
-        else
-        {
-            return ("Products.Availability.AttributeCombinationsNotExists", null);
-        }
-
-        return (stockMessage, null);
-    }
-
-    private (string resource, object? arg0) StockInventoryFormatStockMessage(Product product, string warehouseId,
-        string stockMessage)
-    {
-        if (!product.StockAvailability) return (stockMessage, null);
-
-        var stockQuantity = GetTotalStockQuantity(product, warehouseId: warehouseId);
-        if (stockQuantity > 0)
-        {
-            if (product.DisplayStockQuantity) return ("Products.Availability.InStockWithQuantity", stockQuantity);
-
-            {
-                return ("Products.Availability.InStock", null);
-            }
-        }
-
-        switch (product.BackorderModeId)
-        {
-            case BackorderMode.NoBackorders:
-                {
-                    return ("Products.Availability.OutOfStock", null);
-                }
-            case BackorderMode.AllowQtyBelowZero:
-                {
-                    return ("Products.Availability.Backordering", null);
-                }
-        }
-
-        return (stockMessage, null);
+        return (toReturn?.ErrorMessage ?? string.Empty, toReturn?.CustomState);
     }
 }

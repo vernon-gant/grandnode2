@@ -1,3 +1,4 @@
+using Grand.Business.Checkout.Validators;
 using Grand.Business.Core.Commands.Checkout.Orders;
 using Grand.Business.Core.Events.Checkout.ShoppingCart;
 using Grand.Business.Core.Interfaces.Catalog.Products;
@@ -105,60 +106,15 @@ public class ShoppingCartService : IShoppingCartService
     {
         ArgumentNullException.ThrowIfNull(shoppingCart);
 
-        foreach (var sci in shoppingCart.Where(a => a.ShoppingCartTypeId == shoppingCartType))
+        var validator = new ShoppingCartItemRetrievalValidator();
+        var itemsWithProducts = await Task.WhenAll(shoppingCart.Select(async item => (item, await _productService.GetProductById(item.ProductId))));
+        var toInspect = itemsWithProducts.Where(itemWithProduct => itemWithProduct.Item2 != null && itemWithProduct.item.ShoppingCartTypeId == shoppingCartType)
+            .Select(item => new ShoppingCartItemRetrievalContext(new ShoppingCartItemContext(item.Item1, item.Item2), customerEnteredPrice, attributes?.AsReadOnly(), _productService));
+        foreach (var context in toInspect)
         {
-            if (sci.ProductId != productId || sci.WarehouseId != warehouseId) continue;
-            //attributes
-            var product = await _productService.GetProductById(sci.ProductId);
-            var attributesEqual =
-                ProductExtensions.AreProductAttributesEqual(product, sci.Attributes, attributes, false);
-            if (product.ProductTypeId == ProductType.BundledProduct)
-                foreach (var bundle in product.BundleProducts)
-                {
-                    var p1 = await _productService.GetProductById(bundle.ProductId);
-                    if (p1 == null) continue;
-                    if (!ProductExtensions.AreProductAttributesEqual(p1, sci.Attributes, attributes, false))
-                        attributesEqual = false;
-                }
-
-            //gift vouchers
-            var giftVoucherInfoSame = true;
-            if (product.IsGiftVoucher)
-            {
-                GiftVoucherExtensions.GetGiftVoucherAttribute(attributes,
-                    out var giftVoucherRecipientName1, out _,
-                    out var giftVoucherSenderName1, out _, out _);
-
-                GiftVoucherExtensions.GetGiftVoucherAttribute(sci.Attributes,
-                    out var giftVoucherRecipientName2, out _,
-                    out var giftVoucherSenderName2, out _, out _);
-
-                if (!string.Equals(giftVoucherRecipientName1, giftVoucherRecipientName2,
-                        StringComparison.InvariantCultureIgnoreCase) ||
-                    !string.Equals(giftVoucherSenderName1, giftVoucherSenderName2,
-                        StringComparison.InvariantCultureIgnoreCase))
-                    giftVoucherInfoSame = false;
-            }
-
-            //price is the same (for products which require customers to enter a price)
-            var customerEnteredPricesEqual = true;
-            if (sci.EnteredPrice.HasValue)
-            {
-                if (customerEnteredPrice.HasValue)
-                    customerEnteredPricesEqual = Math.Round(sci.EnteredPrice.Value, 2) ==
-                                                 Math.Round(customerEnteredPrice.Value, 2);
-                else
-                    customerEnteredPricesEqual = false;
-            }
-            else
-            {
-                if (customerEnteredPrice.HasValue)
-                    customerEnteredPricesEqual = false;
-            }
-
-            //found?
-            if (attributesEqual && giftVoucherInfoSame && customerEnteredPricesEqual)
-                return sci;
+            var result = await validator.ValidateAsync(context);
+            if (result.IsValid)
+                return context.ShoppingCartItemContext.ShoppingCartItem;
         }
 
         return null;

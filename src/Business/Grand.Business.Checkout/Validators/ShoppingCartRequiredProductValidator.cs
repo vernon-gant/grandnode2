@@ -1,45 +1,33 @@
 ﻿using FluentValidation;
-using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Business.Core.Interfaces.Common.Localization;
 using Grand.Domain.Catalog;
-using Grand.Domain.Customers;
 using Grand.Domain.Orders;
-using Grand.Domain.Stores;
+using System.Linq.Expressions;
 
 namespace Grand.Business.Checkout.Validators;
 
-public record ShoppingCartRequiredProductValidatorRecord(
-    Customer Customer,
-    Store Store,
-    Product Product,
-    ShoppingCartItem ShoppingCartItem);
+/// In the context of validating required products in a shopping cart, the system must ensure that:
+/// 1. All required products must be present in the customer's shopping cart.
+public record ShoppingCartRequiredProductsValidationContext(IReadOnlyList<ShoppingCartItem> CustomerShoppingCart, IReadOnlyList<Product> RequiredProducts);
 
-public class ShoppingCartRequiredProductValidator : AbstractValidator<ShoppingCartRequiredProductValidatorRecord>
+public record ProductWithCart(Product Product, IReadOnlyList<ShoppingCartItem> CustomerShoppingCart);
+
+public class ShoppingCartRequiredProductValidator : AbstractValidator<ShoppingCartRequiredProductsValidationContext>
 {
-    public ShoppingCartRequiredProductValidator(ITranslationService translationService, IProductService productService,
-        ShoppingCartSettings shoppingCartSettings)
+    private readonly ITranslationService _translationService;
+
+    public ShoppingCartRequiredProductValidator(ITranslationService translationService)
     {
-        RuleFor(x => x).CustomAsync(async (value, context, _) =>
-        {
-            var cart = value.Customer.ShoppingCartItems
-                .Where(sci => sci.ShoppingCartTypeId == value.ShoppingCartItem.ShoppingCartTypeId)
-                .LimitPerStore(shoppingCartSettings.SharedCartBetweenStores, value.Store.Id)
-                .ToList();
+        _translationService = translationService;
 
-            var requiredProducts = new List<Product>();
-            foreach (var id in value.Product.ParseRequiredProductIds())
-            {
-                var rp = await productService.GetProductById(id);
-                if (rp != null)
-                    requiredProducts.Add(rp);
-            }
-
-            foreach (var rp in from rp in requiredProducts
-                               let alreadyInTheCart = cart.Any(sci => sci.ProductId == rp.Id)
-                               where !alreadyInTheCart
-                               select rp)
-                context.AddFailure(string.Format(translationService.GetResource("ShoppingCart.RequiredProductWarning"),
-                    rp.Name));
-        });
+        RuleForEach(RequiredProducts).Where(NotInCart).Must(ReturnMessage).WithMessage(MissingRequiredProductErrorMessage).OverridePropertyName("RequiredProducts");
     }
+
+    private static readonly Expression<Func<ShoppingCartRequiredProductsValidationContext, IEnumerable<ProductWithCart>>> RequiredProducts = x => x.RequiredProducts.Select(product => new ProductWithCart(product, x.CustomerShoppingCart));
+
+    private static bool NotInCart(ProductWithCart product) => product.CustomerShoppingCart.All(sci => sci.ProductId != product.Product.Id);
+
+    private static bool ReturnMessage(ProductWithCart product) => false;
+
+    private string MissingRequiredProductErrorMessage(ShoppingCartRequiredProductsValidationContext validationContext, ProductWithCart product) => string.Format(_translationService.GetResource("ShoppingCart.RequiredProductWarning"), product.Product.Name);
 }

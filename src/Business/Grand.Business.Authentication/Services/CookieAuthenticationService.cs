@@ -1,4 +1,5 @@
-﻿using Grand.Business.Core.Interfaces.Authentication;
+﻿using Grand.Business.Authentication.Validators;
+using Grand.Business.Core.Interfaces.Authentication;
 using Grand.Business.Core.Interfaces.Common.Directory;
 using Grand.Business.Core.Interfaces.Customers;
 using Grand.Business.Core.Utilities.Authentication;
@@ -146,10 +147,11 @@ public class CookieAuthenticationService : IGrandAuthenticationService
             return null;
 
         var customer = await RetrieveCustomer(authenticateResult.Principal);
-        if (customer == null || !await IsValidCustomer(customer, authenticateResult.Principal))
-            return null;
+        var context = new AuthenticatedCustomerValidationContext(customer, authenticateResult.Principal, _groupService);
+        var validator = new AuthenticatedCustomerValidator();
+        var result = await validator.ValidateAsync(context);
 
-        return customer;
+        return result.IsValid ? customer : null;
     }
 
     private async Task<Customer> RetrieveCustomer(ClaimsPrincipal principal)
@@ -178,25 +180,6 @@ public class CookieAuthenticationService : IGrandAuthenticationService
         return null;
     }
 
-    private async Task<bool> IsValidCustomer(Customer customer, ClaimsPrincipal principal)
-    {
-        var passwordToken = customer.GetUserFieldFromEntity<string>(SystemCustomerFieldNames.PasswordToken);
-        if (!string.IsNullOrEmpty(passwordToken))
-        {
-            var tokenClaim = principal
-                .FindFirst(claim =>
-                    claim.Type == ClaimTypes.UserData &&
-                    claim.Issuer.Equals(_securityConfig.CookieClaimsIssuer, StringComparison.InvariantCultureIgnoreCase));
-
-            if (tokenClaim == null || tokenClaim.Value != passwordToken)
-                return false;
-        }
-
-        if (!customer.Active || customer.Deleted || !await _groupService.IsRegistered(customer))
-            return false;
-
-        return true;
-    }
     /// <summary>
     ///     Get customer cookie
     /// </summary>

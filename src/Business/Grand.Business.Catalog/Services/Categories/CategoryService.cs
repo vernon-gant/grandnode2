@@ -1,3 +1,4 @@
+using Grand.Business.Catalog.Services.Validators;
 using Grand.Business.Core.Extensions;
 using Grand.Business.Core.Interfaces.Catalog.Categories;
 using Grand.Business.Core.Interfaces.Common.Security;
@@ -263,22 +264,18 @@ public class CategoryService : ICategoryService
     public virtual async Task<IList<Category>> GetCategoryBreadCrumb(Category category, bool showHidden = false)
     {
         var result = new List<Category>();
-
-        //used to avoid circular references
         var alreadyProcessedCategoryIds = new List<string>();
+        var context = new CategoryBreadcrumbBuildingContext(category, showHidden, CurrentCustomer, CurrentStore.Id, alreadyProcessedCategoryIds, _aclService);
+        var validator = new CategoryBreadcrumbBuildingValidator();
 
-        while (category != null && //not null                
-               (showHidden || category.Published) && //published
-               (showHidden ||
-                _aclService.Authorize(category, CurrentCustomer)) && //limited to customer groups
-               (showHidden || _aclService.Authorize(category, CurrentStore.Id)) && //limited to store
-               !alreadyProcessedCategoryIds.Contains(category.Id))
+        while (validator.Validate(context).IsValid)
         {
             result.Add(category);
 
             alreadyProcessedCategoryIds.Add(category.Id);
 
             category = await GetCategoryById(category.ParentCategoryId);
+            context = context with { Category = category, AlreadyProcessedCategoryIds = alreadyProcessedCategoryIds };
         }
 
         result.Reverse();
@@ -300,7 +297,7 @@ public class CategoryService : ICategoryService
         //used to avoid circular references
         var alreadyProcessedCategoryIds = new List<string>();
 
-        while (category != null && //not null                
+        while (category != null && //not null
                (showHidden || category.Published) && //published
                (showHidden ||
                 _aclService.Authorize(category, CurrentCustomer)) && //limited to customer groups

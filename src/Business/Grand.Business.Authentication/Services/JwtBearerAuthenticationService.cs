@@ -1,4 +1,5 @@
-﻿using Grand.Business.Core.Interfaces.Authentication;
+﻿using Grand.Business.Authentication.Validators;
+using Grand.Business.Core.Interfaces.Authentication;
 using Grand.Business.Core.Interfaces.Customers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -25,39 +26,13 @@ public class JwtBearerAuthenticationService : IJwtBearerAuthenticationService
     /// <param name="context">Context</param>
     public virtual async Task<bool> Valid(TokenValidatedContext context)
     {
-        if (context.Principal == null) return await Task.FromResult(false);
+        var validationContext = new JwtBearerAuthenticationContext(context.Principal, _customerService, _userApiService);
+        var result = await new JwtBearerAuthenticationValidator().ValidateAsync(validationContext);
 
-        _email = context.Principal.Claims.ToList().FirstOrDefault(x => x.Type == "Email")?.Value;
-        var token = context.Principal.Claims.ToList().FirstOrDefault(x => x.Type == "Token")?.Value;
-        if (string.IsNullOrEmpty(token))
-        {
-            _errorMessage = "Wrong token, change password on the customer and create token again";
-            return await Task.FromResult(false);
-        }
+        if (!result.IsValid)
+            _errorMessage = result.Errors.First().ErrorMessage;
 
-        if (string.IsNullOrEmpty(_email))
-        {
-            _errorMessage = "Email not exists in the context";
-            return await Task.FromResult(false);
-        }
-
-        var customer = await _customerService.GetCustomerByEmail(_email);
-        if (customer is not { Active: true } || customer.Deleted)
-        {
-            _errorMessage = "Email not exists/or not active in the customer table";
-            return await Task.FromResult(false);
-        }
-
-        var userApi = await _userApiService.GetUserByEmail(_email);
-        if (userApi is not { IsActive: true })
-        {
-            _errorMessage = "User api not exists/or not active in the user api table";
-            return await Task.FromResult(false);
-        }
-
-        if (userApi.Token == token) return await Task.FromResult(true);
-        _errorMessage = "Wrong token, generate again";
-        return await Task.FromResult(false);
+        return result.IsValid;
     }
 
     /// <summary>

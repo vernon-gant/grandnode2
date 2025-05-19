@@ -1,4 +1,5 @@
-﻿using Grand.Business.Core.Commands.Checkout.Orders;
+﻿using Grand.Business.Checkout.Validators;
+using Grand.Business.Core.Commands.Checkout.Orders;
 using Grand.Business.Core.Interfaces.Catalog.Products;
 using Grand.Business.Core.Interfaces.Checkout.Orders;
 using Grand.Business.Core.Interfaces.Checkout.Shipping;

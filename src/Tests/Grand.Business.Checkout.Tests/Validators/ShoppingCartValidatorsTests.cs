@@ -50,8 +50,7 @@ public class ShoppingCartValidatorsTests
         //Arrange
         var shoppingCartAuctionValidator = new ShoppingCartAuctionValidator(_translationServiceMock.Object);
         //Act
-        var result = shoppingCartAuctionValidator.Validate(new ShoppingCartAuctionValidatorRecord(new Customer(),
-            new Product { AvailableEndDateTimeUtc = DateTime.UtcNow.AddDays(1) }, new ShoppingCartItem(), 10));
+        var result = shoppingCartAuctionValidator.Validate(new ShoppingCartAuctionContext(new Product { AvailableEndDateTimeUtc = DateTime.UtcNow.AddDays(1) }, 10));
         //Assert
         Assert.IsTrue(result.IsValid);
     }
@@ -62,9 +61,7 @@ public class ShoppingCartValidatorsTests
         //Arrange
         var shoppingCartAuctionValidator = new ShoppingCartAuctionValidator(_translationServiceMock.Object);
         //Act
-        var result = shoppingCartAuctionValidator.Validate(new ShoppingCartAuctionValidatorRecord(new Customer(),
-            new Product { AvailableEndDateTimeUtc = DateTime.UtcNow.AddDays(1), StartPrice = 20 },
-            new ShoppingCartItem(), 10));
+        var result = shoppingCartAuctionValidator.Validate(new ShoppingCartAuctionContext(new Product { AvailableEndDateTimeUtc = DateTime.UtcNow.AddDays(1), StartPrice = 20 }, 10));
         //Assert
         Assert.IsFalse(result.IsValid);
     }
@@ -80,11 +77,9 @@ public class ShoppingCartValidatorsTests
         customAttributes.Add(new CustomAttribute { Key = "SenderName", Value = "value" });
         customAttributes.Add(new CustomAttribute { Key = "SenderEmail", Value = "value@email.com" });
         customAttributes.Add(new CustomAttribute { Key = "Message", Value = "value" });
+        GiftVoucherExtensions.GetGiftVoucherAttribute(customAttributes, out var giftVoucherRecipientName, out var giftVoucherRecipientEmail, out var giftVoucherSenderName, out var giftVoucherSenderEmail, out _);
         //Act
-        var result = shoppingCartGiftVoucherValidator.Validate(new ShoppingCartGiftVoucherValidatorRecord(
-            new Customer(), new Product {
-                GiftVoucherTypeId = GiftVoucherType.Virtual
-            }, new ShoppingCartItem { Attributes = customAttributes }));
+        var result = shoppingCartGiftVoucherValidator.Validate(new ShoppingCartGiftVoucherContext(giftVoucherRecipientName, giftVoucherRecipientEmail, giftVoucherSenderName, giftVoucherSenderEmail, GiftVoucherType.Virtual));
         //Assert
         Assert.IsTrue(result.IsValid);
     }
@@ -100,11 +95,9 @@ public class ShoppingCartValidatorsTests
         customAttributes.Add(new CustomAttribute { Key = "SenderName", Value = "value" });
         customAttributes.Add(new CustomAttribute { Key = "SenderEmail", Value = "@email.com" });
         customAttributes.Add(new CustomAttribute { Key = "Message", Value = "value" });
+        GiftVoucherExtensions.GetGiftVoucherAttribute(customAttributes, out var giftVoucherRecipientName, out var giftVoucherRecipientEmail, out var giftVoucherSenderName, out var giftVoucherSenderEmail, out _);
         //Act
-        var result = shoppingCartGiftVoucherValidator.Validate(new ShoppingCartGiftVoucherValidatorRecord(
-            new Customer(), new Product {
-                GiftVoucherTypeId = GiftVoucherType.Virtual
-            }, new ShoppingCartItem { Attributes = customAttributes }));
+        var result = shoppingCartGiftVoucherValidator.Validate(new ShoppingCartGiftVoucherContext(giftVoucherRecipientName, giftVoucherRecipientEmail, giftVoucherSenderName, giftVoucherSenderEmail, GiftVoucherType.Virtual));
         //Assert
         Assert.IsFalse(result.IsValid);
     }
@@ -113,35 +106,20 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartCheckoutAttributesValidator_Success()
     {
         //Arrange
-        var shoppingCartCheckoutValidator = new ShoppingCartCheckoutAttributesValidator(_translationServiceMock.Object,
-            _checkoutAttributeParserMock.Object, _checkoutAttributeServiceMock.Object);
+        var shoppingCartCheckoutValidator = new ShoppingCartCheckoutAttributesValidator(_translationServiceMock.Object);
 
-        _checkoutAttributeParserMock.Setup(x => x.ParseCheckoutAttributes(It.IsAny<IList<CustomAttribute>>()))
-            .Returns(() => Task.FromResult((IList<CheckoutAttribute>)new List<CheckoutAttribute> {
-                new() {
-                    Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox
-                }
-            }));
+        var parsedCheckoutAttributes = new List<CheckoutAttribute> { new() { Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox } };
+        var allCheckoutAttributes = new List<CheckoutAttribute> { new() { Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox } };
 
-        _checkoutAttributeServiceMock.Setup(x => x.GetAllCheckoutAttributes(It.IsAny<string>(), true, false))
-            .Returns(() => Task.FromResult((IList<CheckoutAttribute>)new List<CheckoutAttribute> {
-                new() {
-                    Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox
-                }
-            }));
-
-        _checkoutAttributeParserMock.Setup(x => x.IsConditionMet(
-                It.IsAny<CheckoutAttribute>(), It.IsAny<IList<CustomAttribute>>()))
-            .Returns(() => Task.FromResult((bool?)true));
+        _checkoutAttributeParserMock.Setup(x => x.IsConditionMet(It.IsAny<CheckoutAttribute>(), It.IsAny<IList<CustomAttribute>>())).Returns(() => Task.FromResult((bool?)true));
 
         //Act
         var result = await shoppingCartCheckoutValidator.ValidateAsync(
-            new ShoppingCartCheckoutAttributesValidatorRecord(
-                new Customer(),
-                new Store(),
-                new List<ShoppingCartItem> { new() },
-                new List<CustomAttribute> { new() { Key = "1", Value = "test" } }
-            ));
+            new ShoppingCartCheckoutAttributesContext(
+                new List<CustomAttribute> { new() { Key = "1", Value = "test" } },
+                allCheckoutAttributes,
+                parsedCheckoutAttributes.AsReadOnly(),
+                _checkoutAttributeParserMock.Object));
 
         //Assert
         Assert.IsTrue(result.IsValid);
@@ -151,37 +129,21 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartCheckoutAttributesValidator_Fail()
     {
         //Arrange
-        var shoppingCartCheckoutValidator = new ShoppingCartCheckoutAttributesValidator(_translationServiceMock.Object,
-            _checkoutAttributeParserMock.Object, _checkoutAttributeServiceMock.Object);
+        var shoppingCartCheckoutValidator = new ShoppingCartCheckoutAttributesValidator(_translationServiceMock.Object);
 
-        _checkoutAttributeParserMock.Setup(x => x.ParseCheckoutAttributes(It.IsAny<IList<CustomAttribute>>()))
-            .Returns(() => Task.FromResult((IList<CheckoutAttribute>)new List<CheckoutAttribute> {
-                new() {
-                    Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox,
-                    ValidationMinLength = 10
-                }
-            }));
+        var parsedCheckoutAttributes = new List<CheckoutAttribute> { new() { Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox, ValidationMinLength = 10 } };
 
-        _checkoutAttributeServiceMock.Setup(x => x.GetAllCheckoutAttributes(It.IsAny<string>(), true, false))
-            .Returns(() => Task.FromResult((IList<CheckoutAttribute>)new List<CheckoutAttribute> {
-                new() {
-                    Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox,
-                    ValidationMinLength = 10
-                }
-            }));
+        var allCheckoutAttributes = new List<CheckoutAttribute> { new() { Id = "1", Name = "test", IsRequired = true, AttributeControlTypeId = AttributeControlType.TextBox, ValidationMinLength = 10 } };
 
-        _checkoutAttributeParserMock.Setup(x => x.IsConditionMet(
-                It.IsAny<CheckoutAttribute>(), It.IsAny<IList<CustomAttribute>>()))
-            .Returns(() => Task.FromResult((bool?)true));
+        _checkoutAttributeParserMock.Setup(x => x.IsConditionMet(It.IsAny<CheckoutAttribute>(), It.IsAny<IList<CustomAttribute>>())).Returns(() => Task.FromResult((bool?)true));
 
         //Act
         var result = await shoppingCartCheckoutValidator.ValidateAsync(
-            new ShoppingCartCheckoutAttributesValidatorRecord(
-                new Customer(),
-                new Store(),
-                new List<ShoppingCartItem> { new() },
-                new List<CustomAttribute> { new() { Key = "1", Value = "" } }
-            ));
+            new ShoppingCartCheckoutAttributesContext(
+                new List<CustomAttribute> { new() { Key = "1", Value = "test" } },
+                allCheckoutAttributes,
+                parsedCheckoutAttributes.AsReadOnly(),
+                _checkoutAttributeParserMock.Object));
 
         //Assert
         Assert.IsFalse(result.IsValid);
@@ -191,11 +153,9 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartInventoryProductValidator_Success()
     {
         //Arrange
-        var shoppingCartInventoryValidator = new ShoppingCartInventoryProductValidator(_translationServiceMock.Object,
-            _productServiceMock.Object, _stockQuantityService, new ShoppingCartSettings());
-
+        var shoppingCartInventoryValidator = new ShoppingCartInventoryProductValidator(_translationServiceMock.Object);
         //Act
-        var result = await shoppingCartInventoryValidator.ValidateAsync(new ShoppingCartInventoryProductValidatorRecord(
+        var result = await shoppingCartInventoryValidator.ValidateAsync(new ShoppingCartInventoryProductContext(
             new Customer(),
             new Product {
                 Id = "1",
@@ -204,7 +164,10 @@ public class ShoppingCartValidatorsTests
                 OrderMaximumQuantity = 10,
                 ManageInventoryMethodId = ManageInventoryMethod.ManageStock
             },
-            new ShoppingCartItem { ProductId = "1", Quantity = 1 }
+            new List<BundleProductContext>(),
+            new ShoppingCartItem { ProductId = "1", Quantity = 1 },
+            _stockQuantityService,
+            false
         ));
 
         //Assert
@@ -215,11 +178,10 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartInventoryProductValidator_Fail()
     {
         //Arrange
-        var shoppingCartInventoryValidator = new ShoppingCartInventoryProductValidator(_translationServiceMock.Object,
-            _productServiceMock.Object, _stockQuantityService, new ShoppingCartSettings());
+        var shoppingCartInventoryValidator = new ShoppingCartInventoryProductValidator(_translationServiceMock.Object);
 
         //Act
-        var result = await shoppingCartInventoryValidator.ValidateAsync(new ShoppingCartInventoryProductValidatorRecord(
+        var result = await shoppingCartInventoryValidator.ValidateAsync(new ShoppingCartInventoryProductContext(
             new Customer(),
             new Product {
                 Id = "1",
@@ -228,7 +190,10 @@ public class ShoppingCartValidatorsTests
                 OrderMaximumQuantity = 10,
                 ManageInventoryMethodId = ManageInventoryMethod.ManageStock
             },
-            new ShoppingCartItem { ProductId = "1", Quantity = 1 }
+            new List<BundleProductContext>(),
+            new ShoppingCartItem { ProductId = "1", Quantity = 1 },
+            _stockQuantityService,
+            false
         ));
 
         //Assert
@@ -240,7 +205,7 @@ public class ShoppingCartValidatorsTests
     {
         //Arrange
         var shoppingCartItemAttributeValidator = new ShoppingCartItemAttributeValidator(_translationServiceMock.Object,
-            _productServiceMock.Object, _productAttributeService.Object);
+            _productServiceMock.Object, _productAttributeService.Object, new ShoppingCartItemWarningsValidator(_translationServiceMock.Object));
 
         _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false))
             .Returns(() => Task.FromResult(new Product()));
@@ -267,13 +232,7 @@ public class ShoppingCartValidatorsTests
         var attributes = new List<CustomAttribute> { new() { Key = "1", Value = "1" } };
 
         //Act
-        var result = await shoppingCartItemAttributeValidator.ValidateAsync(
-            new ShoppingCartItemAttributeValidatorRecord(
-                new Customer(),
-                product,
-                new ShoppingCartItem { ProductId = "1", Quantity = 1, Attributes = attributes },
-                false
-            ));
+        var result = await shoppingCartItemAttributeValidator.ValidateAsync(new ShoppingCartItemAttributeValidationContext(product, new ShoppingCartItem { ProductId = "1", Quantity = 1, Attributes = attributes }, false));
 
         //Assert
         Assert.IsTrue(result.IsValid);
@@ -283,14 +242,11 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartItemAttributeValidator_Fail()
     {
         //Arrange
-        var shoppingCartItemAttributeValidator = new ShoppingCartItemAttributeValidator(_translationServiceMock.Object,
-            _productServiceMock.Object, _productAttributeService.Object);
+        var shoppingCartItemAttributeValidator = new ShoppingCartItemAttributeValidator(_translationServiceMock.Object, _productServiceMock.Object, _productAttributeService.Object, new ShoppingCartItemWarningsValidator(_translationServiceMock.Object));
 
-        _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false))
-            .Returns(() => Task.FromResult(new Product()));
+        _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false)).Returns(() => Task.FromResult(new Product()));
 
-        _productAttributeService.Setup(x => x.GetProductAttributeById(It.IsAny<string>()))
-            .Returns(() => Task.FromResult(new ProductAttribute { Name = "test" }));
+        _productAttributeService.Setup(x => x.GetProductAttributeById(It.IsAny<string>())).Returns(() => Task.FromResult(new ProductAttribute { Name = "test" }));
 
         var product = new Product {
             Id = "1",
@@ -311,13 +267,7 @@ public class ShoppingCartValidatorsTests
         var attributes = new List<CustomAttribute> { new() { Key = "2" } };
 
         //Act
-        var result = await shoppingCartItemAttributeValidator.ValidateAsync(
-            new ShoppingCartItemAttributeValidatorRecord(
-                new Customer(),
-                product,
-                new ShoppingCartItem { ProductId = "1", Quantity = 1, Attributes = attributes },
-                false
-            ));
+        var result = await shoppingCartItemAttributeValidator.ValidateAsync(new ShoppingCartItemAttributeValidationContext(product, new ShoppingCartItem { ProductId = "1", Quantity = 1, Attributes = attributes }, false));
 
         //Assert
         Assert.IsFalse(result.IsValid);
@@ -327,37 +277,13 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartRequiredProductValidator_Success()
     {
         //Arrange
-        var shoppingCartRequiredProductValidator =
-            new ShoppingCartRequiredProductValidator(_translationServiceMock.Object, _productServiceMock.Object,
-                new ShoppingCartSettings());
+        var shoppingCartRequiredProductValidator = new ShoppingCartRequiredProductValidator(_translationServiceMock.Object);
 
-        _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false))
-            .Returns(() => Task.FromResult(new Product()));
-
-        _productServiceMock.Setup(x => x.GetProductById("1", false))
-            .Returns(() => Task.FromResult(new Product { Id = "1", Name = "test" }));
-
-        _productServiceMock.Setup(x => x.GetProductById("2", false))
-            .Returns(() => Task.FromResult(new Product { Id = "2", Name = "test" }));
-
-        var product = new Product {
-            Id = "1",
-            StockQuantity = 1,
-            OrderMinimumQuantity = 1,
-            OrderMaximumQuantity = 10,
-            ManageInventoryMethodId = ManageInventoryMethod.ManageStock,
-            RequireOtherProducts = true,
-            RequiredProductIds = "2"
-        };
-        var customer = new Customer();
-        customer.ShoppingCartItems.Add(new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
         //Act
         var result = await shoppingCartRequiredProductValidator.ValidateAsync(
-            new ShoppingCartRequiredProductValidatorRecord(
-                customer,
-                new Store { Id = "1" },
-                product,
-                new ShoppingCartItem { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
+            new ShoppingCartRequiredProductsValidationContext(
+                new List<ShoppingCartItem> { new() { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" } },
+                new List<Product>() { new() { Id = "2", Name = "test" } }
             ));
 
         //Assert
@@ -368,36 +294,13 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartRequiredProductValidator_Fail()
     {
         //Arrange
-        var shoppingCartRequiredProductValidator =
-            new ShoppingCartRequiredProductValidator(_translationServiceMock.Object, _productServiceMock.Object,
-                new ShoppingCartSettings());
+        var shoppingCartRequiredProductValidator = new ShoppingCartRequiredProductValidator(_translationServiceMock.Object);
 
-        _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false))
-            .Returns(() => Task.FromResult(new Product()));
-
-        _productServiceMock.Setup(x => x.GetProductById("1", false))
-            .Returns(() => Task.FromResult(new Product { Id = "1", Name = "test" }));
-
-        _productServiceMock.Setup(x => x.GetProductById("2", false))
-            .Returns(() => Task.FromResult(new Product { Id = "2", Name = "test" }));
-
-        var product = new Product {
-            Id = "1",
-            StockQuantity = 1,
-            OrderMinimumQuantity = 1,
-            OrderMaximumQuantity = 10,
-            ManageInventoryMethodId = ManageInventoryMethod.ManageStock,
-            RequireOtherProducts = true,
-            RequiredProductIds = "2"
-        };
-        var customer = new Customer();
         //Act
         var result = await shoppingCartRequiredProductValidator.ValidateAsync(
-            new ShoppingCartRequiredProductValidatorRecord(
-                customer,
-                new Store { Id = "1" },
-                product,
-                new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
+            new ShoppingCartRequiredProductsValidationContext(
+                new List<ShoppingCartItem> { new() { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" } },
+                new List<Product>() { new() { Id = "2", Name = "test" } }
             ));
 
         //Assert
@@ -409,8 +312,7 @@ public class ShoppingCartValidatorsTests
     {
         //Arrange
         var shoppingCartReservationProductValidator =
-            new ShoppingCartReservationProductValidator(_translationServiceMock.Object,
-                _productReservationServiceMock.Object);
+            new ShoppingCartReservationProductValidator(_translationServiceMock.Object);
 
         _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false))
             .Returns(() => Task.FromResult(new Product()));
@@ -448,7 +350,7 @@ public class ShoppingCartValidatorsTests
         });
         //Act
         var result = await shoppingCartReservationProductValidator.ValidateAsync(
-            new ShoppingCartReservationProductValidatorRecord(
+            new ShoppingCartReservationProductValidationContext(
                 customer,
                 product,
                 new ShoppingCartItem {
@@ -458,7 +360,8 @@ public class ShoppingCartValidatorsTests
                     StoreId = "1",
                     RentalStartDateUtc = DateTime.UtcNow.AddDays(1).Date,
                     RentalEndDateUtc = DateTime.UtcNow.AddDays(2).Date
-                }
+                },
+                _productReservationServiceMock.Object
             ));
 
         //Assert
@@ -470,8 +373,7 @@ public class ShoppingCartValidatorsTests
     {
         //Arrange
         var shoppingCartReservationProductValidator =
-            new ShoppingCartReservationProductValidator(_translationServiceMock.Object,
-                _productReservationServiceMock.Object);
+            new ShoppingCartReservationProductValidator(_translationServiceMock.Object);
 
         _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false))
             .Returns(() => Task.FromResult(new Product()));
@@ -508,7 +410,7 @@ public class ShoppingCartValidatorsTests
         });
         //Act
         var result = await shoppingCartReservationProductValidator.ValidateAsync(
-            new ShoppingCartReservationProductValidatorRecord(
+            new ShoppingCartReservationProductValidationContext(
                 customer,
                 product,
                 new ShoppingCartItem {
@@ -518,7 +420,8 @@ public class ShoppingCartValidatorsTests
                     StoreId = "1",
                     RentalStartDateUtc = DateTime.UtcNow.AddDays(1).Date,
                     RentalEndDateUtc = DateTime.UtcNow.AddDays(2).Date
-                }
+                },
+                _productReservationServiceMock.Object
             ));
 
         //Assert
@@ -529,34 +432,15 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartCommonWarningsValidator_Success()
     {
         //Arrange
-        var shoppingCartCommonWarningsValidator = new ShoppingCartCommonWarningsValidator(
-            _translationServiceMock.Object, _permissionServiceMock.Object, new ShoppingCartSettings {
-                MiniCartProductNumber = 1,
-                MaximumShoppingCartItems = 100
-            });
-        _permissionServiceMock.Setup(x => x.Authorize(It.IsAny<Permission>(), It.IsAny<Customer>()))
-            .Returns(async () => await Task.FromResult(true));
+        var shoppingCartCommonWarningsValidator = new ShoppingCartCommonWarningsValidator(_translationServiceMock.Object);
+        _permissionServiceMock.Setup(x => x.Authorize(It.IsAny<Permission>(), It.IsAny<Customer>())).Returns(async () => await Task.FromResult(true));
 
-        var product = new Product {
-            Id = "1",
-            StockQuantity = 1,
-            OrderMinimumQuantity = 1,
-            OrderMaximumQuantity = 10,
-            ManageInventoryMethodId = ManageInventoryMethod.ManageStock
-        };
+        var shoppingCartSettings = new ShoppingCartSettings { MiniCartProductNumber = 1, MaximumShoppingCartItems = 100 };
         var customer = new Customer();
         customer.ShoppingCartItems.Add(new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
         //Act
         var result = await shoppingCartCommonWarningsValidator.ValidateAsync(
-            new ShoppingCartCommonWarningsValidatorRecord(
-                customer,
-                new Store { Id = "1" },
-                new List<ShoppingCartItem> {
-                    new() {
-                        ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1"
-                    }
-                },
-                product, ShoppingCartType.ShoppingCart, null, null, 1, "")
+            new ShoppingCartCommonWarningsValidationContext(customer, new List<ShoppingCartItem> { new() { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" } }, ShoppingCartType.ShoppingCart, 1, shoppingCartSettings, _permissionServiceMock.Object)
         );
 
         //Assert
@@ -567,34 +451,16 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartCommonWarningsValidator_Fail()
     {
         //Arrange
-        var shoppingCartCommonWarningsValidator = new ShoppingCartCommonWarningsValidator(
-            _translationServiceMock.Object, _permissionServiceMock.Object, new ShoppingCartSettings {
-                MiniCartProductNumber = 1,
-                MaximumShoppingCartItems = 100
-            });
-        _permissionServiceMock.Setup(x => x.Authorize(It.IsAny<Permission>(), It.IsAny<Customer>()))
-            .Returns(async () => await Task.FromResult(false));
+        var shoppingCartCommonWarningsValidator = new ShoppingCartCommonWarningsValidator(_translationServiceMock.Object);
+        var shoppingCartSettings = new ShoppingCartSettings { MiniCartProductNumber = 1, MaximumShoppingCartItems = 100 };
 
-        var product = new Product {
-            Id = "1",
-            StockQuantity = 1,
-            OrderMinimumQuantity = 1,
-            OrderMaximumQuantity = 10,
-            ManageInventoryMethodId = ManageInventoryMethod.ManageStock
-        };
+        _permissionServiceMock.Setup(x => x.Authorize(It.IsAny<Permission>(), It.IsAny<Customer>())).Returns(async () => await Task.FromResult(false));
+
         var customer = new Customer();
         customer.ShoppingCartItems.Add(new ShoppingCartItem { ProductId = "2", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" });
         //Act
         var result = await shoppingCartCommonWarningsValidator.ValidateAsync(
-            new ShoppingCartCommonWarningsValidatorRecord(
-                customer,
-                new Store { Id = "1" },
-                new List<ShoppingCartItem> {
-                    new() {
-                        ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1"
-                    }
-                },
-                product, ShoppingCartType.ShoppingCart, null, null, 1, "")
+            new ShoppingCartCommonWarningsValidationContext(customer, new List<ShoppingCartItem> { new() { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" } }, ShoppingCartType.ShoppingCart, 1, shoppingCartSettings, _permissionServiceMock.Object)
         );
 
         //Assert
@@ -605,8 +471,7 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartStandardValidator_Success()
     {
         //Arrange
-        var shoppingCartStandardValidator =
-            new ShoppingCartStandardValidator(_translationServiceMock.Object, _aclServiceMock.Object);
+        var shoppingCartStandardValidator = new ShoppingCartStandardValidator(_translationServiceMock.Object);
         _aclServiceMock.Setup(x => x.Authorize(It.IsAny<Product>(), It.IsAny<Customer>())).Returns(() => true);
         _aclServiceMock.Setup(x => x.Authorize(It.IsAny<Product>(), It.IsAny<string>())).Returns(() => true);
 
@@ -616,9 +481,10 @@ public class ShoppingCartValidatorsTests
         };
         var customer = new Customer();
         //Act
-        var result = await shoppingCartStandardValidator.ValidateAsync(new ShoppingCartStandardValidatorRecord(
+        var result = await shoppingCartStandardValidator.ValidateAsync(new ShoppingCartStandardValidationContext(
             customer,
             product,
+            _aclServiceMock.Object,
             new ShoppingCartItem { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
         ));
 
@@ -630,8 +496,7 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartStandardValidator_Fail()
     {
         //Arrange
-        var shoppingCartStandardValidator =
-            new ShoppingCartStandardValidator(_translationServiceMock.Object, _aclServiceMock.Object);
+        var shoppingCartStandardValidator = new ShoppingCartStandardValidator(_translationServiceMock.Object);
         _aclServiceMock.Setup(x => x.Authorize(It.IsAny<Product>(), It.IsAny<Customer>())).Returns(() => false);
         _aclServiceMock.Setup(x => x.Authorize(It.IsAny<Product>(), It.IsAny<string>())).Returns(() => true);
 
@@ -641,9 +506,10 @@ public class ShoppingCartValidatorsTests
         };
         var customer = new Customer();
         //Act
-        var result = await shoppingCartStandardValidator.ValidateAsync(new ShoppingCartStandardValidatorRecord(
+        var result = await shoppingCartStandardValidator.ValidateAsync(new ShoppingCartStandardValidationContext(
             customer,
             product,
+            _aclServiceMock.Object,
             new ShoppingCartItem { ProductId = "1", Quantity = 1, ShoppingCartTypeId = ShoppingCartType.ShoppingCart, StoreId = "1" }
         ));
 
@@ -655,8 +521,7 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartWarningsValidator_Success()
     {
         //Arrange
-        var shoppingCartWarningsValidator =
-            new ShoppingCartWarningsValidator(_translationServiceMock.Object, _productServiceMock.Object);
+        var shoppingCartWarningsValidator = new ShoppingCartWarningsValidator(_translationServiceMock.Object);
 
         _productServiceMock.Setup(x => x.GetProductById(It.IsAny<string>(), false))
             .Returns(() => Task.FromResult(new Product()));
@@ -680,11 +545,9 @@ public class ShoppingCartValidatorsTests
         var attributes = new List<CustomAttribute> { new() { Key = "1", Value = "1" } };
 
         //Act
-        var result = await shoppingCartWarningsValidator.ValidateAsync(new ShoppingCartWarningsValidatorRecord(
-            new Customer(),
-            new Store(),
-            new List<ShoppingCartItem> {
-                new() { ProductId = "1", Quantity = 1, Attributes = attributes }
+        var result = await shoppingCartWarningsValidator.ValidateAsync(new ShoppingCartWarningsValidationContext(
+            new List<Product> {
+                new() { }
             }
         ));
 
@@ -696,8 +559,7 @@ public class ShoppingCartValidatorsTests
     public async Task ShoppingCartWarningsValidator_Fail()
     {
         //Arrange
-        var shoppingCartWarningsValidator =
-            new ShoppingCartWarningsValidator(_translationServiceMock.Object, _productServiceMock.Object);
+        var shoppingCartWarningsValidator = new ShoppingCartWarningsValidator(_translationServiceMock.Object);
 
         _productServiceMock.Setup(x => x.GetProductById("1", false))
             .Returns(() => Task.FromResult(new Product { IsRecurring = true, RecurringCyclePeriodId = RecurringCyclePeriod.Weeks }));
@@ -723,12 +585,10 @@ public class ShoppingCartValidatorsTests
         var attributes = new List<CustomAttribute> { new() { Key = "1", Value = "1" } };
 
         //Act
-        var result = await shoppingCartWarningsValidator.ValidateAsync(new ShoppingCartWarningsValidatorRecord(
-            new Customer(),
-            new Store(),
-            new List<ShoppingCartItem> {
-                new() { ProductId = "1", Quantity = 1, Attributes = attributes },
-                new() { ProductId = "2", Quantity = 1, Attributes = attributes }
+        var result = await shoppingCartWarningsValidator.ValidateAsync(new ShoppingCartWarningsValidationContext(
+            new List<Product> {
+                new() { IsRecurring = true, RecurringCyclePeriodId = RecurringCyclePeriod.Weeks },
+                new() { IsRecurring = false }
             }
         ));
 

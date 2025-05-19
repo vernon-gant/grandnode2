@@ -1,5 +1,5 @@
-﻿using Grand.Business.Core.Queries.Checkout.Orders;
-using Grand.Domain.Payments;
+﻿using Grand.Business.Checkout.Validators;
+using Grand.Business.Core.Queries.Checkout.Orders;
 using MediatR;
 
 namespace Grand.Business.Checkout.Queries.Handlers.Orders;
@@ -8,21 +8,6 @@ public class CanPartiallyPaidOfflineQueryHandler : IRequestHandler<CanPartiallyP
 {
     public Task<bool> Handle(CanPartiallyPaidOfflineQuery request, CancellationToken cancellationToken)
     {
-        var paymentTransaction = request.PaymentTransaction;
-        ArgumentNullException.ThrowIfNull(paymentTransaction);
-
-        var amountToPaid = request.AmountToPaid;
-
-        if (paymentTransaction.TransactionAmount == 0)
-            return Task.FromResult(false);
-
-        var canBePaid = paymentTransaction.TransactionAmount - paymentTransaction.PaidAmount;
-        if (canBePaid <= 0)
-            return Task.FromResult(false);
-
-        return amountToPaid > canBePaid
-            ? Task.FromResult(false)
-            : Task.FromResult(paymentTransaction.TransactionStatus is TransactionStatus.PartialPaid
-                or TransactionStatus.Pending or TransactionStatus.PartiallyRefunded or TransactionStatus.Refunded);
+        return Task.FromResult(new PartialOfflineTransactionEligibilityValidator().Validate(new PartialOfflineTransactionEligibilityValidationContext(request.PaymentTransaction, request.AmountToPaid, false)).IsValid);
     }
 }

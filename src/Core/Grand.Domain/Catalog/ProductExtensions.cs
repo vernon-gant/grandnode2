@@ -448,4 +448,52 @@ public static class ProductExtensions
 
         return true;
     }
+
+    public static async Task<List<Product>> GetNonNullRawBundleProductsAsync(this Product product, Func<string, bool, Task<Product>> productRetriever)
+    {
+        var bundleProductInstances = new List<Product>();
+
+        if (product == null || !product.BundleProducts.Any())
+            return bundleProductInstances;
+
+        foreach (var bundleProduct in product.BundleProducts)
+        {
+            var productInstance = await productRetriever(bundleProduct.Id, false);
+
+            if (productInstance != null)
+                bundleProductInstances.Add(productInstance);
+        }
+
+        return bundleProductInstances;
+    }
+
+    public static List<ProductAttributeMapping> GetSelectedProductAttributeMappings(this Product product, IList<CustomAttribute> shoppingCartItemAttributes, IList<Product> nonNullBundleProducts, bool ignoreNonCombinationAttributes)
+    {
+        var selectedAttributeMappings = product.ParseProductAttributeMappings(shoppingCartItemAttributes).ToList();
+
+        if (product.ProductTypeId == ProductType.BundledProduct)
+            selectedAttributeMappings.AddRange(nonNullBundleProducts.SelectMany(x => x.ParseProductAttributeMappings(shoppingCartItemAttributes)));
+
+        if (ignoreNonCombinationAttributes)
+            selectedAttributeMappings = selectedAttributeMappings.Where(x => !x.IsNonCombinable()).ToList();
+
+        return selectedAttributeMappings;
+    }
+
+    public static List<ProductAttributeMapping> GetRequiredProductAttributeMappings(this Product product, IList<CustomAttribute> shoppingCartItemAttributes, IList<Product> nonNullBundleProducts, bool ignoreNonCombinationAttributes)
+    {
+        var requiredAttributeMappings = product.ProductAttributeMappings.ToList();
+
+        if (product.ProductTypeId == ProductType.BundledProduct)
+            requiredAttributeMappings.AddRange(nonNullBundleProducts.SelectMany(x => x.ProductAttributeMappings));
+
+        if (ignoreNonCombinationAttributes)
+            requiredAttributeMappings = requiredAttributeMappings.Where(x => !x.IsNonCombinable()).ToList();
+
+        return requiredAttributeMappings.Where(x =>
+        {
+            var conditionMet = product.IsConditionMet(x, shoppingCartItemAttributes);
+            return !conditionMet.HasValue || conditionMet.Value;
+        }).ToList();
+    }
 }
