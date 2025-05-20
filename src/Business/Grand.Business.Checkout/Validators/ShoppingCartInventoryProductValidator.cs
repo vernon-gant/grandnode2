@@ -25,10 +25,10 @@ namespace Grand.Business.Checkout.Validators;
 /// 8. Product of a bundle product which allows back orders, inventory method is managed by bundle products and rule 7 holds true in product bundle list
 ///     must have the bundle quantity which does not exceed product available stock retrieved from the stock service with different error messages
 ///     when product attribute combination does not allow backorders and main product is managed by bundle products
-/// 7. Product attribute combination must not be null when the inventory method is managed by attributes.
-/// 8. Product attribute combination
+/// 9. Product attribute combination must not be null when the inventory method is managed by attributes.
+/// 10. Product attribute combination
 ///     must have the total needed quantity which does not exceed its available stock retrieved from the stock service with different error messages for out of stock and quantity exceeds stock
-///     when inventory method is managed by attributes, combination does not allow out of stock orders and rule 7 holds true.
+///     when inventory method is managed by attributes, combination does not allow out of stock orders and rule 9 holds true.
 public record ShoppingCartInventoryProductContext(Customer Customer, Product Product, IReadOnlyList<BundleProductContext> BundleProducts, ShoppingCartItem ShoppingCartItem, IStockQuantityService StockQuantityService, bool AllowSelectWarehouse);
 
 public record BundleProductContext(BundleProduct BundleProduct, Product Product);

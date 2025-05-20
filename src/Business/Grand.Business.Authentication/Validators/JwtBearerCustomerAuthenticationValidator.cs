@@ -39,10 +39,10 @@ public class JwtBearerCustomerAuthenticationValidator : AbstractValidator<JwtBea
                     .MustAsync(HaveProvidedRefreshIdMatchingTheIdOfRefreshToken).WithMessage("Invalid token or cancel by refresh token")
                     .DependentRules(() =>
                     {
-                        WhenAsync(CustomerHasPermissionsToUseApi, () =>
-                        {
-                            RuleFor(PasswordToken).Must(BeEqualToCustomerPasswordToken).WhenAsync(CustomerIsNotGuest).WithMessage("Invalid token or cancel by refresh token");
-                        }).Otherwise(Reject);
+                        RuleFor(WholeContext).Cascade(CascadeMode.Stop)
+                            .MustAsync(HaveCustomerWithPermissionsToUseApi)
+                            .Must(HaveProvidedPasswordTokenEqualToCustomerPasswordToken)
+                            .WhenAsync(CustomerIsNotGuest).WithMessage("Invalid token or cancel by refresh token");
                     });
             });
     }
@@ -71,15 +71,15 @@ public class JwtBearerCustomerAuthenticationValidator : AbstractValidator<JwtBea
         return context.RefreshId.Equals(refreshToken.RefreshId);
     }
 
-    private static async Task<bool> CustomerHasPermissionsToUseApi(JwtBearerCustomerAuthenticationContext context, CancellationToken cancellationToken)
+    private static async Task<bool> HaveCustomerWithPermissionsToUseApi(JwtBearerCustomerAuthenticationContext context, CancellationToken cancellationToken)
     {
         return await context.PermissionService.Authorize(StandardPermission.AllowUseApi, context.Customer);
     }
 
-    private static bool BeEqualToCustomerPasswordToken(JwtBearerCustomerAuthenticationContext context, string passwordToken)
+    private static bool HaveProvidedPasswordTokenEqualToCustomerPasswordToken(JwtBearerCustomerAuthenticationContext context)
     {
         var customerPasswordToken = context.Customer.GetUserFieldFromEntity<string>(SystemCustomerFieldNames.PasswordToken);
-        return passwordToken.Equals(customerPasswordToken);
+        return context.PasswordToken.Equals(customerPasswordToken);
     }
 
     private async Task<bool> CustomerIsNotGuest(JwtBearerCustomerAuthenticationContext context, CancellationToken cancellationToken) => !await context.GroupService.IsGuest(context.Customer);

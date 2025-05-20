@@ -7,7 +7,7 @@ using Grand.Domain.Orders;
 using System.Linq.Expressions;
 
 /// In the context of validating checkout attributes during shopping cart checkout, the system must ensure that:
-/// 1. Every checkout attribute in the list of all checkout attributes must have at least one non-empty parsed checkout attribute when checkout attribute is required and its condition is met which using attribute parser.
+/// 1. Every required checkout attribute or attribute with a satisfied condition in the list of all checkout attributes must have at least one non-empty raw checkout attribute when checkout attribute is required and its condition is met which using attribute parser.
 /// 2. Every checkout attribute instance in the list of all checkout attribute instances must have entered text length greater than or equal to the minimum length when the attribute is a text-based attribute (TextBox or MultilineTextbox) and validation min length is set.
 /// 3. Every checkout attribute instance in the list of all checkout attribute instances must have entered text length less than or equal to the maximum length when the attribute is a text-based attribute (TextBox or MultilineTextbox) and validation max length is set.
 public record ShoppingCartCheckoutAttributesContext(
@@ -27,7 +27,7 @@ public class ShoppingCartCheckoutAttributesValidator : AbstractValidator<Shoppin
     {
         _translationService = translationService;
 
-        RuleForEach(AllCheckoutAttributesWithContext).WhereAsync(CheckoutAttributeIsRequiredAndConditionIsMet).Must(HaveAtLeastOneNonEmptyParsedAttribute).WithMessage(MissingAttributeMessage).OverridePropertyName("CheckoutAttribute");
+        RuleForEach(AllCheckoutAttributesWithContext).WhereAsync(CheckoutAttributeIsRequiredOrConditionIsMet).Must(HaveAtLeastOneNonEmptyParsedAttribute).WithMessage(MissingAttributeMessage).OverridePropertyName("CheckoutAttribute");
 
         RuleForEach(AllCheckoutAttributes).Where(IsTextAttributeAndMinimumLengthIsSet).Must(HaveEnteredTextLengthGreaterThanOrEqualToMinimumLength).WithMessage(TextBoxMinimumLengthMessage).OverridePropertyName("CheckoutAttribute");
 
@@ -38,10 +38,10 @@ public class ShoppingCartCheckoutAttributesValidator : AbstractValidator<Shoppin
 
     private static readonly Expression<Func<ShoppingCartCheckoutAttributesContext, IEnumerable<CheckoutAttribute>>> AllCheckoutAttributes = ctx => ctx.AllCheckoutAttributes;
 
-    private static async Task<bool> CheckoutAttributeIsRequiredAndConditionIsMet(CheckoutAttributeWithContext attributeWithContext)
+    private static async Task<bool> CheckoutAttributeIsRequiredOrConditionIsMet(CheckoutAttributeWithContext attributeWithContext)
     {
         var conditionMet = await attributeWithContext.Context.AttributeParser.IsConditionMet(attributeWithContext.CheckoutAttribute, attributeWithContext.Context.RawCartCheckoutAttributes.ToList());
-        return attributeWithContext.CheckoutAttribute.IsRequired && conditionMet.HasValue && conditionMet.Value;
+        return attributeWithContext.CheckoutAttribute.IsRequired || conditionMet.HasValue && conditionMet.Value;
     }
 
     private static bool HaveAtLeastOneNonEmptyParsedAttribute(CheckoutAttributeWithContext attributeWithContext)

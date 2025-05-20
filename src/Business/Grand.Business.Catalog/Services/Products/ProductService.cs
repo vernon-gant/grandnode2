@@ -296,7 +296,7 @@ public class ProductService : IProductService
 
         await _productRepository.UpdateOneAsync(x => x.Id == product.Id, update);
 
-        if (new ProductCartUpdatePublishingValidator().Validate(new ProductCartUpdatePublishingContext(oldProduct, product)).IsValid)
+        if (!new ProductCartUpdatePublishingValidator().Validate(new ProductCartUpdatePublishingContext(oldProduct, product)).IsValid)
             await _mediator.Publish(new UpdateProductOnCartEvent(product));
 
         switch (oldProduct.Published)
