@@ -38,12 +38,9 @@ public class CancelOrderItemCommandHandler : IRequestHandler<CancelOrderItemComm
         ArgumentNullException.ThrowIfNull(request.OrderItem);
 
         var product = await _productService.GetProductById(request.OrderItem.ProductId);
-        if (product == null)
-            return (true, "Product not exists.");
-
-        if (request.OrderItem.OpenQty == 0 || request.OrderItem.Status == OrderItemStatus.Close)
-            return (true, "You can't cancel this order item.");
-        if (product.IsGiftVoucher) return (true, "You can't cancel gift voucher, please delete it.");
+        var validationResult = new CancelOrderItemValidator().Validate(new CancelOrderItemValidationContext(product, request.OrderItem.OpenQty, request.OrderItem.Status));
+        if (!validationResult.IsValid)
+            return (true, validationResult.Errors.First().ErrorMessage);
 
         //add a note
         await _orderService.InsertOrderNote(new OrderNote {
